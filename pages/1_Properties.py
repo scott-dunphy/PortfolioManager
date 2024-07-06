@@ -31,14 +31,14 @@ with col1:
     square_footage = st.number_input('Square Footage', min_value=0.0, value=float(selected_property.square_footage) if selected_property and selected_property.square_footage else 0.0, format='%f')
     year_built = st.number_input('Year Built', min_value=0, value=selected_property.year_built)
     current_value = st.number_input('Current Value', min_value=0.0, value=float(selected_property.current_value), format='%f')
-    purchase_price = st.number_input('Purchase Price', min_value=0.0, value=selected_property.purchase_price, format='%f')
+    purchase_price = st.number_input('Purchase Price', min_value=0.0, value=float(selected_property.purchase_price), format='%f')
     purchase_date = st.date_input('Purchase Date', value=selected_property.purchase_date)
     
 
 with col2:
     analysis_start_date = st.date_input('Analysis Start Date', value=selected_property.analysis_start_date)
     analysis_end_date = st.date_input('Analysis End Date', value=selected_property.analysis_end_date)
-    ownership_share = st.number_input('Ownership Share', min_value=0.0, max_value=1.0, value=selected_property.ownership_share, format='%f')
+    ownership_share = st.number_input('Ownership Share', min_value=0.0, max_value=1.0, value=float(selected_property.ownership_share), format='%f')
     default_sale_date = selected_property.analysis_start_date.replace(day=1) + relativedelta(years=10)
     sale_date = selected_property._standardize_date(st.date_input('Sale Date', value=selected_property.sale_date or default_sale_date))
     sale_price = st.number_input('Sale Price', min_value=0.0, value=float(selected_property.sale_price) if selected_property.sale_price else 0.0, format="%f")
