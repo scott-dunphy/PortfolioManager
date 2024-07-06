@@ -179,7 +179,7 @@ class Property:
 
     def get_cash_flows_dataframe(self, ownership_adjusted: bool = True) -> pd.DataFrame:
         # Generate a date range for the entire analysis period
-        end_date = min(pd.Timestamp(self.analysis_end_date), pd.Timestamp(self.sale_date)))
+        end_date = min(pd.Timestamp(self.analysis_end_date), pd.Timestamp(self.sale_date))
         dates = pd.date_range(start=self.analysis_start_date, end=end_date, freq='MS')
     
         # Create a DataFrame with these dates as the index
