@@ -185,11 +185,14 @@ class Property:
         # Update the property's NOI
         self.capex = new_capex
 
-    def get_cash_flows_dataframe(self, ownership_adjusted: bool = True) -> pd.DataFrame:
+    def get_cash_flows_dataframe(self, ownership_adjusted: bool = True, start_date: Optional[pd.Timestamp] = None, end_date: Optional[pd.Timestamp] = None) -> pd.DataFrame:
+        if start_date is None:
+            start_date = self.analysis_start_date
+        if end_date is None:
+            end_date = self.analysis_end_date
         # Generate a date range for the entire analysis period
-        end_date = min(pd.Timestamp(self.analysis_end_date), pd.Timestamp(self.sale_date))
-        end_date = self._standardize_date(end_date)
-        dates = pd.date_range(start=self.analysis_start_date, end=end_date, freq='MS')
+        end_date = self._standardize_date(min(end_date, pd.Timestamp(self.sale_date)))
+        dates = pd.date_range(start=self._standardize_date(start_date), end=end_date, freq='MS')
     
         # Create a DataFrame with these dates as the index
         cash_flows_df = pd.DataFrame(index=dates, columns=[
