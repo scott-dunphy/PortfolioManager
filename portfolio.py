@@ -53,7 +53,7 @@ class Portfolio:
           # Ensure the DataFrame is within the specified date range
           property_cf = property_cf[(property_cf.index >= self.start_date) & (property_cf.index <= self.end_date)]
           aggregate_cf = aggregate_cf.add(property_cf, fill_value=0)
-          aggregate_cf = aggregate_cf[['Adjusted Purchase Price','Adjusted Loan Proceeds','Adjusted Net Operating Income','Adjusted Capital Expenditures','Adjusted Interest Expense','Adjusted Principal Payments','Adjusted Debt Scheduled Repayment','Adjusted Debt Early Prepayment','Adjusted Sale Proceeds','Adjusted Partner Buyout']]
+          aggregate_cf = aggregate_cf[['Adjusted Purchase Price','Adjusted Loan Proceeds','Adjusted Net Operating Income','Adjusted Capital Expenditures','Adjusted Interest Expense','Adjusted Principal Payments','Adjusted Debt Scheduled Repayment','Adjusted Debt Early Prepayment','Adjusted Sale Proceeds','Adjusted Partner Buyout','Total Cash Flow']]
   
       # Aggregate loan cash flows
       #for loan in self.standalone_loans:
