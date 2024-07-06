@@ -19,7 +19,7 @@ class Loan:
         loan_id: Optional[str] = None
     ):
         self.loan_id = loan_id if loan_id is not None else str(uuid.uuid4())
-        self.origination_date = pd.Timestamp(origination_date)
+        self.origination_date = self._adjust_to_month_start(origination_date)
         self.maturity_date = self._adjust_to_month_start(
             pd.Timestamp(maturity_date))
         self.original_balance = original_balance
