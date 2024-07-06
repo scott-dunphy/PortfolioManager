@@ -293,24 +293,44 @@ class Property:
     
 
     def update_ownership_share(self, start_date: date, new_share: float):
-        """
-        Update the ownership share starting from the given date.
-        
-        Parameters:
-        - start_date: The date from which the new ownership share applies.
-        - new_share: The new ownership share (e.g., 1.0 for full ownership).
-        """
-        start_date = self._standardize_date(start_date)
-        # Update ownership share for the start_date and all subsequent dates
-        for d in sorted(self.ownership_share_series.keys()):
-            if d >= start_date:
-                self.ownership_share_series[d] = new_share
-        # Ensure the ownership share for future dates not already in the dictionary
-        max_existing_date = max(self.ownership_share_series.keys(), default=start_date)
-        current_date = max(start_date, max_existing_date)
-        while current_date <= self.analysis_end_date:
-            self.ownership_share_series[current_date] = new_share
-            current_date += relativedelta(months=1)
+            """
+            Update the ownership share starting from the given date.
+            
+            Parameters:
+            - start_date: The date from which the new ownership share applies.
+            - new_share: The new ownership share (e.g., 1.0 for full ownership).
+            """
+            print(f"Debug: Entering update_ownership_share method")
+            print(f"Debug: start_date type: {type(start_date)}, value: {start_date}")
+            print(f"Debug: new_share type: {type(new_share)}, value: {new_share}")
+            print(f"Debug: self.analysis_end_date type: {type(self.analysis_end_date)}, value: {self.analysis_end_date}")
+    
+            start_date = self._standardize_date(start_date)
+            print(f"Debug: Standardized start_date: {start_date}")
+    
+            # Update ownership share for the start_date and all subsequent dates
+            for d in sorted(self.ownership_share_series.keys()):
+                if d >= start_date:
+                    self.ownership_share_series[d] = new_share
+    
+            # Ensure the ownership share for future dates not already in the dictionary
+            max_existing_date = max(self.ownership_share_series.keys(), default=start_date)
+            current_date = max(start_date, max_existing_date)
+            print(f"Debug: current_date before loop: {current_date}")
+    
+            try:
+                while current_date <= self.analysis_end_date:
+                    self.ownership_share_series[current_date] = new_share
+                    current_date += relativedelta(months=1)
+                    print(f"Debug: Updated date in loop: {current_date}")
+            except TypeError as e:
+                print(f"Debug: TypeError occurred: {e}")
+                print(f"Debug: current_date type: {type(current_date)}, value: {current_date}")
+                print(f"Debug: self.analysis_end_date type: {type(self.analysis_end_date)}, value: {self.analysis_end_date}")
+            except Exception as e:
+                print(f"Debug: Unexpected error occurred: {e}")
+    
+            print("Debug: Exiting update_ownership_share method")
 
     def buy_out_partner(self, buyout_date: date, buyout_amount: float):
         """
