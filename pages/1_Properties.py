@@ -109,6 +109,7 @@ def update_property():
     selected_property.current_value = current_value
     selected_property.sale_date = sale_date
     selected_property.sale_price = sale_price
+    selected_property.sale_price = ownership_share
 
     # Call update_ownership_share if ownership_share is changed
     selected_property.update_ownership_share(start_date=analysis_start_date, new_share=ownership_share)
@@ -159,7 +160,7 @@ def update_property():
     hold_period_cf = selected_property.hold_period_cash_flows_x()
     cf = selected_property.get_cash_flows_dataframe()
     st.table(hold_period_cf)
-    st.session_state.properties = properties
+
 
 
 if st.button('Update and Recalculate'):
