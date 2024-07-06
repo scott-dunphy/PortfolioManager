@@ -4,6 +4,7 @@ from portfolio import Portfolio
 import pandas as pd
 from property import Property
 from loan import Loan
+from config import adjusted_column_config
 
 st.set_page_config(
     page_title="CRE Portfolio Manager",
