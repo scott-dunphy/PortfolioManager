@@ -2,6 +2,8 @@ import streamlit as st
 from datetime import date, datetime
 from portfolio import Portfolio
 import pandas as pd
+from property import Property
+from loan import Loan
 
 st.set_page_config(
     page_title="CRE Portfolio Manager",
