@@ -49,9 +49,11 @@ if 'properties' not in st.session_state:
             )
         ]
     
-    properties = st.session_state.properties
+    
 
 if st.session_state.properties:
+    properties = st.session_state.properties
+    
     portfolio = Portfolio(
         name = 'Dunphy Property Fund',
         start_date = datetime(2023,1,1),
