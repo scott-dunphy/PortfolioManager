@@ -11,7 +11,7 @@ cashflows_file = st.file_uploader('Upload Cashflows Excel File', type=['xlsx'])
 
 if st.button("Upload"):
     if properties_and_loans_file and cashflows_file:
-        properties = load_properties_and_loans(properties_and_loans_file)
+        properties, loans = load_properties_and_loans(properties_and_loans_file)
         noi, capex = load_cashflows(cashflows_file)
         
         for property_obj in properties:
