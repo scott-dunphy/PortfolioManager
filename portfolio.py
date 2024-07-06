@@ -44,7 +44,7 @@ class Portfolio:
   
   def aggregate_hold_period_cash_flows(self) -> pd.DataFrame:
       # Initialize an empty DataFrame with date range index
-      date_range = pd.date_range(self.start_date, self.end_date)
+      date_range = pd.date_range(self.start_date, self.end_date, freq='MS')
       aggregate_cf = pd.DataFrame(0, index=date_range, columns=['Cash Flow'])
   
       # Aggregate property cash flows
