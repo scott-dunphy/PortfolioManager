@@ -124,6 +124,12 @@ class Property:
     def add_loan(self, loan: 'Loan'):
         self.loan = loan
 
+    def add_noi(self, _date: 'datetime', noi: 'float'):
+        self.noi[_date] = noi
+
+    def add_capex(self, _date: 'datetime', capex: 'float'):
+        self.capex[_date] = capex
+
     def remove_loan(self):
         self.loan = None
 
