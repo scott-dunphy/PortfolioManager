@@ -275,12 +275,14 @@ class Property:
         adjusted_columns = [col for col in df.columns if 'Adjusted' in col]
         if ownership_adjusted:
             cf_df = df[adjusted_columns]
+            cf_df['Ownership Share'] = df['Ownership Share']
             cf_df [['Ownership Share','Adjusted Purchase Price','Adjusted Loan Proceeds','Adjusted Net Operating Income','Adjusted Capital Expenditures','Adjusted Interest Expense','Adjusted Principal Payments','Adjusted Debt Scheduled Repayment','Adjusted Debt Early Prepayment','Adjusted Sale Proceeds','Adjusted Partner Buyout']]
         else:
             non_adjusted_columns = [col for col in df.columns if 'Adjusted' not in col]
             cf_df = df[non_adjusted_columns]
+            cf_df['Ownership Share'] = df['Ownership Share']
         
-        cf_df['Ownership Share'] = df['Ownership Share']
+        
     
         # Adjust the signs of the specified columns
         for col in columns_to_change_sign:
