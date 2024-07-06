@@ -4,6 +4,8 @@ from loan import Loan
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 from typing import List, Tuple, Optional, Dict
+import streamlit as st
+
 
 # Initialize session state for properties
 if 'properties' not in st.session_state:
