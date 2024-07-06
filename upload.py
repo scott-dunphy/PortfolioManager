@@ -7,7 +7,7 @@ def load_properties_and_loans(file_path):
     xls = pd.ExcelFile(file_path)
     properties_df = pd.read_excel(xls, 'Properties')
     loans_df = pd.read_excel(xls, 'Loans')
-    
+
     loans = {}
     for _, row in loans_df.iterrows():
         loan = Loan(
@@ -21,7 +21,7 @@ def load_properties_and_loans(file_path):
             day_count_method=row.get('Day Count Method', '30/360')
         )
         loans[loan.loan_id] = loan
-    
+
     properties = []
     for _, row in properties_df.iterrows():
         loan = loans.get(row['Loan ID'])
@@ -45,14 +45,14 @@ def load_properties_and_loans(file_path):
             buyout_amount=row.get('Buyout Amount', 0)
         )
         properties.append(property_obj)
-    
+
     return properties, loans
 
 def load_cashflows(file_path):
     df = pd.read_excel(file_path, sheet_name='Cashflows')
     noi = {}
     capex = {}
-    
+
     for _, row in df.iterrows():
         property_id = row['Property ID']
         date = pd.to_datetime(row['Date'])
@@ -65,5 +65,5 @@ def load_cashflows(file_path):
             if property_id not in capex:
                 capex[property_id] = {}
             capex[property_id][date] = amount
-    
+
     return noi, capex
