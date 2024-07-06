@@ -9,7 +9,7 @@ st.title('Property and Loan Importer')
 properties_and_loans_file = st.file_uploader('Upload Properties and Loans Excel File', type=['xlsx'])
 cashflows_file = st.file_uploader('Upload Cashflows Excel File', type=['xlsx'])
 
-if st.button("Upload"):
+if st.button("Upload Portfolio"):
     if properties_and_loans_file and cashflows_file:
         properties, loans = load_properties_and_loans(properties_and_loans_file)
         noi, capex = load_cashflows(cashflows_file)
