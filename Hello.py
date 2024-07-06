@@ -51,7 +51,7 @@ if 'properties' not in st.session_state:
     
     
 
-if st.session_state.properties:
+if 'properties' in st.session_state:
     properties = st.session_state.properties
     
     portfolio = Portfolio(
