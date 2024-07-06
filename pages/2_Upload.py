@@ -15,3 +15,5 @@ if properties_and_loans_file and cashflows_file:
     
     for property_obj in properties:
         property_obj.noi = noi.get(property_obj.property_id, {})
+
+st.session_state.properties = properties
