@@ -30,20 +30,19 @@ with col1:
     square_footage = st.number_input('Square Footage', min_value=0.0, value=selected_property.square_footage, format='%f')
     year_built = st.number_input('Year Built', min_value=0, value=selected_property.year_built)
     current_value = st.number_input('Current Value', min_value=0.0, value=selected_property.current_value, format='%f')
+    purchase_price = st.number_input('Purchase Price', min_value=0.0, value=selected_property.purchase_price, format='%f')
+    purchase_date = st.date_input('Purchase Date', value=selected_property.purchase_date)
     
 
 with col2:
-    purchase_price = st.number_input('Purchase Price', min_value=0.0, value=selected_property.purchase_price, format='%f')
-    purchase_date = st.date_input('Purchase Date', value=selected_property.purchase_date)
     analysis_start_date = st.date_input('Analysis Start Date', value=selected_property.analysis_start_date)
     analysis_end_date = st.date_input('Analysis End Date', value=selected_property.analysis_end_date)
     ownership_share = st.number_input('Ownership Share', min_value=0.0, max_value=1.0, value=selected_property.ownership_share, format='%f')
     default_sale_date = selected_property.analysis_start_date.replace(day=1) + relativedelta(years=10)
-    
-    # Sale Date input: if sale_date is None, default to ten years from the analysis date
     sale_date = selected_property._standardize_date(st.date_input('Sale Date', value=selected_property.sale_date or default_sale_date))
-
     sale_price = st.number_input('Sale Price', min_value=0.0, value=float(selected_property.sale_price) if selected_property.sale_price else 0.0, format="%f")
+    buyout_date = selected_property._standardize_date(st.date_input('Partner Buyout Date', value=selected_property.buyout_date or datetime(2100,12,1)))
+    buyout_amount = st.number_input('Buyout Amount', min_value=0.0, value=float(selected_property.buyout_amount) if selected_property.buyout_amount else 0.0, format="%f")
 
 # Loan inputs
 with st.expander("Loan Details"):
