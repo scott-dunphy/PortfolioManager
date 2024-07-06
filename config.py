@@ -1,3 +1,5 @@
+import streamlit as st
+
 adjusted_column_config = {
     'Adjusted Purchase Price': st.column_config.NumberColumn("Adjusted Purchase Price", format='%d'),
     'Adjusted Loan Proceeds': st.column_config.NumberColumn("Adjusted Loan Proceeds", format='%d'),
