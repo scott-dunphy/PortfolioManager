@@ -10,7 +10,7 @@ st.set_page_config(
     page_icon="👋",
 )
 
-st.write("CRE Portfolio Manager 🏗️")
+st.title("CRE Portfolio Manager 🏗️")
 
 
 
