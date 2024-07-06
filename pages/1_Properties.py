@@ -159,6 +159,7 @@ def update_property():
     hold_period_cf = selected_property.hold_period_cash_flows_x()
     cf = selected_property.get_cash_flows_dataframe()
     st.table(hold_period_cf)
+    st.session_state.properties = properties
 
 
 if st.button('Update and Recalculate'):
