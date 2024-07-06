@@ -1,6 +1,8 @@
 import pandas as pd
 from property import Property
 from loan import Loan
+from datetime import date, datetime
+from dateutil.relativedelta import relativedelta
 
 class Portfolio:
   def __init__(self, name: str, start_date: date, end_date: date, properties: List['Property'] = None, unsecured_loans: List['Loan'] = None):
