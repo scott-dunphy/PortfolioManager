@@ -65,7 +65,7 @@ if 'properties' in st.session_state:
 
     
     column_config = {
-        'Adjusted Purchase Price': st.column_config.NumberColumn("Adjusted Purchase Price", format='$ % g'),
+        'Adjusted Purchase Price': st.column_config.NumberColumn("Adjusted Purchase Price", format='$ %f'),
         'Adjusted Loan Proceeds': st.column_config.NumberColumn("Adjusted Loan Proceeds", format='$%d'),
         'Adjusted Net Operating Income': st.column_config.NumberColumn("Adjusted Net Operating Income", format='$%d'),
         'Adjusted Capital Expenditures': st.column_config.NumberColumn("Adjusted Capital Expenditures", format='$%d'),
