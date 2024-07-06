@@ -50,12 +50,6 @@ def load_properties_and_loans(file_path):
 
 properties = load_properties_and_loans()
 
-def get_property(properties, property_id):
-  for property in properties:
-    if property.property_id = property_id:
-      return property
-  return "Property not found."
-
 def load_cashflows(file_path):
     df = pd.read_excel(file_path, sheet_name='Cashflows')
     noi = {}
