@@ -131,9 +131,9 @@ def update_property():
 
 if st.button('Update and Recalculate'):
     update_property()
+    # Save updated properties to session state
+    st.session_state.properties = properties
 
-# Save updated properties to session state
-st.session_state.properties = properties
 
 # Function to save session state to a file
 def save_session_state(filename="session_state.json"):
