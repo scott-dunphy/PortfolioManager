@@ -51,15 +51,16 @@ if 'properties' not in st.session_state:
     
     properties = st.session_state.properties
 
-portfolio = Portfolio(
-    name = 'Dunphy Property Fund',
-    start_date = datetime(2023,1,1),
-    end_date = datetime(2025,1,1),
-    properties = properties
-)
-
-cash_flows = portfolio.aggregate_hold_period_cash_flows()
-
-st.table(cash_flows)
+if st.session_state.properties:
+    portfolio = Portfolio(
+        name = 'Dunphy Property Fund',
+        start_date = datetime(2023,1,1),
+        end_date = datetime(2025,1,1),
+        properties = properties
+    )
+    
+    cash_flows = portfolio.aggregate_hold_period_cash_flows()
+    
+    st.table(cash_flows)
 
 
