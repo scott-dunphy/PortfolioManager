@@ -3,6 +3,7 @@ from dateutil.relativedelta import relativedelta
 from typing import Optional, Dict
 import pandas as pd
 import streamlit as st
+from config import adjusted_column_config
 
 from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta
@@ -126,7 +127,7 @@ def update_property():
     st.subheader("Hold Period Cash Flows")
     hold_period_cf = selected_property.hold_period_cash_flows_x()
     cf = selected_property.get_cash_flows_dataframe()
-    st.table(hold_period_cf)
+    st.dataframe(hold_period_cf, column_config=adjusted_column_config, use_container_width=True)
 
 
 
