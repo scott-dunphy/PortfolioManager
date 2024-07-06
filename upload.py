@@ -46,7 +46,7 @@ def load_properties_and_loans(file_path):
         )
         properties.append(property_obj)
     
-    return properties
+    return properties, loans
 
 def load_cashflows(file_path):
     df = pd.read_excel(file_path, sheet_name='Cashflows')
@@ -58,15 +58,7 @@ def load_cashflows(file_path):
         date = pd.to_datetime(row['Date'])
         amount = row['Amount']
         if row['Type'].lower() == 'noi':
-            if property_id not in noi:
-                noi[property_id] = {}
-            noi[property_id][date] = amount
-        elif row['Type'].lower() == 'capex':
-            if property_id not in capex:
-                capex[property_id] = {}
-            capex[property_id][date] = amount
-    
-    return noi, capex
+
 
 
 
