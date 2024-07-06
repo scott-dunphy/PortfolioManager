@@ -269,6 +269,8 @@ class Property:
         return cf_after_debt
     
     def hold_period_cash_flows_x(self, ownership_adjusted: bool = True) -> Dict[pd.Timestamp, float]:
+        if self.buyout_date:
+            self.update_ownership_share(self.buyout_date,1)
         df = self.get_cash_flows_dataframe()
     
         # Define the columns that need their signs changed
