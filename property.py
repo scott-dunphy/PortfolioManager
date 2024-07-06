@@ -10,6 +10,7 @@ from typing import List, Tuple, Optional, Dict
 import uuid
 import pandas as pd
 import json
+from loan import Loan
 
 
 class Property:
