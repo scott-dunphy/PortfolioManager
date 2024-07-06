@@ -75,7 +75,7 @@ def update_property():
     selected_property.current_value = current_value
     selected_property.sale_date = sale_date
     selected_property.sale_price = sale_price
-    selected_property.sale_price = ownership_share
+    selected_property.ownership_share = ownership_share
 
     # Call update_ownership_share if ownership_share is changed
     selected_property.update_ownership_share(start_date=analysis_start_date, new_share=ownership_share)
