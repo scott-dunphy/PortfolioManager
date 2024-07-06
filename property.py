@@ -305,7 +305,7 @@ class Property:
             print(f"Debug: new_share type: {type(new_share)}, value: {new_share}")
             print(f"Debug: self.analysis_end_date type: {type(self.analysis_end_date)}, value: {self.analysis_end_date}")
     
-            start_date = pd.Datetime(self._standardize_date(start_date))
+            start_date = pd.Timestamp(self._standardize_date(start_date))
             print(f"Debug: Standardized start_date: {start_date}")
     
             # Update ownership share for the start_date and all subsequent dates
@@ -314,7 +314,7 @@ class Property:
                     self.ownership_share_series[d] = new_share
     
             # Ensure the ownership share for future dates not already in the dictionary
-            max_existing_date = pd.Datetime(max(self.ownership_share_series.keys(), default=start_date))
+            max_existing_date = pd.Timestamp(max(self.ownership_share_series.keys(), default=start_date))
             current_date = max(start_date, max_existing_date)
             print(f"Debug: current_date before loop: {current_date}")
     
