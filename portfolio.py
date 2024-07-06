@@ -41,7 +41,7 @@ def aggregate_hold_period_cash_flows(self) -> pd.DataFrame:
 
     # Aggregate property cash flows
     for property in self.properties:
-        property_cf = property.hold_period_cash_flows()
+        property_cf = property.hold_period_cash_flows_x()
         # Ensure the DataFrame is within the specified date range
         property_cf = property_cf[(property_cf.index >= self.start_date) & (property_cf.index <= self.end_date)]
         aggregate_cf = aggregate_cf.add(property_cf, fill_value=0)
