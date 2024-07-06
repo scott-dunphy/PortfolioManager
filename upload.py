@@ -40,27 +40,4 @@ def load_properties_and_loans(file_path):
             sale_date=row.get('Sale Date'),
             sale_price=row.get('Sale Price'),
             loan=loan,
-            ownership_share=row.get('Ownership Share', 1),
-            buyout_date=row.get('Buyout Date'),
-            buyout_amount=row.get('Buyout Amount', 0)
-        )
-        properties.append(property_obj)
-    
-    return properties, loans
-
-def load_cashflows(file_path):
-    df = pd.read_excel(file_path, sheet_name='Cashflows')
-    noi = {}
-    capex = {}
-    
-    for _, row in df.iterrows():
-        property_id = row['Property ID']
-        date = pd.to_datetime(row['Date'])
-        amount = row['Amount']
-        if row['Type'].lower() == 'noi':
-
-
-
-
-    
  
