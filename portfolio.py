@@ -7,40 +7,7 @@ from typing import List, Tuple, Optional, Dict
 import streamlit as st
 
 
-# Initialize session state for properties
-if 'properties' not in st.session_state:
-    st.session_state.properties = [
-        Property(
-            property_id="CRE001",
-            name="Downtown Office Building",
-            address="123 Main St, Anytown, USA",
-            property_type="Office",
-            square_footage=50000.0,
-            year_built=1995,
-            purchase_price=25000000.00,
-            purchase_date=date(2023, 1, 1),
-            analysis_start_date=date(2023, 1, 1),
-            analysis_end_date=date(2025, 12, 1),
-            current_value=25000000.00,
-            ownership_share=0.8
-        ),
-        Property(
-            property_id="CRE002",
-            name="Suburban Retail Center",
-            address="456 Elm St, Anytown, USA",
-            property_type="Retail",
-            square_footage=75000.0,
-            year_built=2005,
-            purchase_price=35000000.00,
-            purchase_date=date(2023, 1, 1),
-            analysis_start_date=date(2023, 1, 1),
-            analysis_end_date=date(2025, 12, 1),
-            current_value=35000000.00,
-            ownership_share=1.0
-        )
-    ]
 
-properties = st.session_state.properties
 
 
 class Portfolio:
