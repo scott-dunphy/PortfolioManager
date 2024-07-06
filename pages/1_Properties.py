@@ -30,7 +30,7 @@ with col1:
     property_type = st.text_input('Property Type', value=selected_property.property_type)
     square_footage = st.number_input('Square Footage', min_value=0.0, value=float(selected_property.square_footage) if selected_property and selected_property.square_footage else 0.0, format='%f')
     year_built = st.number_input('Year Built', min_value=0, value=selected_property.year_built)
-    current_value = st.number_input('Current Value', min_value=0.0, value=selected_property.current_value, format='%f')
+    current_value = st.number_input('Current Value', min_value=0.0, value=float(selected_property.current_value), format='%f')
     purchase_price = st.number_input('Purchase Price', min_value=0.0, value=selected_property.purchase_price, format='%f')
     purchase_date = st.date_input('Purchase Date', value=selected_property.purchase_date)
     
