@@ -33,6 +33,8 @@ class Property:
         noi: Optional[Dict[date, float]] = None,
         capex: Optional[Dict[date, float]] = None,
         ownership_share: float = 1,
+        buyout_date: Optional[date] = None,
+        buyout_amount: Optional[float] = None
     ):
         self.property_id = property_id
         self.name = name
