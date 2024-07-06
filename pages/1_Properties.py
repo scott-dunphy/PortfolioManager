@@ -13,7 +13,7 @@ import json
 from loan import Loan
 from property import Property
 
-
+properties = st.session_state.properties
 
 property_names = [prop.name for prop in properties]
 selected_property_name = st.selectbox("Select Property", property_names)
