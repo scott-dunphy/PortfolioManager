@@ -319,7 +319,7 @@ class Property:
             print(f"Debug: current_date before loop: {current_date}")
     
             try:
-                while pd.Timestamp(current_date) <= pd.Timesetamp(self.analysis_end_date):
+                while pd.Timestamp(current_date) <= pd.Timestamp(self.analysis_end_date):
                     self.ownership_share_series[current_date] = new_share
                     current_date += relativedelta(months=1)
                     print(f"Debug: Updated date in loop: {current_date}")
