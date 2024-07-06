@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from loan import Loan
 from property import Property
-import upload
+from upload import *
 
 st.title('Property and Loan Importer')
     
