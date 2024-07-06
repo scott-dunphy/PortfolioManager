@@ -1,4 +1,5 @@
 import streamlit as st
+from datetime import date, datetime
 from portfolio import Portfolio
 import pandas as pd
 
@@ -15,8 +16,8 @@ properties = st.session_state.properties
 
 portfolio = Portfolio(
     name = 'Dunphy Property Fund',
-    start_date = pd.Datetime(2023,1,1),
-    end_date = pd.Datetime(2025,1,1),
+    start_date = datetime(2023,1,1),
+    end_date = datetime(2025,1,1),
     properties = properties
 )
 
