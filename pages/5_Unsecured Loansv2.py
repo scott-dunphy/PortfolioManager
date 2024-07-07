@@ -6,7 +6,7 @@ import uuid
 from loan import Loan
 
 # Assuming you have a list of unsecured loans stored in st.session_state.unsecured_loans
-unsecured_loans = st.session_state.unsecured_loans if 'unsecured_loans' in st.session_state else []
+unsecured_loans = st.session_state.portfolio.unsecured_loans if 'portfolio' in st.session_state else []
 
 loan_names = [loan.loan_id for loan in unsecured_loans]
 selected_loan_name = st.selectbox("Select Unsecured Loan", loan_names)
