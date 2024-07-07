@@ -93,10 +93,11 @@ class Loan:
         if self.fixed_floating == 'Fixed':
             note_rate = self.note_rate
         else:
-            chatham = Chatham()
-            sofr = chatham.get_monthly_rates()
+            if sofr not in st.session_state:
+                chatham = Chatham()
+                st.session_state.sofr = chatham.get_monthly_rates()
             start_date_str = self._standardize_date(start_date).strftime("%Y-%m-%d")
-            note_rate = sofr.get(start_date_str, 0) + self.spread / 100
+            note_rate =  st.session_state.sofr.get(start_date_str, 0) + self.spread / 100
 
         if self.day_count_method == "30/360":
             days = 30
