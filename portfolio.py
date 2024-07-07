@@ -58,7 +58,6 @@ class Portfolio:
       # Aggregate loan cash flows
       if self.unsecured_loans:
           for loan in self.unsecured_loans:
-              st.write(loan)
               loan_cf = pd.DataFrame(loan.get_unsecured_schedule())
               # Ensure the DataFrame is within the specified date range
               loan_cf = loan_cf[(loan_cf.index >= self.start_date) & (loan_cf.index <= self.end_date)]
