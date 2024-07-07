@@ -38,6 +38,8 @@ class Chatham:
             st.error(f"Key error: {e}")
         except Exception as e:
             st.error(f"An unexpected error occurred: {e}")
+        finally:
+            st.write("Data fetch attempt complete.")
 
     def get_rate(self, date):
         """Gets the rate for a specific date. If the date is not found, it finds the closest next date."""
@@ -59,6 +61,9 @@ class Chatham:
             self.fetch_data()
         monthly_rates = {}
         sorted_dates = sorted(self.rates.keys())
+        if not sorted_dates:
+            return monthly_rates  # Return empty if no dates are available
+
         current_month = sorted_dates[0].month
         current_year = sorted_dates[0].year
 
