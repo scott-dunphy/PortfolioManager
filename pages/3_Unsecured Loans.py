@@ -14,6 +14,7 @@ import json
 from loan import Loan
 from property import Property
 
+
 st.write("Unsecured Loan Inputs")
 origination_date = pd.to_datetime(st.date_input('Origination Date'))
 maturity_date = pd.to_datetime(st.date_input('Maturity Date'))
@@ -41,3 +42,4 @@ loan = Loan(
 st.dataframe(loan.get_unsecured_schedule())
 
 st.write(loan.sofr)
+
