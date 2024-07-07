@@ -6,7 +6,7 @@ class Chatham:
     def __init__(self):
         self.url = "https://www.chathamfinancial.com/getrates/285116"
         self.curve_date = None
-        self.rates = {}
+        self.rates = self.get_curve()
 
     def get_curve(self):
         headers = {
@@ -25,7 +25,7 @@ class Chatham:
             response.raise_for_status()  # Check for HTTP errors
             data = response.json()
             self.curve_date = datetime.strptime(data["CurveDate"], "%Y-%m-%d")
-            self.rates = {datetime.strptime(rate["Date"], "%Y-%m-%d"): rate["Rate"] for rate in data["Rates"]}
+            return {datetime.strptime(rate["Date"], "%Y-%m-%d"): rate["Rate"] for rate in data["Rates"]}
         except requests.exceptions.RequestException as e:
             print(f"Request error: {e}")
         except requests.exceptions.HTTPError as e:
