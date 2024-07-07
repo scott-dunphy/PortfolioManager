@@ -3,6 +3,7 @@ from property import Property
 from loan import Loan
 from datetime import date
 from typing import List
+import streamlit as st
 
 class Portfolio:
     def __init__(self, name: str, start_date: date, end_date: date, properties: List['Property'] = None, unsecured_loans: List['Loan'] = None):
@@ -53,7 +54,7 @@ class Portfolio:
             for loan in self.unsecured_loans:
                 loan_schedule = loan.get_unsecured_schedule()
                 loan_cf = pd.DataFrame(loan_schedule)
-                
+                st.write(loan_cf)
                 # Convert 'date' column to datetime and set as index
                 loan_cf['date'] = pd.to_datetime(loan_cf['date'], errors='coerce')
                 loan_cf.set_index('date', inplace=True)
