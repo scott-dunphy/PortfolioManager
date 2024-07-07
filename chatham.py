@@ -1,13 +1,16 @@
 import requests
 from datetime import datetime, timedelta
 import pandas as pd
+import streamlit as st
 
 class Chatham:
     def __init__(self):
         self.url = "https://www.chathamfinancial.com/getrates/285116"
         self.curve_date = None
+        self.rates = {}
 
-    def get_curve(self):
+    def fetch_data(self):
+        """Fetches data from the given URL and updates the curve_date and rates."""
         headers = {
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15',
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -24,34 +27,36 @@ class Chatham:
             response.raise_for_status()  # Check for HTTP errors
             data = response.json()
             self.curve_date = datetime.strptime(data["CurveDate"], "%Y-%m-%d")
-            return data#{datetime.strptime(rate["Date"], "%Y-%m-%d"): rate["Rate"] for rate in data["Rates"]}
+            self.rates = {datetime.strptime(rate["Date"], "%Y-%m-%d"): rate["Rate"] for rate in data["Rates"]}
         except requests.exceptions.RequestException as e:
-            print(f"Request error: {e}")
+            st.error(f"Request error: {e}")
         except requests.exceptions.HTTPError as e:
-            print(f"HTTP error: {e}")
+            st.error(f"HTTP error: {e}")
         except requests.exceptions.JSONDecodeError as e:
-            print(f"JSON decode error: {e}")
+            st.error(f"JSON decode error: {e}")
         except KeyError as e:
-            print(f"Key error: {e}")
+            st.error(f"Key error: {e}")
         except Exception as e:
-            print(f"An unexpected error occurred: {e}")
+            st.error(f"An unexpected error occurred: {e}")
 
     def get_rate(self, date):
+        """Gets the rate for a specific date. If the date is not found, it finds the closest next date."""
         if not self.rates:
-            self.get_curve()
-        while date not in self.rates:
+            self.fetch_data()
+        while date not in self.rates and date <= datetime.today():
             date += timedelta(days=1)
-        return self.rates.get(date)
+        return self.rates.get(date, None)
 
-
-    def get_rates(self):
+    def get_all_rates(self):
+        """Returns all rates after fetching data if not already done."""
         if not self.rates:
-            self.get_curve()
+            self.fetch_data()
         return self.rates
 
     def get_monthly_rates(self):
+        """Returns rates for the first available date of each month."""
         if not self.rates:
-            self.get_curve()
+            self.fetch_data()
         monthly_rates = {}
         sorted_dates = sorted(self.rates.keys())
         current_month = sorted_dates[0].month
@@ -63,28 +68,3 @@ class Chatham:
                 current_month = date.month
                 current_year = date.year
         return monthly_rates
-
-    def plot_rates_ascii(self, rates):
-        dates = sorted(rates.keys())
-        rate_values = [rates[date] for date in dates]
-
-        min_rate = min(rate_values)
-        max_rate = max(rate_values)
-        rate_range = max_rate - min_rate
-        width = 50
-        height = 20
-
-        def get_y(rate):
-            return int((rate - min_rate) / rate_range * height)
-
-        plot = [[' ' for _ in range(width)] for _ in range(height + 1)]
-
-        for i, rate in enumerate(rate_values):
-            y = get_y(rate)
-            x = int(i / len(rate_values) * width)
-            plot[y][x] = '*'
-
-        for y in reversed(range(height + 1)):
-            print(''.join(plot[y]))
-        print(f"Min Rate: {min_rate:.4f}, Max Rate: {max_rate:.4f}")
-
