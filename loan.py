@@ -4,7 +4,7 @@ from typing import List, Tuple, Optional, Dict
 import uuid
 import pandas as pd
 import json
-from sofr import Chatham
+from chatham import Chatham
 
 
 class Loan:    
