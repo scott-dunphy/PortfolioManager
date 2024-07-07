@@ -44,6 +44,7 @@ class Loan:
         self.interest_only_period = interest_only_period if interest_only_period is not None else 0
         self._amortization_period = amortization_period if amortization_period is not None else self.total_months - self.interest_only_period
         self.monthly_payment = self._get_monthly_payment()
+        self.schedule = self.get_schedule()
 
         self._validate_inputs()
         
