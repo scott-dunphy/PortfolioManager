@@ -65,7 +65,7 @@ if 'properties' in st.session_state:
     
     portfolio = Portfolio(
         name = 'Dunphy Property Fund',
-        start_date = analyst_start_date,
+        start_date = analysis_start_date,
         end_date = analysis_end_date,
         properties = properties
     )
