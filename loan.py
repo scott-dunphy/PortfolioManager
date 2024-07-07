@@ -102,7 +102,7 @@ class Loan:
         else:  # Actual/365
             days = (end_date - start_date).days
             year_basis = 365
-        return balance * self.note_rate * days / year_basis
+        return balance * note_rate * days / year_basis
 
     def get_monthly_interest_and_principal(self, current_date: pd.Timestamp) -> Tuple[float, float]:
         if current_date < self.origination_date or current_date > self.maturity_date:
