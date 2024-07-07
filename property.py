@@ -286,6 +286,9 @@ class Property:
 
         start_date = self._standardize_date(start_date)
         end_date = self._standardize_date(end_date)
+
+        if self.loan:
+            self.loan.get_schedule()
         
         if self.buyout_date:
             self.update_ownership_share(self.buyout_date,1)
