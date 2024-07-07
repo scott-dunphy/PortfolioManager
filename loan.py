@@ -6,7 +6,17 @@ import pandas as pd
 import json
 
 
-class Loan:
+class Loan:    
+    @property
+    def amortization_period(self):
+        return self._amortization_period
+
+    @amortization_period.setter
+    def amortization_period(self, value):
+        self._amortization_period = value
+        self._calculate_monthly_payment()
+        self.get_schedule()
+        
     def __init__(
         self,
         origination_date: date,
@@ -28,13 +38,11 @@ class Loan:
 
         # Calculate total loan term in months
         self.total_months = (self.maturity_date.year - self.origination_date.year) * 12 + \
-                            (self.maturity_date.month -
-                             self.origination_date.month)
+                            (self.maturity_date.month - self.origination_date.month)
 
         # Handle optional parameters
         self.interest_only_period = interest_only_period if interest_only_period is not None else 0
-        self.amortization_period = amortization_period if amortization_period is not None else self.total_months - \
-            self.interest_only_period
+        self._amortization_period = amortization_period if amortization_period is not None else self.total_months - self.interest_only_period
 
         self._validate_inputs()
         self._calculate_monthly_payment()
