@@ -24,8 +24,8 @@ class Chatham:
             response = requests.get(self.url, headers=headers)
             response.raise_for_status()  # Check for HTTP errors
             data = response.json()
-            self.curve_date = datetime.strptime(data["CurveDate"], "%Y-%m-%dT%H:%M:%S")
-            self.rates = {pd.to_datetime(rate["Date"]): rate["Rate"] for rate in data["Rates"]}
+            self.curve_date = datetime.strptime(data["CurveDate"], "%Y-%m-%d")
+            self.rates = {datetime.strptime(rate["Date"], "%Y-%m-%d"): rate["Rate"] for rate in data["Rates"]}
             return data
         except requests.exceptions.RequestException as e:
             print(f"Request error: {e}")
