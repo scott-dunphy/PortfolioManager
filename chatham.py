@@ -39,7 +39,7 @@ class Chatham:
         except Exception as e:
             st.error(f"An unexpected error occurred: {e}")
         finally:
-            st.write("Data fetch attempt complete.")
+            pass
 
     def get_rate(self, date):
         """Gets the rate for a specific date. If the date is not found, it finds the closest next date."""
