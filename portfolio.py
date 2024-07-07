@@ -55,7 +55,7 @@ class Portfolio:
                 loan_cf = pd.DataFrame(loan_schedule)
                 
                 # Debug: Log the initial loan schedule
-                st.write("Initial loan schedule DataFrame:")
+                #st.write("Initial loan schedule DataFrame:")
                 st.write(loan_cf)
     
                 # Convert 'date' column to datetime and set as index
