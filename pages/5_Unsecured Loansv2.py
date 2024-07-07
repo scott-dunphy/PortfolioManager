@@ -8,10 +8,10 @@ from loan import Loan
 # Assuming you have a list of unsecured loans stored in st.session_state.unsecured_loans
 unsecured_loans = st.session_state.unsecured_loans if 'unsecured_loans' in st.session_state else []
 
-loan_names = [loan.id for loan in unsecured_loans]
+loan_names = [loan.loan_id for loan in unsecured_loans]
 selected_loan_name = st.selectbox("Select Unsecured Loan", loan_names)
 
-selected_loan = next((loan for loan in unsecured_loans if loan.id == selected_loan_name), None)
+selected_loan = next((loan for loan in unsecured_loans if loan.loan_id == selected_loan_name), None)
 
 # Unsecured Loan inputs
 loan_id = st.text_input('Loan ID', value=selected_loan.loan_id if selected_loan else str(uuid.uuid4()))
