@@ -144,7 +144,10 @@ class Loan:
             months_since_origination = (current_date.year - self.origination_date.year) * 12 + \
                 current_date.month - self.origination_date.month
 
-            if months_since_origination < self.interest_only_period:
+            if self.interest_only_period == 0 and self.amortization_period == 0:
+                principal = 0
+                payment = interest
+            elif months_since_origination < self.interest_only_period:
                 principal = 0
                 payment = interest
             else:
