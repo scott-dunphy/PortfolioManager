@@ -14,7 +14,7 @@ selected_loan_name = st.selectbox("Select Unsecured Loan", loan_names)
 selected_loan = next((loan for loan in unsecured_loans if loan.loan_id == selected_loan_name), None)
 
 # Unsecured Loan inputs
-loan_id = st.text_input('Loan ID', value=selected_loan.loan_id if selected_loan else str(uuid.uuid4()))
+loan_id = st.text_input('Loan ID', value=selected_loan.loan_id if selected_loan else "")
 
 col1, col2 = st.columns(2)
 
