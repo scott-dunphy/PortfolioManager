@@ -129,7 +129,7 @@ def update_property():
     cf = selected_property.get_cash_flows_dataframe()
     st.dataframe(hold_period_cf, column_config=adjusted_column_config, use_container_width=True)
 
-    st.dataframe(self.loan.schedule)
+    st.dataframe(selected_property.loan.schedule)
 
 
 
