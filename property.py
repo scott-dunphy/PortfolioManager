@@ -55,8 +55,8 @@ class Property:
         self.ownership_share = ownership_share
         self._initialize_ownership_share()
         #self._align_noi_and_capex()
-        self.buyout_date = None
-        self.buyout_amount = 0
+        self.buyout_date = buyout_date
+        self.buyout_amount = buyout_amount
         
     def to_dict(self):
         return {
