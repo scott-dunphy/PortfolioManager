@@ -26,8 +26,8 @@ class Chatham:
             response = requests.get(self.url, headers=headers)
             response.raise_for_status()  # Check for HTTP errors
             data = response.json()
-            self.curve_date = datetime.strptime(data["CurveDate"].split("T")[0], "%Y-%m-%d")
-            self.rates = {datetime.strptime(rate["Date"].split("T")[0], "%Y-%m-%d"): rate["Rate"] for rate in data["Rates"]}
+            self.curve_date = data["CurveDate"].split("T")[0]
+            self.rates = {rate["Date"].split("T")[0]: rate["Rate"] for rate in data["Rates"]}
         except requests.exceptions.RequestException as e:
             st.error(f"Request error: {e}")
         except requests.exceptions.HTTPError as e:
@@ -45,9 +45,9 @@ class Chatham:
         """Gets the rate for a specific date. If the date is not found, it finds the closest next date."""
         if not self.rates:
             self.fetch_data()
-        while date not in self.rates and date <= datetime.today():
+        while date.strftime("%Y-%m-%d") not in self.rates and date <= datetime.today():
             date += timedelta(days=1)
-        return self.rates.get(date, None)
+        return self.rates.get(date.strftime("%Y-%m-%d"), None)
 
     def get_all_rates(self):
         """Returns all rates after fetching data if not already done."""
@@ -64,43 +64,14 @@ class Chatham:
         if not sorted_dates:
             return monthly_rates  # Return empty if no dates are available
 
-        current_month = sorted_dates[0].month
-        current_year = sorted_dates[0].year
+        current_month = datetime.strptime(sorted_dates[0], "%Y-%m-%d").month
+        current_year = datetime.strptime(sorted_dates[0], "%Y-%m-%d").year
 
-        for date in sorted_dates:
+        for date_str in sorted_dates:
+            date = datetime.strptime(date_str, "%Y-%m-%d")
             if date.month != current_month or date.year != current_year:
-                monthly_rates[datetime(current_year, current_month, 1)] = self.rates[date]
+                monthly_rates[f"{current_year}-{current_month:02d}-01"] = self.rates[date_str]
                 current_month = date.month
                 current_year = date.year
         return monthly_rates
 
-# Example usage in a Streamlit app
-def main():
-    chatham = Chatham()
-    st.title("Chatham Financial Rates")
-
-    st.write("### Latest Rates Data")
-    if st.button("Fetch Rates"):
-        chatham.fetch_data()
-        rates = chatham.get_all_rates()
-        if rates:
-            st.write(pd.DataFrame(list(rates.items()), columns=["Date", "Rate"]))
-        else:
-            st.write("No rates available. Please check for any errors above.")
-
-    st.write("### Get Rate for Specific Date")
-    date_input = st.date_input("Select a date", datetime.today())
-    if st.button("Get Rate"):
-        rate = chatham.get_rate(datetime.combine(date_input, datetime.min.time()))
-        if rate:
-            st.write(f"Rate for {date_input}: {rate}")
-        else:
-            st.write("Rate not found for the selected date.")
-
-    st.write("### Monthly Rates")
-    if st.button("Get Monthly Rates"):
-        monthly_rates = chatham.get_monthly_rates()
-        if monthly_rates:
-            st.write(pd.DataFrame(list(monthly_rates.items()), columns=["Date", "Rate"]))
-        else:
-            st.write("No monthly rates available.")
