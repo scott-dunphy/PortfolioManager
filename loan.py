@@ -93,7 +93,9 @@ class Loan:
         if self.fixed_floating == 'Fixed':
             note_rate = self.note_rate
         else:
-            note_rate = self.sofr[self._standardize_date(start_dat)] + self.spread / 100   
+            start_date_str = self._standardize_date(start_date)
+            note_rate = self.sofr[start_date_str] + self.spread / 100
+
         if self.day_count_method == "30/360":
             days = 30
             year_basis = 360
@@ -103,6 +105,7 @@ class Loan:
         else:  # Actual/365
             days = (end_date - start_date).days
             year_basis = 365
+
         return balance * note_rate * days / year_basis
 
     def get_monthly_interest_and_principal(self, current_date: pd.Timestamp) -> Tuple[float, float]:
