@@ -145,12 +145,13 @@ if st.button('Update and Recalculate'):
 
 from io import StringIO
 
+
 def save_session_state():
     properties_dict = [prop.to_dict() for prop in st.session_state.properties]
     json_str = json.dumps(properties_dict)
 
-    # Use StringIO to create a file-like object
-    file_like = StringIO(json_str)
+    # Use BytesIO to create a binary file-like object
+    file_like = BytesIO(json_str.encode('utf-8'))
 
     # Create a download button in Streamlit
     st.download_button(
