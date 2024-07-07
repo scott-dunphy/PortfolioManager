@@ -41,7 +41,7 @@ class Loan:
         self.spread = spread if spread is not None else 0
         self.monthly_payment = self._calculate_monthly_payment()
         self.schedule = self.get_schedule()
-        self.sofr = Chatham.get_monthly_rates() if fixed_floating == 'Floating' else None
+        self.sofr = Chatham.get_monthly_rates()
         self._validate_inputs()
         
     def to_dict(self):
