@@ -1,7 +1,7 @@
 import requests
 from datetime import datetime, timedelta
 
-class SOFR:
+class Chatham:
     def __init__(self):
         self.url = "https://www.chathamfinancial.com/getrates/285116"
         self.curve_date = None
