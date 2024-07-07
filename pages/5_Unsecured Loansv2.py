@@ -45,7 +45,7 @@ loan = Loan(
     day_count_method=day_count_method,
     loan_id=loan_id,  # Use the input loan_id
     fixed_floating=fixed_floating,
-    spread=spread
+    spread=spread if spread else 0
 )
 
 # Display the unsecured loan schedule
