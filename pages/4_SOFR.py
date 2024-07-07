@@ -1,5 +1,6 @@
 from chatham import Chatham
 
-rates = Chatham.get_curve()
+chatham = Chatham()
+rates = chatham.get_curve()
 
 st.write(rates)
