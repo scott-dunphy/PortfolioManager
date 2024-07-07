@@ -74,7 +74,7 @@ class Loan:
     def _validate_inputs(self):
         assert self.origination_date < self.maturity_date, "Origination date must be before maturity date."
         assert self.original_balance > 0, "Original balance must be positive."
-        assert 0 < self.note_rate < 1, "Note rate must be between 0 and 100 percent."
+        assert 0 <= self.note_rate < 1, "Note rate must be between 0 and 100 percent."
         assert self.interest_only_period >= 0, "Interest-only period must be non-negative."
         assert self.amortization_period >= 0, "Amortization period must be positive."
         assert self.day_count_method in [
