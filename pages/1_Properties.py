@@ -94,6 +94,7 @@ def update_property():
             selected_property.loan.interest_only_period = int(interest_only_period)
             selected_property.loan.amortization_period = int(amortization_period)
             selected_property.loan.day_count_method = day_count_method
+            selected_property.loan.get_schedule()
         else:
             selected_property.add_loan(Loan(
                 origination_date=origination_date,
