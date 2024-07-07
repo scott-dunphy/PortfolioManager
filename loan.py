@@ -43,6 +43,7 @@ class Loan:
         self.monthly_payment = self._calculate_monthly_payment()
         self.schedule = self.get_schedule()
         self._validate_inputs()
+        self.sofr = None
         
     def to_dict(self):
         return {
