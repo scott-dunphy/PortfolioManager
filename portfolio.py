@@ -36,7 +36,7 @@ class Portfolio:
                 return loan
         raise ValueError(f"Unsecured loan with ID {loan_id} not found in the portfolio.")
   
-    def aggregate_hold_period_cash_flows(self) -> pd.DataFrame:
+   def aggregate_hold_period_cash_flows(self) -> pd.DataFrame:
         # Initialize an empty DataFrame with date range index
         date_range = pd.date_range(self.start_date, self.end_date, freq='MS')
         aggregate_cf = pd.DataFrame(0, index=date_range, columns=['Cash Flow'])
@@ -52,11 +52,24 @@ class Portfolio:
         if self.unsecured_loans:
             for loan in self.unsecured_loans:
                 loan_cf = pd.DataFrame(loan.get_unsecured_schedule())
+                
+                # Debug: Log the index type and values
+                st.write(f"Original loan_cf.index type: {type(loan_cf.index)}")
+                st.write(f"Original loan_cf.index: {loan_cf.index}")
+                
                 # Convert loan_cf index to datetime if it's not already
                 if not pd.api.types.is_datetime64_any_dtype(loan_cf.index):
                     loan_cf.index = pd.to_datetime(loan_cf.index)
+                    
+                # Debug: Log the index type and values after conversion
+                st.write(f"Converted loan_cf.index type: {type(loan_cf.index)}")
+                st.write(f"Converted loan_cf.index: {loan_cf.index}")
+    
                 # Ensure the DataFrame is within the specified date range
                 loan_cf = loan_cf[(loan_cf.index >= pd.to_datetime(self.start_date)) & (loan_cf.index <= pd.to_datetime(self.end_date))]
                 aggregate_cf = aggregate_cf.add(loan_cf, fill_value=0)
+                
+                # Debug: Log the resulting loan_cf DataFrame
+                st.write(f"Filtered loan_cf DataFrame: {loan_cf}")
     
         return aggregate_cf
