@@ -96,7 +96,7 @@ class Loan:
             chatham = Chatham()
             sofr = chatham.get_monthly_rates()
             start_date_str = self._standardize_date(start_date)
-            note_rate = sofr[start_date_str] + self.spread / 100
+            note_rate = sofr.get(start_date_str, 0) + self.spread / 100
 
         if self.day_count_method == "30/360":
             days = 30
