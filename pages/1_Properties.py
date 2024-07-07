@@ -143,7 +143,7 @@ if st.button('Update and Recalculate'):
     st.session_state.properties = properties
 
 
-from io import ByteIO
+from io import BytesIO
 
 
 def save_session_state():
