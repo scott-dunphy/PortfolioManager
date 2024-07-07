@@ -277,10 +277,18 @@ class Property:
         
         return cf_after_debt
     
-    def hold_period_cash_flows_x(self, ownership_adjusted: bool = True) -> Dict[pd.Timestamp, float]:
+    def hold_period_cash_flows_x(self, ownership_adjusted: bool = True, start_date: Optional[pd.Timestamp] = None, end_date: Optional[pd.Timestamp] = None) -> Dict[pd.Timestamp, float]:
+        if start_date is None:
+            start_date = self.analysis_start_date
+        if end_date is None:
+            end_date = self.analysis_end_date
+
+        start_date = self._standardize_date(start_date)
+        end_date = self._standardize_date(end_date)
+        
         if self.buyout_date:
             self.update_ownership_share(self.buyout_date,1)
-        df = self.get_cash_flows_dataframe()
+        df = self.get_cash_flows_dataframe(start_date=start_date, end_date=end_date)
     
         # Define the columns that need their signs changed
         columns_to_change_sign = ['Capital Expenditures', 'Purchase Price', 'Interest Expense','Principal Payments','Partner Buyout','Debt Scheduled Repayment','Debt Early Prepayment']  # Replace with your actual column names
