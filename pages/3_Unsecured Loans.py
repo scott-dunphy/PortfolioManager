@@ -15,8 +15,8 @@ from loan import Loan
 from property import Property
 
 
-origination_date = pd.to_Timestamp(st.date_input('Origination Date'))
-maturity_date = pd.to_Timestamp(st.date_input('Maturity Date'))
+origination_date = pd.to_timestamp(st.date_input('Origination Date'))
+maturity_date = pd.to_timestamp(st.date_input('Maturity Date'))
 original_balance = st.number_input('Original Balance')
 note_rate = st.number_input('Note Rate (%)', min_value=0.0)
 interest_only_period = st.number_input('Interest Only Period (months)')
