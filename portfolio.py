@@ -52,6 +52,7 @@ class Portfolio:
         if self.unsecured_loans:
             for loan in self.unsecured_loans:
                 loan_cf = pd.DataFrame(loan.get_unsecured_schedule())
+                st.dataframe(loan_cf)
                 
                 # Debug: Log the index type and values
                 st.write(f"Original loan_cf.index type: {type(loan_cf.index)}")
