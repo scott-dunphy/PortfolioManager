@@ -20,5 +20,5 @@ if st.button("Upload Portfolio"):
             property_obj.noi = noi.get(property_obj.property_id, {})
     
     st.session_state.properties = properties
-    portfolio = Portfolio(name='XYZ', properties=properties, analysis_start_date=datetime(2023,1,1), analysis_end_date=datetime(2030,12,1)))
+    portfolio = Portfolio(name='XYZ', properties=properties, analysis_start_date=datetime(2023,1,1), analysis_end_date=datetime(2030,12,1))
     st.session_state.portfolio = portfolio
