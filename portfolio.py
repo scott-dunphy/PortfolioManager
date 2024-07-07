@@ -36,7 +36,7 @@ class Portfolio:
                 return loan
         raise ValueError(f"Unsecured loan with ID {loan_id} not found in the portfolio.")
   
-   def aggregate_hold_period_cash_flows(self) -> pd.DataFrame:
+    def aggregate_hold_period_cash_flows(self) -> pd.DataFrame:
         # Initialize an empty DataFrame with date range index
         date_range = pd.date_range(self.start_date, self.end_date, freq='MS')
         aggregate_cf = pd.DataFrame(0, index=date_range, columns=['Cash Flow'])
