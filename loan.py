@@ -43,7 +43,6 @@ class Loan:
         self.monthly_payment = self._calculate_monthly_payment()
         self.schedule = self.get_schedule()
         self._validate_inputs()
-        self.sofr = None
         
     def to_dict(self):
         return {
@@ -95,10 +94,9 @@ class Loan:
             note_rate = self.note_rate
         else:
             chatham = Chatham()
-            if not self.sofr:
-                self.sofr = chatham.get_monthly_rates()
+            sofr = chatham.get_monthly_rates()
             start_date_str = self._standardize_date(start_date).strftime("%Y-%m-%d")
-            note_rate = self.sofr.get(start_date_str, 0) + self.spread / 100
+            note_rate = sofr.get(start_date_str, 0) + self.spread / 100
 
         if self.day_count_method == "30/360":
             days = 30
