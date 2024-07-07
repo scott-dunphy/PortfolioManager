@@ -55,19 +55,19 @@ class Portfolio:
                 loan_schedule = loan.get_unsecured_schedule()
                 loan_cf = pd.DataFrame(loan_schedule)
                 st.write(loan_cf)
-                # Convert 'date' column to datetime and set as index
+                
                 loan_cf['date'] = pd.to_datetime(loan_cf['date'], errors='coerce')
                 loan_cf.set_index('date', inplace=True)
     
-                # Debug: Log the converted index
+                
                 st.write("Converted loan_cf.index type:", type(loan_cf.index))
                 st.write("Converted loan_cf.index:", loan_cf.index)
     
-                # Check for any NaT (Not a Time) values that could cause issues
+              
                 if loan_cf.index.isna().any():
                     st.write("Warning: loan_cf.index contains NaT values after conversion.")
                 
-                # Ensure the DataFrame is within the specified date range
+          
                 start_date_dt = pd.to_datetime(self.start_date)
                 end_date_dt = pd.to_datetime(self.end_date)
     
@@ -78,7 +78,7 @@ class Portfolio:
                 except Exception as e:
                     st.write("Error during filtering:", e)
     
-                # Debug: Log the filtered loan_cf DataFrame
+            
                 st.write("Filtered loan_cf DataFrame:")
                 st.write(loan_cf)
                 
