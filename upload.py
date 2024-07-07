@@ -4,16 +4,15 @@ import pandas as pd
 
 
 def load_properties_and_loans(file_path):
-    xls = pd.ExcelFile(file_path)
-    properties_df = pd.read_excel(xls, 'Properties')
-    loans_df = pd.read_excel(xls, 'Loans')
+    properties_df = pd.read_excel(file_path, sheet_name='Properties')
+    loans_df = pd.read_excel(file_path, sheet_name='Loans')
 
     loans = {}
     for _, row in loans_df.iterrows():
         loan = Loan(
             loan_id=row['Loan ID'],
-            origination_date=row['Origination Date'],
-            maturity_date=row['Maturity Date'],
+            origination_date=pd.Timestamp(row['Origination Date']),
+            maturity_date=pd.Timestamp(row['Maturity Date']),
             original_balance=row['Original Balance'],
             note_rate=row['Note Rate'],
             interest_only_period=row.get('Interest Only Period'),
@@ -33,15 +32,15 @@ def load_properties_and_loans(file_path):
             square_footage=row['Square Footage'],
             year_built=row['Year Built'],
             purchase_price=row['Purchase Price'],
-            purchase_date=row['Purchase Date'],
-            analysis_start_date=row['Analysis Start Date'],
-            analysis_end_date=row['Analysis End Date'],
+            purchase_date=pd.Timestamp(row['Purchase Date']),
+            analysis_start_date=pd.Timestamp(row['Analysis Start Date']),
+            analysis_end_date=pd.Timestamp(row['Analysis End Date']),
             current_value=row.get('Current Value'),
-            sale_date=row.get('Sale Date'),
+            sale_date=pd.Timestamp(row['Sale Date']) if pd.notna(row['Sale Date']) else None,
             sale_price=row.get('Sale Price'),
             loan=loan,
             ownership_share=row.get('Ownership Share', 1),
-            buyout_date=row.get('Buyout Date'),
+            buyout_date=pd.Timestamp(row['Buyout Date']) if pd.notna(row['Buyout Date']) else None,
             buyout_amount=row.get('Buyout Amount', 0)
         )
         properties.append(property_obj)
