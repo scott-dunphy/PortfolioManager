@@ -165,6 +165,54 @@ class Loan:
 
         return cash_flows
 
+    def get_unsecured_schedule(self) -> List[Dict[str, float]]:
+        self._calculate_monthly_payment()
+        cash_flows = []
+        current_date = self.origination_date
+        current_balance = self.original_balance
+
+        # Add the initial cash flow (loan disbursement)
+        cash_flows.append({
+            'date': self._standardize_date(current_date),
+            'Loan Proceeds': self.original_balance,
+            'Interest Expense': 0,
+            'Principal Payments': 0,
+            'Debt Scheduled Repayment': 0
+        })
+
+        while current_date < self.maturity_date:
+            next_date = min(
+                current_date + relativedelta(months=1), self.maturity_date)
+            standardized_date = self._standardize_date(next_date)
+            interest = self._calculate_interest(
+                current_balance, current_date, next_date)
+
+            months_since_origination = (current_date.year - self.origination_date.year) * 12 + \
+                current_date.month - self.origination_date.month
+
+            if months_since_origination < self.interest_only_period:
+                principal = 0
+                payment = interest
+            else:
+                payment = self._calculate_monthly_payment()
+                principal = payment - interest
+
+            current_balance -= principal
+            cash_flows.append({
+                'date': standardized_date,
+                'Loan Proceeds': 0,
+                'Interest Expense': interest,
+                'Principal Payments': principal,
+                'Debt Scheduled Repayment': 0
+            })
+            current_date = next_date
+        cash_flows[-1]['Debt Scheduled Repayment'] = current_balance
+
+        return cash_flows
+
+
+
+
         # Adjust final payment if necessary
         if abs(current_balance) > 0.01:
             final_payment = current_balance + cash_flows[-1]['Total Payment']
