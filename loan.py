@@ -93,7 +93,7 @@ class Loan:
         if self.fixed_floating == 'Fixed':
             note_rate = self.note_rate
         else:
-            note_rate = self.sofr[start_date] + self.spread / 100   
+            note_rate = self.sofr[self._standardize_date(start_dat)e] + self.spread / 100   
         if self.day_count_method == "30/360":
             days = 30
             year_basis = 360
