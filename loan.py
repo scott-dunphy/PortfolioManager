@@ -160,6 +160,7 @@ class Loan:
                 'Ending Balance': current_balance
             })
             current_date = next_date
+            self.schedule = cash_flows
 
         return cash_flows
 
