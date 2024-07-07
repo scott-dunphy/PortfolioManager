@@ -80,24 +80,3 @@ class SOFR:
             print(''.join(plot[y]))
         print(f"Min Rate: {min_rate:.4f}, Max Rate: {max_rate:.4f}")
 
-# Example usage:
-curve = SOFRForwardCurve()
-
-# Get all rates
-all_rates = curve.get_rates()
-for date, rate in all_rates.items():
-    print(f"Rate: {rate:.4f} on {date.strftime('%Y-%m-%d')}")
-
-# Get rate for a specific date
-date = datetime(2024, 7, 26)
-rate = curve.get_rate(date)
-if rate is not None:
-    print(f"Rate on {date.strftime('%Y-%m-%d')}: {rate:.4f}")
-else:
-    print(f"No rate available for {date.strftime('%Y-%m-%d')}")
-
-# Get and plot monthly rates
-monthly_rates = curve.get_monthly_rates()
-curve.plot_rates_ascii(monthly_rates)
-for date, rate in monthly_rates.items():
-    print(f"Monthly Rate: {rate:.4f} on {date.strftime('%Y-%m-%d')}")
