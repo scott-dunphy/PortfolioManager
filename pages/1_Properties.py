@@ -143,11 +143,23 @@ if st.button('Update and Recalculate'):
     st.session_state.properties = properties
 
 
-# Function to save session state to a file
-def save_session_state(filename="session_state.json"):
+from io import StringIO
+
+def save_session_state():
     properties_dict = [prop.to_dict() for prop in st.session_state.properties]
-    with open(filename, 'w') as f:
-        json.dump(properties_dict, f)
+    json_str = json.dumps(properties_dict)
+
+    # Use StringIO to create a file-like object
+    file_like = StringIO(json_str)
+
+    # Create a download button in Streamlit
+    st.download_button(
+        label="Download Session State",
+        data=file_like,
+        file_name="session_state.json",
+        mime="application/json"
+    )
+
         
 if st.button("Save Session State"):
     save_session_state()
