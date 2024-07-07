@@ -60,22 +60,22 @@ if 'properties' not in st.session_state:
     
     
 
-    if 'properties' in st.session_state:
-        properties = st.session_state.properties
-    
-    if 'portfolio' in st.session_state:
-        st.session_state.portfolio.properties = properties 
-    else:
-        st.session_state.portfolio = Portfolio(
-            name = 'Dunphy Property Fund',
-            start_date = analysis_start_date,
-            end_date = analysis_end_date,
-            properties = properties
-        )
-    
-    
-    cash_flows = st.session_state.portfolio.aggregate_hold_period_cash_flows()
-    
-    # Display the DataFrame with custom formatting
-    st.dataframe(cash_flows, column_config=adjusted_column_config, use_container_width=True)
+if 'properties' in st.session_state:
+    properties = st.session_state.properties
+
+if 'portfolio' in st.session_state:
+    st.session_state.portfolio.properties = properties 
+else:
+    st.session_state.portfolio = Portfolio(
+        name = 'Dunphy Property Fund',
+        start_date = analysis_start_date,
+        end_date = analysis_end_date,
+        properties = properties
+    )
+
+
+cash_flows = st.session_state.portfolio.aggregate_hold_period_cash_flows()
+
+# Display the DataFrame with custom formatting
+st.dataframe(cash_flows, column_config=adjusted_column_config, use_container_width=True)
 
