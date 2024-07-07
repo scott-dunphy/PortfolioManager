@@ -56,10 +56,11 @@ class Portfolio:
           aggregate_cf = aggregate_cf[['Adjusted Purchase Price','Adjusted Loan Proceeds','Adjusted Net Operating Income','Adjusted Capital Expenditures','Adjusted Interest Expense','Adjusted Principal Payments','Adjusted Debt Scheduled Repayment','Adjusted Debt Early Prepayment','Adjusted Sale Proceeds','Adjusted Partner Buyout','Total Cash Flow']]
   
       # Aggregate loan cash flows
-      #for loan in self.standalone_loans:
-      #    loan_cf = loan.calculate_cash_flows()
-      #    # Ensure the DataFrame is within the specified date range
-      #    loan_cf = loan_cf[(loan_cf.index >= self.start_date) & (loan_cf.index <= self.end_date)]
-      #    aggregate_cf = aggregate_cf.subtract(loan_cf, fill_value=0)
+      #if self.unsecured_loans:
+      #  for loan in self.unsecured_loans:
+      #      loan_cf = loan.calculate_cash_flows()
+      #      # Ensure the DataFrame is within the specified date range
+      #      loan_cf = loan_cf[(loan_cf.index >= self.start_date) & (loan_cf.index <= self.end_date)]
+      #      aggregate_cf = aggregate_cf.subtract(loan_cf, fill_value=0)
   
       return aggregate_cf
