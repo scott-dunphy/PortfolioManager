@@ -42,7 +42,7 @@ loan = Loan(
 st.dataframe(loan.get_unsecured_schedule())
 
 if st.button("Add Unsecured Loan"):
-  if st.session_state.portfolio:
+  if 'portfolio' in st.session_state:
     st.session_state.portfolio.add_unsecured_loan(loan)
 
 
