@@ -233,8 +233,7 @@ class Property:
         if self.sale_date is not None:
             cash_flows_df.at[pd.Timestamp(self.sale_date), 'Sale Proceeds'] = self.sale_price
             if self.loan:
-                self.loan.get_schedule()
-                cash_flows_df.at[pd.Timestamp(self.sale_date), 'Debt Early Prepayment'] = self.loan.get_current_balance(self.sale_date)
+                cash_flows_df.at[pd.Timestamp(self.sale_date), 'Debt Early Prepayment'] = self.loan.get_current_balance(pd.Timestamp(self.sale_date))
     
         for col in cash_flows_df.columns[1:]:
             adjusted_column = "Adjusted " + col
