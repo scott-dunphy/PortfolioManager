@@ -230,7 +230,7 @@ class Property:
                 if standardized_date == pd.Timestamp(self.loan.maturity_date) and not self.sale_date:
                     cash_flows_df.at[standardized_date, 'Debt Repayment'] = self.loan.get_current_balance(self.loan.maturity_date)
     
-        if self.sale_date:
+        if self.sale_date is not None:
             cash_flows_df.at[pd.Timestamp(self.sale_date), 'Sale Proceeds'] = self.sale_price
             if self.loan:
                 cash_flows_df.at[pd.Timestamp(self.sale_date), 'Debt Early Prepayment'] = self.loan.get_current_balance(self.sale_date)
