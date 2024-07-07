@@ -87,10 +87,11 @@ class Loan:
     def _calculate_monthly_payment(self):
         if self.amortization_period > 0:
             monthly_rate = self.note_rate / 12
-            self.monthly_payment = self.original_balance * (monthly_rate * (1 + monthly_rate)**self.amortization_period) / \
+            monthly_payment = self.original_balance * (monthly_rate * (1 + monthly_rate)**self.amortization_period) / \
                 ((1 + monthly_rate)**self.amortization_period - 1)
         else:
-            self.monthly_payment = 0
+            monthly_payment = 0
+        return monthly_payment
 
     def _calculate_interest(self, balance: float, start_date: pd.Timestamp, end_date: pd.Timestamp) -> float:
         if self.day_count_method == "30/360":
