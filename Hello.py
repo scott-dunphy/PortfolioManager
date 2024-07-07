@@ -5,6 +5,7 @@ import pandas as pd
 from property import Property
 from loan import Loan
 from config import adjusted_column_config
+from datetime import datetime, timedelta
 
 st.set_page_config(
     page_title="CRE Portfolio Manager",
@@ -12,6 +13,13 @@ st.set_page_config(
 )
 
 st.title("CRE Portfolio Manager 🏗️")
+# Get the current date and time
+now = datetime.now()
+start_date = pd.Timestamp(datetime(now.year, now.month, 1))
+end_date = pd.Timestamp(datetime(first_day_of_month.year + 3, first_day_of_month.month, 1))
+
+analysis_start_date = st.date_input('Analysis Start Date', value=start_date)
+analysis_end_date = st.date_input('Analysis End Date', value=end_date)
 
 
 
@@ -57,8 +65,8 @@ if 'properties' in st.session_state:
     
     portfolio = Portfolio(
         name = 'Dunphy Property Fund',
-        start_date = datetime(2014,1,1),
-        end_date = datetime(2033,12,1),
+        start_date = analyst_start_date,
+        end_date = analysis_end_date,
         properties = properties
     )
     
