@@ -25,7 +25,7 @@ class Chatham:
             response.raise_for_status()  # Check for HTTP errors
             data = response.json()
             self.curve_date = datetime.strptime(data["CurveDate"], "%Y-%m-%d")
-            return {datetime.strptime(rate["Date"], "%Y-%m-%d"): rate["Rate"] for rate in data["Rates"]}
+            return data#{datetime.strptime(rate["Date"], "%Y-%m-%d"): rate["Rate"] for rate in data["Rates"]}
         except requests.exceptions.RequestException as e:
             print(f"Request error: {e}")
         except requests.exceptions.HTTPError as e:
