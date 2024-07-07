@@ -93,7 +93,7 @@ class Loan:
         if self.fixed_floating == 'Fixed':
             note_rate = self.note_rate
         else:
-            if sofr not in st.session_state:
+            if 'sofr' not in st.session_state:
                 chatham = Chatham()
                 st.session_state.sofr = chatham.get_monthly_rates()
             start_date_str = self._standardize_date(start_date).strftime("%Y-%m-%d")
