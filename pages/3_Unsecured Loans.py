@@ -40,4 +40,4 @@ loan = Loan(
 
 st.dataframe(loan.get_unsecured_schedule())
 
-st.write(loan.get_monthly_rates())
+st.write(loan.sofr)
