@@ -51,29 +51,36 @@ class Portfolio:
         # Aggregate loan cash flows
         if self.unsecured_loans:
             for loan in self.unsecured_loans:
-                loan_cf = pd.DataFrame(loan.get_unsecured_schedule())
+                loan_schedule = loan.get_unsecured_schedule()
+                loan_cf = pd.DataFrame(loan_schedule)
                 
-                # Debug: Log the original index
-                st.write("Original loan_cf.index:")
-                st.write(loan_cf.index)
-                
-                # Convert loan_cf index to datetime if it's not already
-                loan_cf.index = pd.to_datetime(loan_cf.index, errors='coerce')
-                
+                # Debug: Log the initial loan schedule
+                st.write("Initial loan schedule DataFrame:")
+                st.write(loan_cf)
+    
+                # Convert 'date' column to datetime and set as index
+                loan_cf['date'] = pd.to_datetime(loan_cf['date'], errors='coerce')
+                loan_cf.set_index('date', inplace=True)
+    
                 # Debug: Log the converted index
-                st.write("Converted loan_cf.index to datetime:")
-                st.write(loan_cf.index)
-                
+                st.write("Converted loan_cf.index type:", type(loan_cf.index))
+                st.write("Converted loan_cf.index:", loan_cf.index)
+    
                 # Check for any NaT (Not a Time) values that could cause issues
                 if loan_cf.index.isna().any():
                     st.write("Warning: loan_cf.index contains NaT values after conversion.")
                 
                 # Ensure the DataFrame is within the specified date range
-                st.write(f"Filtering loan_cf with start_date: {self.start_date} and end_date: {self.end_date}")
                 start_date_dt = pd.to_datetime(self.start_date)
                 end_date_dt = pd.to_datetime(self.end_date)
-                loan_cf = loan_cf[(loan_cf.index >= start_date_dt) & (loan_cf.index <= end_date_dt)]
+    
+                st.write(f"Filtering loan_cf with start_date: {start_date_dt} and end_date: {end_date_dt}")
                 
+                try:
+                    loan_cf = loan_cf[(loan_cf.index >= start_date_dt) & (loan_cf.index <= end_date_dt)]
+                except Exception as e:
+                    st.write("Error during filtering:", e)
+    
                 # Debug: Log the filtered loan_cf DataFrame
                 st.write("Filtered loan_cf DataFrame:")
                 st.write(loan_cf)
