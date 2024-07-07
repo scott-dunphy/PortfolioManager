@@ -25,6 +25,7 @@ class Chatham:
             data = response.json()
             self.curve_date = datetime.strptime(data["CurveDate"], "%Y-%m-%dT%H:%M:%S")
             self.rates = {datetime.strptime(rate["Date"], "%Y-%m-%dT%H:%M:%S"): rate["Rate"] for rate in data["Rates"]}
+        return data
         except requests.exceptions.RequestException as e:
             print(f"Request error: {e}")
         except requests.exceptions.HTTPError as e:
