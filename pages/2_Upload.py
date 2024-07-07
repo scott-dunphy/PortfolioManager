@@ -3,6 +3,7 @@ import pandas as pd
 from loan import Loan
 from property import Property
 from upload import load_cashflows, load_properties_and_loans
+from portfolio import Portfolio
 
 st.title('Property and Loan Importer')
     
@@ -18,3 +19,5 @@ if st.button("Upload Portfolio"):
             property_obj.noi = noi.get(property_obj.property_id, {})
     
     st.session_state.properties = properties
+    portfolio = Portfolio(properties)
+    st.session_state.portfolio = portfolio
