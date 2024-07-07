@@ -40,20 +40,23 @@ class Portfolio:
         # Initialize an empty DataFrame with date range index
         date_range = pd.date_range(self.start_date, self.end_date, freq='MS')
         aggregate_cf = pd.DataFrame(0, index=date_range, columns=['Cash Flow'])
-  
+    
         # Aggregate property cash flows
         for property in self.properties:
             property_cf = property.hold_period_cash_flows_x(start_date=self.start_date, end_date=self.end_date)
             # Ensure the DataFrame is within the specified date range
             property_cf = property_cf[(property_cf.index >= self.start_date) & (property_cf.index <= self.end_date)]
             aggregate_cf = aggregate_cf.add(property_cf, fill_value=0)
-
+    
         # Aggregate loan cash flows
         if self.unsecured_loans:
             for loan in self.unsecured_loans:
                 loan_cf = pd.DataFrame(loan.get_unsecured_schedule())
+                # Ensure loan_cf.index is datetime
+                if not pd.api.types.is_datetime64_any_dtype(loan_cf.index):
+                    loan_cf.index = pd.to_datetime(loan_cf.index)
                 # Ensure the DataFrame is within the specified date range
                 loan_cf = loan_cf[(loan_cf.index >= self.start_date) & (loan_cf.index <= self.end_date)]
                 aggregate_cf = aggregate_cf.add(loan_cf, fill_value=0)
-  
+    
         return aggregate_cf
