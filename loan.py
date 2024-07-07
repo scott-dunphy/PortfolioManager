@@ -5,6 +5,7 @@ import uuid
 import pandas as pd
 import json
 from chatham import Chatham
+import streamlit as st
 
 
 class Loan:    
@@ -93,6 +94,7 @@ class Loan:
             note_rate = self.note_rate
         else:
             sofr = Chatham.get_monthly_rates()
+            st.write(sofr)
             start_date_str = self._standardize_date(start_date)
             note_rate = sofr[start_date_str] + self.spread / 100
 
