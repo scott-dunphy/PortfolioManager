@@ -29,7 +29,7 @@ with col2:
     if fixed_floating == "Fixed":
         note_rate = st.number_input('Note Rate (%)', value=selected_loan.note_rate if selected_loan else 0.0, min_value=0.0, format='%f')
     else:
-        note_rate = 0
+        note_rate = None
     if fixed_floating == "Floating":
         spread = st.number_input('Floating Rate Spread (%)', value=selected_loan.spread if selected_loan else 0.0, min_value=0.0, format='%f')
     else:
