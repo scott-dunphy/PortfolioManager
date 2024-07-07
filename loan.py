@@ -81,7 +81,7 @@ class Loan:
             "Actual/360", "Actual/365", "30/360"], "Invalid day count method."
 
     def _calculate_monthly_payment(self):
-        if self.amortization_period > 0:
+        if self.amortization_period > 0 and self.fixed_floating == "Fixed":
             monthly_rate = self.note_rate / 12
             monthly_payment = self.original_balance * (monthly_rate * (1 + monthly_rate)**self.amortization_period) / \
                 ((1 + monthly_rate)**self.amortization_period - 1)
