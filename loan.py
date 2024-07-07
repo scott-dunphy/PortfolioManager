@@ -221,13 +221,13 @@ class Loan:
             current_balance -= principal
             cash_flows.append({
                 'date': standardized_date,
-                'Loan Proceeds': 0,
-                'Interest Expense': -interest,
-                'Principal Payments': -principal,
-                'Debt Scheduled Repayment': 0
+                'Adjusted Loan Proceeds': 0,
+                'Adjusted Interest Expense': -interest,
+                'Adjusted Principal Payments': -principal,
+                'Adjusted Debt Scheduled Repayment': 0
             })
             current_date = next_date
-        cash_flows[-1]['Debt Scheduled Repayment'] = -current_balance
+        cash_flows[-1]['Adjusted Debt Scheduled Repayment'] = -current_balance
 
         return cash_flows
 
