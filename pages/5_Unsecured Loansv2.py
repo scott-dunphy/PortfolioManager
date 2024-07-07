@@ -28,14 +28,13 @@ with col1:
 with col2:
     if fixed_floating == "Fixed":
         note_rate = st.number_input('Note Rate (%)', value=selected_loan.note_rate if selected_loan else 0.0, min_value=0.0, format='%f')
+        interest_only_period = st.number_input('Interest Only Period (months)', value=selected_loan.interest_only_period if selected_loan else 0, min_value=0)
+        amortization_period = st.number_input('Amortization Period (months)', value=selected_loan.amortization_period if selected_loan else 0, min_value=0)
+        spread = 0
     else:
         note_rate = 0
-    if fixed_floating == "Floating":
         spread = st.number_input('Floating Rate Spread (%)', value=selected_loan.spread if selected_loan else 0.0, min_value=0.0, format='%f')
-    else:
-        spread = 0
-    interest_only_period = st.number_input('Interest Only Period (months)', value=selected_loan.interest_only_period if selected_loan else 0, min_value=0)
-    amortization_period = st.number_input('Amortization Period (months)', value=selected_loan.amortization_period if selected_loan else 0, min_value=0)
+    
     day_count_method = st.selectbox('Day Count Method', options=["Actual/360", "Actual/365", "30/360"], index=["Actual/360", "Actual/365", "30/360"].index(selected_loan.day_count_method) if selected_loan else 0)
 
 # Create or update the loan object
