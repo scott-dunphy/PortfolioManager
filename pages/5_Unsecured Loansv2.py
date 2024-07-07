@@ -34,6 +34,8 @@ with col2:
     else:
         note_rate = 0
         spread = st.number_input('Floating Rate Spread (%)', value=selected_loan.spread if selected_loan else 0.0, min_value=0.0, format='%f')
+        interest_only_period = 0
+        amortization_period = 0
     
     day_count_method = st.selectbox('Day Count Method', options=["Actual/360", "Actual/365", "30/360"], index=["Actual/360", "Actual/365", "30/360"].index(selected_loan.day_count_method) if selected_loan else 0)
 
