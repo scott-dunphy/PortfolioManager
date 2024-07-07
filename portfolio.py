@@ -57,18 +57,9 @@ class Portfolio:
             for loan in self.unsecured_loans:
                 loan_schedule = loan.get_unsecured_schedule()
                 loan_cf = pd.DataFrame(loan_schedule)
-                
-                # Add to debug logs
-                debug_logs.append("Initial loan schedule DataFrame:")
-                debug_logs.append(loan_cf.to_string())
-    
-                try:
-                    # Convert 'date' column to datetime and set as index
-                    loan_cf['date'] = pd.to_datetime(loan_cf['date'], errors='coerce')
-                    loan_cf.set_index('date', inplace=True)
-                except Exception as e:
-                    debug_logs.append("Error converting date column to datetime: " + str(e))
-                
+                loan_cf['date'] = pd.to_datetime(loan_cf['date'], errors='coerce')
+                st.dataframe(loan_cf)
+                loan_cf.set_index('date', inplace=True)
                 aggregate_cf = aggregate_cf.add(loan_cf, fill_value=0)
     
         return aggregate_cf
