@@ -192,10 +192,10 @@ class Loan:
         # Add the initial cash flow (loan disbursement)
         cash_flows.append({
             'date': self._standardize_date(current_date),
-            'Loan Proceeds': self.original_balance,
-            'Interest Expense': 0,
-            'Principal Payments': 0,
-            'Debt Scheduled Repayment': 0
+            'Adjusted Loan Proceeds': self.original_balance,
+            'Adjusted Interest Expense': 0,
+            'Adjusted Principal Payments': 0,
+            'Adjusted Debt Scheduled Repayment': 0
         })
 
         while current_date < self.maturity_date:
