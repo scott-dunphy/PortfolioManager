@@ -133,6 +133,7 @@ def update_property():
     st.dataframe(selected_property.loan.schedule)
 
     st.write(selected_property.loan.amortization_period)
+    st.write(selected_property.loan.monthly_payment)
 
 
 
