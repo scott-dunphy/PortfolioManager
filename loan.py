@@ -72,7 +72,7 @@ class Loan:
         return date_to_adjust.replace(day=1)
 
     def _validate_inputs(self):
-        assert self.origination_date < self.maturity_date, "Origination date must be before maturity date."
+        assert pd.to_datetime(self.origination_date) < self.maturity_date, "Origination date must be before maturity date."
         assert self.original_balance > 0, "Original balance must be positive."
         assert 0 <= self.note_rate < 1, "Note rate must be between 0 and 100 percent."
         assert self.interest_only_period >= 0, "Interest-only period must be non-negative."
