@@ -91,8 +91,8 @@ def update_property():
             selected_property.loan.maturity_date = maturity_date
             selected_property.loan.original_balance = original_balance
             selected_property.loan.note_rate = note_rate / 100
-            selected_property.loan.interest_only_period = interest_only_period
-            selected_property.loan.amortization_period = amortization_period
+            selected_property.loan.interest_only_period = int(interest_only_period)
+            selected_property.loan.amortization_period = int(amortization_period)
             selected_property.loan.day_count_method = day_count_method
         else:
             selected_property.add_loan(Loan(
