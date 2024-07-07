@@ -4,7 +4,7 @@ from typing import List, Tuple, Optional, Dict
 import uuid
 import pandas as pd
 import json
-from sofr import SOFR
+from sofr import Chatham
 
 
 class Loan:    
@@ -41,7 +41,7 @@ class Loan:
         self.spread = spread if spread is not None else 0
         self.monthly_payment = self._calculate_monthly_payment()
         self.schedule = self.get_schedule()
-        self.sofr = SOFR.get_monthly_rates() if fixed_floating == 'Floating' else None
+        self.sofr = Chatham.get_monthly_rates() if fixed_floating == 'Floating' else None
         self._validate_inputs()
         
     def to_dict(self):
