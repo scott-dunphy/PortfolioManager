@@ -127,6 +127,7 @@ class Loan:
         return d.replace(day=1)
 
     def get_schedule(self) -> List[Dict[str, float]]:
+        self._calculate_monthly_payment()
         cash_flows = []
         current_date = self.origination_date
         current_balance = self.original_balance
