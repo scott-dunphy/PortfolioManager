@@ -18,8 +18,8 @@ class Loan:
         interest_only_period: Optional[int] = None,
         amortization_period: Optional[int] = None,
         day_count_method: str = "30/360",
+        fixed_floating: str = "Fixed",    
         loan_id: Optional[str] = None,
-        fixed_floating: str = "Fixed",
         spread: Optional[int] = 0
     ):
         self.loan_id = loan_id if loan_id is not None else str(uuid.uuid4())
