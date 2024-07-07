@@ -59,6 +59,7 @@ class Portfolio:
       if self.unsecured_loans:
         for loan in self.unsecured_loans:
             loan_cf = loan.get_unsecured_schedule()
+            st.write(loan_cf)
             # Ensure the DataFrame is within the specified date range
             loan_cf = loan_cf[(loan_cf.index >= self.start_date) & (loan_cf.index <= self.end_date)]
             aggregate_cf = aggregate_cf.add(loan_cf, fill_value=0)
