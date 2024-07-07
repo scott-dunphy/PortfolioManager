@@ -7,15 +7,6 @@ import json
 
 
 class Loan:    
-    @property
-    def amortization_period(self):
-        return self._amortization_period
-
-    @amortization_period.setter
-    def amortization_period(self, value):
-        self._amortization_period = value
-        self._calculate_monthly_payment()
-        self.get_schedule()
         
     def __init__(
         self,
@@ -120,7 +111,7 @@ class Loan:
                 current_date + relativedelta(months=-1))
             interest = self._calculate_interest(
                 current_balance, current_date, current_date + relativedelta(months=1))
-            principal = self.monthly_payment - interest if self.monthly_payment else 0
+            principal = self._calculate_monthly_payment() - interest if self._calculate_monthly_payment() else 0
         return interest, principal
 
     def _standardize_date(self, d: pd.Timestamp) -> pd.Timestamp:
@@ -157,7 +148,7 @@ class Loan:
                 principal = 0
                 payment = interest
             else:
-                payment = self.monthly_payment
+                payment = self._calculate_monthly_payment()
                 principal = payment - interest
 
             current_balance -= principal
@@ -221,7 +212,7 @@ class Loan:
             if months_from_origination < self.interest_only_period:
                 return self._calculate_interest(self.original_balance, calculation_date, calculation_date + relativedelta(months=1))
             else:
-                return self.monthly_payment
+                return self._calculate_monthly_payment()
         else:
             return 0
 
