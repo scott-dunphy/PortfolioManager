@@ -23,3 +23,15 @@ interest_only_period = st.number_input('Interest Only Period (months)')
 amortization_period = st.number_input('Amortization Period (months)')
 day_count_method = st.selectbox('Day Count Method', options=["Actual/360", "Actual/365", "30/360"])
 
+loan = Loan(
+  origination_date=origination_date,
+  maturity_date = maturity_date,
+  original_balance = original_balance,
+  note_rate = note_rate,
+  interest_only_period = interest_only_period,
+  amortization_period = amortization_period,
+  day_count_method = day_count_method,
+  loan_id = 'U01'
+)
+
+st.dataframe(loan.get_unsecured_schedule())
