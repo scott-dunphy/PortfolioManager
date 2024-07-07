@@ -18,8 +18,8 @@ now = datetime.now()
 start_date = datetime(now.year, now.month, 1)
 end_date = datetime(start_date.year + 3, start_date.month, 1)
 
-analysis_start_date = st.date_input('Analysis Start Date', value=start_date)
-analysis_end_date = st.date_input('Analysis End Date', value=end_date)
+analysis_start_date = pd.to_datetime(st.date_input('Analysis Start Date', value=start_date))
+analysis_end_date = pd.to_datetime(st.date_input('Analysis End Date', value=end_date))
 
 
 
