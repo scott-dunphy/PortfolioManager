@@ -5,7 +5,7 @@ class Chatham:
     def __init__(self):
         self.url = "https://www.chathamfinancial.com/getrates/285116"
         self.curve_date = None
-        self.rates = {}
+        self.get_curve()
 
     def get_curve(self):
         headers = {
