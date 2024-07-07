@@ -37,10 +37,11 @@ class Loan:
         # Handle optional parameters
         self.interest_only_period = interest_only_period if interest_only_period is not None else 0
         self.amortization_period = amortization_period if amortization_period is not None else 0
+        self.fixed_floating = fixed_floating
+        self.spread = spread if spread is not None else 0
         self.monthly_payment = self._calculate_monthly_payment()
         self.schedule = self.get_schedule()
         self.sofr = SOFR.get_monthly_rates() if fixed_floating == 'Floating' else None
-
         self._validate_inputs()
         
     def to_dict(self):
