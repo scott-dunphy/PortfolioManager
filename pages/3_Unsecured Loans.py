@@ -15,8 +15,8 @@ from loan import Loan
 from property import Property
 
 
-origination_date = st.date_input('Origination Date')
-maturity_date = st.date_input('Maturity Date')
+origination_date = pd.to_Timestamp(st.date_input('Origination Date'))
+maturity_date = pd.to_Timestamp(st.date_input('Maturity Date'))
 original_balance = st.number_input('Original Balance')
 note_rate = st.number_input('Note Rate (%)', min_value=0.0)
 interest_only_period = st.number_input('Interest Only Period (months)')
@@ -24,7 +24,7 @@ amortization_period = st.number_input('Amortization Period (months)')
 day_count_method = st.selectbox('Day Count Method', options=["Actual/360", "Actual/365", "30/360"])
 
 loan = Loan(
-  origination_date=origination_date,
+  origination_date = origination_date,
   maturity_date = maturity_date,
   original_balance = original_balance,
   note_rate = note_rate,
