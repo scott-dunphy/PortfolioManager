@@ -132,6 +132,8 @@ def update_property():
 
     st.dataframe(selected_property.loan.schedule)
 
+    st.write(selected_property.loan.amortization_period)
+
 
 
 if st.button('Update and Recalculate'):
