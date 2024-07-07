@@ -191,7 +191,8 @@ class Property:
         if end_date is None:
             end_date = self.analysis_end_date
         # Generate a date range for the entire analysis period
-        end_date = min(pd.Timestamp(end_date), pd.Timestamp(self.sale_date))
+        if self.sale_date:
+            end_date = min(pd.Timestamp(end_date), pd.Timestamp(self.sale_date))
         dates = pd.date_range(start=self._standardize_date(start_date), end=end_date, freq='MS')
     
         # Create a DataFrame with these dates as the index
