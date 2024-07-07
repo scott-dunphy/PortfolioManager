@@ -65,7 +65,7 @@ if 'properties' in st.session_state:
 
 if 'portfolio' in st.session_state:
     st.session_state.portfolio.properties = properties 
-    st.write(st.session_state.portfolio.name)
+    st.write(st.session_state.portfolio.unsecured_loans)
 else:
     st.session_state.portfolio = Portfolio(
         name = 'Dunphy Property Fund',
