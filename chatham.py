@@ -1,5 +1,6 @@
 import requests
 from datetime import datetime, timedelta
+import streamlit as st
 
 class Chatham:
     def __init__(self):
@@ -7,6 +8,7 @@ class Chatham:
         self.curve_date = None
         self.rates = {}
 
+    @st.cache_data(ttl=3600)  # Cache the data for an hour
     def get_curve(self):
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
@@ -17,33 +19,33 @@ class Chatham:
             data = response.json()
             self.curve_date = datetime.strptime(data["CurveDate"], "%Y-%m-%dT%H:%M:%S")
             self.rates = {datetime.strptime(rate["Date"], "%Y-%m-%dT%H:%M:%S"): rate["Rate"] for rate in data["Rates"]}
+            return self.curve_date, self.rates
         except requests.exceptions.RequestException as e:
-            print(f"Request error: {e}")
+            st.error(f"Request error: {e}")
         except requests.exceptions.HTTPError as e:
-            print(f"HTTP error: {e}")
+            st.error(f"HTTP error: {e}")
         except requests.exceptions.JSONDecodeError as e:
-            print(f"JSON decode error: {e}")
+            st.error(f"JSON decode error: {e}")
         except KeyError as e:
-            print(f"Key error: {e}")
+            st.error(f"Key error: {e}")
         except Exception as e:
-            print(f"An unexpected error occurred: {e}")
+            st.error(f"An unexpected error occurred: {e}")
 
     def get_rate(self, date):
         if not self.rates:
-            self.get_curve()
+            self.curve_date, self.rates = self.get_curve()
         while date not in self.rates:
             date += timedelta(days=1)
         return self.rates.get(date)
 
-
     def get_rates(self):
         if not self.rates:
-            self.get_curve()
+            self.curve_date, self.rates = self.get_curve()
         return self.rates
 
     def get_monthly_rates(self):
         if not self.rates:
-            self.get_curve()
+            self.curve_date, self.rates = self.get_curve()
         monthly_rates = {}
         sorted_dates = sorted(self.rates.keys())
         current_month = sorted_dates[0].month
@@ -79,4 +81,3 @@ class Chatham:
         for y in reversed(range(height + 1)):
             print(''.join(plot[y]))
         print(f"Min Rate: {min_rate:.4f}, Max Rate: {max_rate:.4f}")
-
