@@ -6,19 +6,11 @@ class Chatham:
     def __init__(self):
         self.url = "https://www.chathamfinancial.com/getrates/285116"
         self.curve_date = None
-        self.get_curve()
+        self.rates = {}
 
     def get_curve(self):
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'Accept-Language': 'en-US,en;q=0.9',
-            'Connection': 'keep-alive',
-            'Host': 'www.chathamfinancial.com',
-            'Sec-Fetch-Dest': 'document',
-            'Sec-Fetch-Mode': 'navigate',
-            'Sec-Fetch-Site': 'none',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         }
         try:
             response = requests.get(self.url, headers=headers)
@@ -26,7 +18,6 @@ class Chatham:
             data = response.json()
             self.curve_date = datetime.strptime(data["CurveDate"], "%Y-%m-%d")
             self.rates = {datetime.strptime(rate["Date"], "%Y-%m-%d"): rate["Rate"] for rate in data["Rates"]}
-            return data
         except requests.exceptions.RequestException as e:
             print(f"Request error: {e}")
         except requests.exceptions.HTTPError as e:
@@ -52,7 +43,6 @@ class Chatham:
         return self.rates
 
     def get_monthly_rates(self):
-        
         if not self.rates:
             self.get_curve()
         monthly_rates = {}
@@ -90,3 +80,4 @@ class Chatham:
         for y in reversed(range(height + 1)):
             print(''.join(plot[y]))
         print(f"Min Rate: {min_rate:.4f}, Max Rate: {max_rate:.4f}")
+
