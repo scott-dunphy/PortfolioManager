@@ -52,25 +52,32 @@ class Portfolio:
         if self.unsecured_loans:
             for loan in self.unsecured_loans:
                 loan_cf = pd.DataFrame(loan.get_unsecured_schedule())
-                st.dataframe(loan_cf)
                 
-                # Debug: Log the index type and values
-                st.write(f"Original loan_cf.index type: {type(loan_cf.index)}")
-                st.write(f"Original loan_cf.index: {loan_cf.index}")
+                # Debug: Log the original index
+                st.write("Original loan_cf.index:")
+                st.write(loan_cf.index)
                 
                 # Convert loan_cf index to datetime if it's not already
-                if not pd.api.types.is_datetime64_any_dtype(loan_cf.index):
-                    loan_cf.index = pd.to_datetime(loan_cf.index)
-                    
-                # Debug: Log the index type and values after conversion
-                st.write(f"Converted loan_cf.index type: {type(loan_cf.index)}")
-                st.write(f"Converted loan_cf.index: {loan_cf.index}")
-    
-                # Ensure the DataFrame is within the specified date range
-                loan_cf = loan_cf[(loan_cf.index >= pd.to_datetime(self.start_date)) & (loan_cf.index <= pd.to_datetime(self.end_date))]
-                aggregate_cf = aggregate_cf.add(loan_cf, fill_value=0)
+                loan_cf.index = pd.to_datetime(loan_cf.index, errors='coerce')
                 
-                # Debug: Log the resulting loan_cf DataFrame
-                st.write(f"Filtered loan_cf DataFrame: {loan_cf}")
+                # Debug: Log the converted index
+                st.write("Converted loan_cf.index to datetime:")
+                st.write(loan_cf.index)
+                
+                # Check for any NaT (Not a Time) values that could cause issues
+                if loan_cf.index.isna().any():
+                    st.write("Warning: loan_cf.index contains NaT values after conversion.")
+                
+                # Ensure the DataFrame is within the specified date range
+                st.write(f"Filtering loan_cf with start_date: {self.start_date} and end_date: {self.end_date}")
+                start_date_dt = pd.to_datetime(self.start_date)
+                end_date_dt = pd.to_datetime(self.end_date)
+                loan_cf = loan_cf[(loan_cf.index >= start_date_dt) & (loan_cf.index <= end_date_dt)]
+                
+                # Debug: Log the filtered loan_cf DataFrame
+                st.write("Filtered loan_cf DataFrame:")
+                st.write(loan_cf)
+                
+                aggregate_cf = aggregate_cf.add(loan_cf, fill_value=0)
     
         return aggregate_cf
