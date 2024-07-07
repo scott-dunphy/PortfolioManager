@@ -68,30 +68,7 @@ class Portfolio:
                     loan_cf.set_index('date', inplace=True)
                 except Exception as e:
                     debug_logs.append("Error converting date column to datetime: " + str(e))
-    
-                # Add to debug logs
-                debug_logs.append("Converted loan_cf.index type: " + str(type(loan_cf.index)))
-                debug_logs.append("Converted loan_cf.index: " + str(loan_cf.index))
-    
-                # Check for any NaT (Not a Time) values that could cause issues
-                if loan_cf.index.isna().any():
-                    debug_logs.append("Warning: loan_cf.index contains NaT values after conversion.")
-                
-                # Ensure the DataFrame is within the specified date range
-                start_date_dt = pd.to_datetime(self.start_date)
-                end_date_dt = pd.to_datetime(self.end_date)
-    
-                debug_logs.append(f"Filtering loan_cf with start_date: {start_date_dt} and end_date: {end_date_dt}")
-                
-                try:
-                    loan_cf = loan_cf[(loan_cf.index >= start_date_dt) & (loan_cf.index <= end_date_dt)]
-                except Exception as e:
-                    debug_logs.append("Error during filtering: " + str(e))
-    
-                # Add to debug logs
-                debug_logs.append("Filtered loan_cf DataFrame:")
-                debug_logs.append(loan_cf.to_string())
                 
                 aggregate_cf = aggregate_cf.add(loan_cf, fill_value=0)
     
-        return aggregate_cf, debug_logs
+        return aggregate_cf
