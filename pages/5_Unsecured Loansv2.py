@@ -1,19 +1,21 @@
-from datetime import date, datetime
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
-from typing import List, Dict
-import pandas as pd
 import streamlit as st
+import pandas as pd
+import uuid
 from loan import Loan
 
 # Assuming you have a list of unsecured loans stored in st.session_state.unsecured_loans
 unsecured_loans = st.session_state.unsecured_loans if 'unsecured_loans' in st.session_state else []
 
-loan_names = [loan.name for loan in unsecured_loans]
+loan_names = [loan.id for loan in unsecured_loans]
 selected_loan_name = st.selectbox("Select Unsecured Loan", loan_names)
 
-selected_loan = next((loan for loan in unsecured_loans if loan.name == selected_loan_name), None)
+selected_loan = next((loan for loan in unsecured_loans if loan.id == selected_loan_name), None)
 
 # Unsecured Loan inputs
+loan_id = st.text_input('Loan ID', value=selected_loan.loan_id if selected_loan else str(uuid.uuid4()))
+
 col1, col2 = st.columns(2)
 
 with col1:
@@ -22,9 +24,9 @@ with col1:
     original_balance = st.number_input('Original Balance', value=selected_loan.original_balance if selected_loan else 0.0, format='%f')
     note_rate = st.number_input('Note Rate (%)', value=selected_loan.note_rate if selected_loan else 0.0, min_value=0.0, format='%f')
     spread = st.number_input('Floating Rate Spread (%)', value=selected_loan.spread if selected_loan else 0.0, min_value=0.0, format='%f')
-    fixed_floating = st.selectbox('Fixed/Floating', options=["Fixed", "Floating"], index=["Fixed", "Floating"].index(selected_loan.fixed_floating) if selected_loan else 0)
-
+    
 with col2:
+    fixed_floating = st.selectbox('Fixed/Floating', options=["Fixed", "Floating"], index=["Fixed", "Floating"].index(selected_loan.fixed_floating) if selected_loan else 0)
     interest_only_period = st.number_input('Interest Only Period (months)', value=selected_loan.interest_only_period if selected_loan else 0, min_value=0)
     amortization_period = st.number_input('Amortization Period (months)', value=selected_loan.amortization_period if selected_loan else 0, min_value=0)
     day_count_method = st.selectbox('Day Count Method', options=["Actual/360", "Actual/365", "30/360"], index=["Actual/360", "Actual/365", "30/360"].index(selected_loan.day_count_method) if selected_loan else 0)
@@ -38,7 +40,7 @@ loan = Loan(
     interest_only_period=interest_only_period,
     amortization_period=amortization_period,
     day_count_method=day_count_method,
-    loan_id=selected_loan.loan_id if selected_loan else str(uuid.uuid4()),  # Use existing ID or generate a new one
+    loan_id=loan_id,  # Use the input loan_id
     fixed_floating=fixed_floating,
     spread=spread
 )
