@@ -41,7 +41,6 @@ class Loan:
         self.spread = spread if spread is not None else 0
         self.monthly_payment = self._calculate_monthly_payment()
         self.schedule = self.get_schedule()
-        self.sofr = Chatham.get_monthly_rates()
         self._validate_inputs()
         
     def to_dict(self):
@@ -93,8 +92,9 @@ class Loan:
         if self.fixed_floating == 'Fixed':
             note_rate = self.note_rate
         else:
+            sofr = Chatham.get_monthly_rates()
             start_date_str = self._standardize_date(start_date)
-            note_rate = self.sofr[start_date_str] + self.spread / 100
+            note_rate = sofr[start_date_str] + self.spread / 100
 
         if self.day_count_method == "30/360":
             days = 30
