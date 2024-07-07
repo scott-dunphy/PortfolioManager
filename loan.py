@@ -215,6 +215,7 @@ class Loan:
             return 0
 
     def get_current_balance(self, as_of_date: pd.Timestamp) -> float:
+        self.get_schedule()
         closest_entry = None
         for entry in self.schedule:
             entry_date = pd.Timestamp(entry['date'])
