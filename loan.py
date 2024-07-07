@@ -95,7 +95,6 @@ class Loan:
         else:
             chatham = Chatham()
             sofr = chatham.get_monthly_rates()
-            st.write(sofr)
             start_date_str = self._standardize_date(start_date)
             note_rate = sofr[start_date_str] + self.spread / 100
 
