@@ -4,6 +4,7 @@ from typing import List, Tuple, Optional, Dict
 import uuid
 import pandas as pd
 import json
+from sofr import SOFR
 
 
 class Loan:    
@@ -17,7 +18,9 @@ class Loan:
         interest_only_period: Optional[int] = None,
         amortization_period: Optional[int] = None,
         day_count_method: str = "30/360",
-        loan_id: Optional[str] = None
+        loan_id: Optional[str] = None,
+        fixed_floating: str = "Fixed",
+        spread: Optional[int] = 0
     ):
         self.loan_id = loan_id if loan_id is not None else str(uuid.uuid4())
         self.origination_date = self._adjust_to_month_start(origination_date)
@@ -36,6 +39,7 @@ class Loan:
         self.amortization_period = amortization_period if amortization_period is not None else 0
         self.monthly_payment = self._calculate_monthly_payment()
         self.schedule = self.get_schedule()
+        self.sofr = SOFR.get_monthly_rates() if fixed_floating == 'Floating' else None
 
         self._validate_inputs()
         
@@ -85,6 +89,10 @@ class Loan:
         return monthly_payment
 
     def _calculate_interest(self, balance: float, start_date: pd.Timestamp, end_date: pd.Timestamp) -> float:
+        if self.fixed_floating == 'Fixed':
+            note_rate = self.note_rate
+        else:
+            note_rate = self.sofr[start_date] + self.spread / 100   
         if self.day_count_method == "30/360":
             days = 30
             year_basis = 360
