@@ -136,7 +136,7 @@ class Loan:
     def get_schedule(self) -> List[Dict[str, float]]:
         self._calculate_monthly_payment()
         cash_flows = []
-        current_date = self.origination_date
+        current_date = pd.to_datetime(self.origination_date)
         current_balance = self.original_balance
 
         # Add the initial cash flow (loan disbursement)
