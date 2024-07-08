@@ -73,6 +73,7 @@ else:
     col1, col2 = st.columns(2)
 
     with col1:
+        property_name = st.text_input('Property ID')
         property_name = st.text_input('Property Name')
         property_address = st.text_input('Property Address')
         property_type = st.text_input('Property Type')
