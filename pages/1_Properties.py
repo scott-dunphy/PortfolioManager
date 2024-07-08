@@ -121,6 +121,7 @@ else:
 
         st.session_state.properties.append(new_property)
         st.success("Property added successfully.")
+        selected_property = new_property
     
     # Display cash flows
     st.subheader("Hold Period Cash Flows")
