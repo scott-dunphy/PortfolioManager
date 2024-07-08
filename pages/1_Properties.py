@@ -73,7 +73,7 @@ else:
     col1, col2 = st.columns(2)
 
     with col1:
-        property_name = st.text_input('Property ID')
+        property_id = st.text_input('Property ID')
         property_name = st.text_input('Property Name')
         property_address = st.text_input('Property Address')
         property_type = st.text_input('Property Type')
@@ -95,6 +95,7 @@ else:
     # Button to add new property
     if st.button('Add Property'):
         new_property = Property(
+            property_id=property_id,
             name=property_name,
             address=property_address,
             property_type=property_type,
