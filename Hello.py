@@ -39,9 +39,9 @@ if 'properties' in st.session_state:
     # Display the DataFrame with custom formatting
     st.dataframe(cash_flows, column_config=adjusted_column_config, use_container_width=True)
 else:
-    st.write("Looks like you haven't uploaded any properties yet.")
-    if st.button("Upload Properties"):
-        st.session_state.page = "Upload"
+    st.write("Looks like you haven't uploaded any properties yet.\n
+    Go to the Upload page to upload a portfolio or the Properties page to add individual properties.")
+
 
 
 
