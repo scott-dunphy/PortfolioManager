@@ -16,11 +16,10 @@ from property import Property
 
 if 'properties' in st.session_state:
     properties = st.session_state.properties
-
-property_names = [prop.name for prop in properties]
-selected_property_name = st.selectbox("Select Property", property_names)
-
-selected_property = next(prop for prop in properties if prop.name == selected_property_name)
+    property_names = [prop.name for prop in properties]
+    selected_property_name = st.selectbox("Select Property", property_names)
+    
+    selected_property = next(prop for prop in properties if prop.name == selected_property_name)
 
 # Property inputs
 col1, col2 = st.columns(2)
