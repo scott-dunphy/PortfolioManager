@@ -144,6 +144,28 @@ if st.button('Update and Recalculate'):
 
 from io import BytesIO
 
+def update_property(properties, selected_property, updated_data):
+    for prop in properties:
+        if prop.property_id == selected_property.property_id:
+            prop.name = updated_data['name']
+            prop.address = updated_data['address']
+            prop.property_type = updated_data['property_type']
+            prop.square_footage = updated_data['square_footage']
+            prop.year_built = updated_data['year_built']
+            prop.current_value = updated_data['current_value']
+            prop.purchase_price = updated_data['purchase_price']
+            prop.purchase_date = updated_data['purchase_date']
+            prop.analysis_start_date = updated_data['analysis_start_date']
+            prop.analysis_end_date = updated_data['analysis_end_date']
+            prop.ownership_share = updated_data['ownership_share']
+            prop.sale_date = updated_data['sale_date']
+            prop.sale_price = updated_data['sale_price']
+            prop.buyout_date = updated_data['buyout_date']
+            prop.buyout_amount = updated_data['buyout_amount']
+            break
+    st.session_state.properties = properties
+    st.success("Property updated successfully.")
+    
 
 def save_session_state():
     properties_dict = [prop.to_dict() for prop in st.session_state.properties]
