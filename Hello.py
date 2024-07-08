@@ -41,7 +41,7 @@ if 'properties' in st.session_state:
 else:
     st.write("Looks like you haven't uploaded any properties yet.")
     if st.button("Upload Properties"):
-        st.session_state.page = "upload"
+        st.session_state.page = "Upload"
 
 
 
