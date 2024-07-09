@@ -2,9 +2,8 @@ import pandas as pd
 from property import Property
 from loan import Loan
 from datetime import date
-from typing import List
-import streamlit as st
 from typing import List, Tuple
+import streamlit as st
 
 class Portfolio:
     def __init__(self, name: str, start_date: date, end_date: date, properties: List['Property'] = None, unsecured_loans: List['Loan'] = None):
@@ -38,9 +37,7 @@ class Portfolio:
                 return loan
         raise ValueError(f"Unsecured loan with ID {loan_id} not found in the portfolio.")
   
-    
-    def aggregate_hold_period_cash_flows(self) -> Tuple[pd.DataFrame, List[str]]:
-        debug_logs = []
+    def aggregate_hold_period_cash_flows(self) -> pd.DataFrame:
         date_range = pd.date_range(self.start_date, self.end_date, freq='MS')
         # Initialize an empty DataFrame with date range index
         columns_order = [
@@ -50,23 +47,38 @@ class Portfolio:
             'Adjusted Partner Buyout', 'Total Cash Flow'
         ]
         aggregate_cf = pd.DataFrame(0, index=date_range, columns=columns_order)
-        
-    
+
         # Aggregate property cash flows
         for property in self.properties:
             property_cf = property.hold_period_cash_flows_x(start_date=self.start_date, end_date=self.end_date)
             # Ensure the DataFrame is within the specified date range
             property_cf = property_cf[(property_cf.index >= self.start_date) & (property_cf.index <= self.end_date)]
             aggregate_cf = aggregate_cf.add(property_cf, fill_value=0)
-    
+
         # Aggregate loan cash flows
         if self.unsecured_loans:
             for loan in self.unsecured_loans:
                 loan_schedule = loan.get_unsecured_schedule()
                 loan_cf = pd.DataFrame(loan_schedule)
                 loan_cf['date'] = pd.to_datetime(loan_cf['date'], errors='coerce')
-                st.dataframe(loan_cf)
                 loan_cf.set_index('date', inplace=True)
+
+                # Ensure columns match the order
+                for column in columns_order:
+                    if column not in loan_cf.columns:
+                        loan_cf[column] = 0
+
+                loan_cf = loan_cf[columns_order]
                 aggregate_cf = aggregate_cf.add(loan_cf, fill_value=0)
-    
+
+        # Reorder the columns
+        aggregate_cf = aggregate_cf[columns_order]
+
+        # Ensure the dates are consistent
+        aggregate_cf = aggregate_cf.loc[self.start_date:self.end_date]
+
         return aggregate_cf
+
+# Example debug statement
+# You can add these debug statements in various parts of your code to track values and state changes.
+st.write("Aggregate Cash Flows:", aggregate_cf)
