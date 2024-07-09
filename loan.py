@@ -149,7 +149,7 @@ class Loan:
             'Ending Balance': self.original_balance
         })
 
-        while pd.to_datetime(current_date) < pd.to_datetime(self.maturity_date):
+        while pd.Timestamp(current_date) < pd.Timestamp(self.maturity_date):
             next_date = min(
                 pd.Timestamp(current_date + relativedelta(months=1)), pd.Timestamp(self.maturity_date))
             standardized_date = self._standardize_date(next_date)
