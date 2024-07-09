@@ -24,9 +24,8 @@ class Loan:
         spread: Optional[int] = 0
     ):
         self.loan_id = loan_id if loan_id is not None else str(uuid.uuid4())
-        self.origination_date = pd.to_datetime(self._adjust_to_month_start(origination_date))
-        self.maturity_date = pd.to_datetime(self._adjust_to_month_start(
-            maturity_date))
+        self.origination_date = self._adjust_to_month_start(origination_date)
+        self.maturity_date = self._adjust_to_month_start(maturity_date)
         self.original_balance = original_balance
         self.note_rate = note_rate / 100  # Convert to decimal
         self.day_count_method = day_count_method
@@ -69,10 +68,10 @@ class Loan:
 
     def _adjust_to_month_start(self, date_to_adjust: pd.Timestamp) -> pd.Timestamp:
         """Adjust the given date to the first day of the current month if it's not already the first day of a month."""
-        return date_to_adjust.replace(day=1)
+        return pd.Timestamp(date_to_adjust.replace(day=1))
 
     def _validate_inputs(self):
-        assert pd.to_datetime(self.origination_date) < self.maturity_date, "Origination date must be before maturity date."
+        assert self.origination_date < self.maturity_date, "Origination date must be before maturity date."
         assert self.original_balance > 0, "Original balance must be positive."
         assert 0 <= self.note_rate < 1, "Note rate must be between 0 and 100 percent."
         assert self.interest_only_period >= 0, "Interest-only period must be non-negative."
