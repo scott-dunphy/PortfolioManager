@@ -12,7 +12,7 @@ if 'properties' in st.session_state:
     # Existing code for when properties exist
     property_names = [prop.name for prop in properties]
     selected_property_name = st.selectbox("Select Property", property_names)
-    selected_property = next((prop for prop in properties if prop.name == selected_property_name), None)
+    selected_property = next(prop for prop in properties if prop.name == selected_property_name)
     # Property inputs
     col1, col2 = st.columns(2)
 
