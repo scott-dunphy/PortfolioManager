@@ -41,9 +41,16 @@ class Portfolio:
     
     def aggregate_hold_period_cash_flows(self) -> Tuple[pd.DataFrame, List[str]]:
         debug_logs = []
-        # Initialize an empty DataFrame with date range index
         date_range = pd.date_range(self.start_date, self.end_date, freq='MS')
-        aggregate_cf = pd.DataFrame(0, index=date_range, columns=['Cash Flow'])
+        # Initialize an empty DataFrame with date range index
+        columns_order = [
+            'Adjusted Purchase Price', 'Adjusted Loan Proceeds', 'Adjusted Net Operating Income',
+            'Adjusted Capital Expenditures', 'Adjusted Interest Expense', 'Adjusted Principal Payments',
+            'Adjusted Debt Scheduled Repayment', 'Adjusted Debt Early Prepayment', 'Adjusted Sale Proceeds',
+            'Adjusted Partner Buyout', 'Total Cash Flow'
+        ]
+        aggregate_cf = pd.DataFrame(0, index=date_range, columns=columns_order)
+        
     
         # Aggregate property cash flows
         for property in self.properties:
@@ -61,12 +68,5 @@ class Portfolio:
                 st.dataframe(loan_cf)
                 loan_cf.set_index('date', inplace=True)
                 aggregate_cf = aggregate_cf.add(loan_cf, fill_value=0)
-        columns_order = [
-            'Adjusted Purchase Price', 'Adjusted Loan Proceeds', 'Adjusted Net Operating Income',
-            'Adjusted Capital Expenditures', 'Adjusted Interest Expense', 'Adjusted Principal Payments',
-            'Adjusted Debt Scheduled Repayment', 'Adjusted Debt Early Prepayment', 'Adjusted Sale Proceeds',
-            'Adjusted Partner Buyout', 'Total Cash Flow'
-        ]
-        aggregate_cf = aggregate_cf[columns_order]
     
         return aggregate_cf
