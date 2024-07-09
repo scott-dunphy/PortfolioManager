@@ -140,6 +140,7 @@ else:
 
         st.session_state.properties.append(new_property)
         st.success("New property added successfully.")
+        st.rerun()
 
 # Save session state button
 if st.button("Save Session State"):
