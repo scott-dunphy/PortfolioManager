@@ -6,17 +6,40 @@ from config import adjusted_column_config
 from loan import Loan
 from property import Property
 
-if 'properties' in st.session_state:
+def update_property(properties, selected_property, updated_data):
+    for prop in properties:
+        if prop.property_id == selected_property.property_id:
+            prop.name = updated_data['name']
+            prop.address = updated_data['address']
+            prop.property_type = updated_data['property_type']
+            prop.square_footage = updated_data['square_footage']
+            prop.year_built = updated_data['year_built']
+            prop.current_value = updated_data['current_value']
+            prop.purchase_price = updated_data['purchase_price']
+            prop.purchase_date = updated_data['purchase_date']
+            prop.analysis_start_date = updated_data['analysis_start_date']
+            prop.analysis_end_date = updated_data['analysis_end_date']
+            prop.ownership_share = updated_data['ownership_share']
+            prop.sale_date = updated_data['sale_date']
+            prop.sale_price = updated_data['sale_price']
+            prop.buyout_date = updated_data['buyout_date']
+            prop.buyout_amount = updated_data['buyout_amount']
+            break
+    st.session_state.properties = properties
+
+if 'properties' in st.session_state and st.session_state.properties:
     properties = st.session_state.properties
 
     # Existing code for when properties exist
     property_names = [prop.name for prop in properties]
     selected_property_name = st.selectbox("Select Property", property_names)
     selected_property = next(prop for prop in properties if prop.name == selected_property_name)
+
     # Property inputs
     col1, col2 = st.columns(2)
 
     with col1:
+        property_id = st.text_input('Property ID', value=selected_property.property_id)
         property_name = st.text_input('Property Name', value=selected_property.name)
         property_address = st.text_input('Property Address', value=selected_property.address)
         property_type = st.text_input('Property Type', value=selected_property.property_type)
@@ -31,9 +54,9 @@ if 'properties' in st.session_state:
         analysis_end_date = st.date_input('Analysis End Date', value=selected_property.analysis_end_date)
         ownership_share = st.number_input('Ownership Share', min_value=0.0, max_value=1.0, value=float(selected_property.ownership_share), format='%f')
         default_sale_date = selected_property.analysis_start_date.replace(day=1) + relativedelta(years=10)
-        sale_date = selected_property._standardize_date(st.date_input('Sale Date', value=selected_property.sale_date or default_sale_date))
+        sale_date = st.date_input('Sale Date', value=selected_property.sale_date or default_sale_date)
         sale_price = st.number_input('Sale Price', min_value=0.0, value=float(selected_property.sale_price) if selected_property.sale_price else 0.0, format="%f")
-        buyout_date = selected_property._standardize_date(st.date_input('Partner Buyout Date', value=selected_property.buyout_date or datetime(2100,12,1)))
+        buyout_date = st.date_input('Partner Buyout Date', value=selected_property.buyout_date or datetime(2100,12,1))
         buyout_amount = st.number_input('Buyout Amount', min_value=0.0, value=float(selected_property.buyout_amount) if selected_property.buyout_amount else 0.0, format="%f")
 
     # Loan inputs
@@ -54,8 +77,25 @@ if 'properties' in st.session_state:
         capex_data = st.text_area("Capital Expenditures (space-separated values)", value=' '.join([str(v) for v in selected_property.capex.values()]))
 
     if st.button('Update and Recalculate'):
-        update_property()
-        st.session_state.properties = properties
+        updated_data = {
+            'property_id': property_id,
+            'name': property_name,
+            'address': property_address,
+            'property_type': property_type,
+            'square_footage': square_footage,
+            'year_built': year_built,
+            'current_value': current_value,
+            'purchase_price': purchase_price,
+            'purchase_date': purchase_date,
+            'analysis_start_date': analysis_start_date,
+            'analysis_end_date': analysis_end_date,
+            'ownership_share': ownership_share,
+            'sale_date': sale_date,
+            'sale_price': sale_price,
+            'buyout_date': buyout_date,
+            'buyout_amount': buyout_amount
+        }
+        update_property(properties, selected_property, updated_data)
         st.success("Property updated successfully.")
 
 else:
@@ -65,7 +105,7 @@ else:
     col1, col2 = st.columns(2)
 
     with col1:
-        property_id = st.text_input('Property ID')  # Generate a new UUID for the property
+        property_id = st.text_input('Property ID', value=str(uuid.uuid4()))
         property_name = st.text_input('Property Name')
         property_address = st.text_input('Property Address')
         property_type = st.text_input('Property Type')
@@ -118,7 +158,10 @@ else:
             sale_date=sale_date,
             sale_price=sale_price,
             buyout_date=buyout_date,
-            buyout_amount=buyout_amount
+            buyout_amount=buyout_amount,
+            loan=None,  # Initialize with no loan
+            noi={},  # Initialize empty
+            capex={}  # Initialize empty
         )
 
         if loan_exists:
@@ -140,7 +183,7 @@ else:
 
         st.session_state.properties.append(new_property)
         st.success("New property added successfully.")
-        st.rerun()
+        st.experimental_rerun()  # Rerun to reflect the new property in the session state
 
 # Save session state button
 if st.button("Save Session State"):
