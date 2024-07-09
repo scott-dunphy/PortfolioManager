@@ -299,12 +299,12 @@ class Property:
     
         adjusted_columns = [col for col in df.columns if 'Adjusted' in col]
         if ownership_adjusted:
-            cf_df = df[adjusted_columns]
+            cf_df.loc[:, adjusted_col_name] = -cf_df[adjusted_col_name]
             cf_df['Ownership Share'] = df['Ownership Share']
             cf_df [['Ownership Share','Adjusted Purchase Price','Adjusted Loan Proceeds','Adjusted Net Operating Income','Adjusted Capital Expenditures','Adjusted Interest Expense','Adjusted Principal Payments','Adjusted Debt Scheduled Repayment','Adjusted Debt Early Prepayment','Adjusted Sale Proceeds','Adjusted Partner Buyout']]
         else:
             non_adjusted_columns = [col for col in df.columns if 'Adjusted' not in col]
-            cf_df = df[non_adjusted_columns]
+            cf_df.loc[:, non_adjusted_col_name] = -cf_df[non_adjusted_col_name]
             cf_df['Ownership Share'] = df['Ownership Share']
         
         
@@ -313,10 +313,10 @@ class Property:
         for col in columns_to_change_sign:
             adjusted_col_name = f'Adjusted {col}' if ownership_adjusted else col
             if adjusted_col_name in cf_df.columns:
-                cf_df[adjusted_col_name] = -cf_df[adjusted_col_name]
+                cf_df.loc[:, adjusted_col_name] = -cf_df[adjusted_col_name]
     
         # Calculate the Total column
-        cf_df['Total Cash Flow'] = cf_df.drop(columns=['Ownership Share']).sum(axis=1)
+        cf_df.loc[:, 'Total Cash Flow'] = cf_df.drop(columns=['Ownership Share']).sum(axis=1)
     
         return cf_df
     
