@@ -24,8 +24,8 @@ class Loan:
         spread: Optional[int] = 0
     ):
         self.loan_id = loan_id if loan_id is not None else str(uuid.uuid4())
-        self.origination_date = pd.Timestamp(self._adjust_to_month_start(origination_date))
-        self.maturity_date = pd.Timestamp(self._adjust_to_month_start(
+        self.origination_date = pd.to_datetime(self._adjust_to_month_start(origination_date))
+        self.maturity_date = pd.to_datetime(self._adjust_to_month_start(
             maturity_date))
         self.original_balance = original_balance
         self.note_rate = note_rate / 100  # Convert to decimal
