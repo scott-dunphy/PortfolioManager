@@ -10,9 +10,9 @@ from property import Property
 if 'properties' not in st.session_state:
     st.session_state.properties = []
 
-properties = st.session_state.properties
+if 'properties' in st.session_state.properties:
+    properties = st.session_state.properties
 
-if properties:
     # Existing code for when properties exist
     property_names = [prop.name for prop in properties]
     selected_property_name = st.selectbox("Select Property", property_names)
