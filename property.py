@@ -298,13 +298,14 @@ class Property:
         columns_to_change_sign = ['Capital Expenditures', 'Purchase Price', 'Interest Expense','Principal Payments','Partner Buyout','Debt Scheduled Repayment','Debt Early Prepayment']  # Replace with your actual column names
     
         adjusted_columns = [col for col in df.columns if 'Adjusted' in col]
+        st.write(cf_df.columns)
         if ownership_adjusted:
-            cf_df.loc[:, adjusted_columns] = -cf_df[adjusted_columns]
+            cf_df.loc[:, adjusted_columns] = -df[adjusted_columns]
             cf_df['Ownership Share'] = df['Ownership Share']
             cf_df [['Ownership Share','Adjusted Purchase Price','Adjusted Loan Proceeds','Adjusted Net Operating Income','Adjusted Capital Expenditures','Adjusted Interest Expense','Adjusted Principal Payments','Adjusted Debt Scheduled Repayment','Adjusted Debt Early Prepayment','Adjusted Sale Proceeds','Adjusted Partner Buyout']]
         else:
             non_adjusted_columns = [col for col in df.columns if 'Adjusted' not in col]
-            cf_df.loc[:, non_adjusted_columns] = -cf_df[non_adjusted_columns]
+            cf_df.loc[:, non_adjusted_columns] = -df[non_adjusted_columns]
             cf_df['Ownership Share'] = df['Ownership Share']
         
         
