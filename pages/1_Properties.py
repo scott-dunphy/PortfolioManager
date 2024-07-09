@@ -70,7 +70,7 @@ else:
     col1, col2 = st.columns(2)
 
     with col1:
-        property_id = str(uuid.uuid4())  # Generate a new UUID for the property
+        property_id = st.text_input('Property ID')  # Generate a new UUID for the property
         property_name = st.text_input('Property Name')
         property_address = st.text_input('Property Address')
         property_type = st.text_input('Property Type')
