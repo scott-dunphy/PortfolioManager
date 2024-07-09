@@ -6,7 +6,7 @@ from config import adjusted_column_config
 from loan import Loan
 from property import Property
 
-def update_property(properties, selected_property, updated_data):
+def update_property(properties, selected_property, updated_data, noi_data, capex_data, loan_data):
     for prop in properties:
         if prop.property_id == selected_property.property_id:
             prop.name = updated_data['name']
@@ -24,7 +24,22 @@ def update_property(properties, selected_property, updated_data):
             prop.sale_price = updated_data['sale_price']
             prop.buyout_date = updated_data['buyout_date']
             prop.buyout_amount = updated_data['buyout_amount']
+            
+            # Update NOI and CapEx
+            prop.noi = {k: float(v) for k, v in enumerate(noi_data.split())}
+            prop.capex = {k: float(v) for k, v in enumerate(capex_data.split())}
+            
+            # Update loan if it exists
+            if loan_data['loan_exists']:
+                prop.loan.origination_date = loan_data['origination_date']
+                prop.loan.maturity_date = loan_data['maturity_date']
+                prop.loan.original_balance = loan_data['original_balance']
+                prop.loan.note_rate = loan_data['note_rate'] / 100
+                prop.loan.interest_only_period = loan_data['interest_only_period']
+                prop.loan.amortization_period = loan_data['amortization_period']
+                prop.loan.day_count_method = loan_data['day_count_method']
             break
+
     st.session_state.properties = properties
 
 if 'properties' in st.session_state and st.session_state.properties:
@@ -95,18 +110,32 @@ if 'properties' in st.session_state and st.session_state.properties:
             'buyout_date': buyout_date,
             'buyout_amount': buyout_amount
         }
-        update_property(properties, selected_property, updated_data)
+        
+        loan_data = {
+            'loan_exists': loan_exists,
+            'origination_date': origination_date,
+            'maturity_date': maturity_date,
+            'original_balance': original_balance,
+            'note_rate': note_rate,
+            'interest_only_period': interest_only_period,
+            'amortization_period': amortization_period,
+            'day_count_method': day_count_method
+        }
+        
+        update_property(properties, selected_property, updated_data, noi_data, capex_data, loan_data)
         st.success("Property updated successfully.")
+        
         # Display cash flows
         st.subheader("Hold Period Cash Flows")
         hold_period_cf = selected_property.hold_period_cash_flows_x()
-        cf = selected_property.get_cash_flows_dataframe()
         st.dataframe(hold_period_cf, column_config=adjusted_column_config, use_container_width=True)
-    
-        st.dataframe(selected_property.loan.schedule)
-    
-        st.write(selected_property.loan.amortization_period)
-        st.write(selected_property.loan.monthly_payment)
+        
+        # Display loan schedule
+        if selected_property.loan:
+            st.subheader("Loan Schedule")
+            st.dataframe(selected_property.loan.schedule)
+            st.write("Amortization Period:", selected_property.loan.amortization_period)
+            st.write("Monthly Payment:", selected_property.loan.monthly_payment)
 
 else:
     # New code for when no properties exist
@@ -125,14 +154,14 @@ else:
         purchase_price = st.number_input('Purchase Price', min_value=0.0, format='%f')
         purchase_date = st.date_input('Purchase Date')
 
-    with col2:
-        analysis_start_date = st.date_input('Analysis Start Date')
-        analysis_end_date = st.date_input('Analysis End Date')
-        ownership_share = st.number_input('Ownership Share', min_value=0.0, max_value=1.0, format='%f')
-        sale_date = st.date_input('Sale Date')
-        sale_price = st.number_input('Sale Price', min_value=0.0, format="%f")
-        buyout_date = st.date_input('Partner Buyout Date')
-        buyout_amount = st.number_input('Buyout Amount', min_value=0.0, format="%f")
+        with col2:
+            analysis_start_date = st.date_input('Analysis Start Date')
+            analysis_end_date = st.date_input('Analysis End Date')
+            ownership_share = st.number_input('Ownership Share', min_value=0.0, max_value=1.0, format='%f')
+            sale_date = st.date_input('Sale Date')
+            sale_price = st.number_input('Sale Price', min_value=0.0, format="%f")
+            buyout_date = st.date_input('Partner Buyout Date')
+            buyout_amount = st.number_input('Buyout Amount', min_value=0.0, format="%f")
 
     # Loan inputs
     with st.expander("Loan Details"):
