@@ -135,12 +135,12 @@ class Loan:
     def get_schedule(self) -> List[Dict[str, float]]:
         self._calculate_monthly_payment()
         cash_flows = []
-        current_date = self._adjust_to_month_start(self.origination_date)
+        current_date = pd.to_datetime(self.origination_date)
         current_balance = self.original_balance
 
         # Add the initial cash flow (loan disbursement)
         cash_flows.append({
-            'date': current_date,
+            'date': self._standardize_date(current_date),
             'Beginning Balance': self.original_balance,
             'Interest Expense': 0,
             'Principal Payments': 0,
@@ -149,7 +149,8 @@ class Loan:
         })
 
         while pd.Timestamp(current_date) < pd.Timestamp(self.maturity_date):
-            next_date = min(current_date + relativedelta(months=1), self.maturity_date)
+            next_date = min(
+                pd.Timestamp(current_date + relativedelta(months=1)), pd.Timestamp(self.maturity_date))
             standardized_date = self._standardize_date(next_date)
             interest = self._calculate_interest(
                 current_balance, current_date, next_date)
