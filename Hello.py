@@ -20,6 +20,7 @@ end_date = pd.Timestamp(datetime(start_date.year + 3, start_date.month, 1))
 
 # User input for analysis start and end dates
 analysis_start_date = pd.Timestamp(st.date_input('Analysis Start Date', value=start_date))
+st.write(analysis_start_date)
 analysis_end_date = pd.Timestamp(st.date_input('Analysis End Date', value=end_date))
 
 # Initialize properties in session state if not already present
