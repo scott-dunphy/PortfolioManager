@@ -15,8 +15,8 @@ st.title("CRE Portfolio Manager 🏗️")
 
 # Get the current date and time
 now = datetime.now()
-start_date = date(now.year, now.month, 1)
-end_date = date(start_date.year + 3, start_date.month, 1)
+start_date = pd.to_datetime(date(now.year, now.month, 1))
+end_date = pd.to_datetime(date(start_date.year + 3, start_date.month, 1))
 
 # User input for analysis start and end dates
 analysis_start_date = pd.Timestamp(st.date_input('Analysis Start Date', value=start_date))
