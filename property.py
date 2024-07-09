@@ -339,6 +339,7 @@ class Property:
     
             # Update ownership share for the start_date and all subsequent dates
             for d in sorted(self.ownership_share_series.keys()):
+                st.write(d)
                 if d >= start_date.date():
                     self.ownership_share_series[d] = new_share
     
