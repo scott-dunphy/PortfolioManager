@@ -6,7 +6,7 @@ from config import adjusted_column_config
 from loan import Loan
 from property import Property
 
-if 'properties' in st.session_state.properties:
+if 'properties' in st.session_state:
     properties = st.session_state.properties
 
     # Existing code for when properties exist
