@@ -47,7 +47,7 @@ class Property:
         self.capex = self._standardize_cash_flow_dates(capex) if capex is not None else {}
         self.ownership_share = ownership_share
         self._initialize_ownership_share()
-        self.buyout_date = buyout_date
+        self.buyout_date = self._standardize_date(buyout_date)
         self.buyout_amount = buyout_amount
         
     def to_dict(self):
