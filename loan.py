@@ -151,7 +151,7 @@ class Loan:
 
         while pd.to_datetime(current_date) < pd.to_datetime(self.maturity_date):
             next_date = min(
-                pd.Timestamp(current_date + relativedelta(months=1)), self.maturity_date)
+                pd.to_datetime(current_date + relativedelta(months=1)), pd.to_datetime(self.maturity_date))
             standardized_date = self._standardize_date(next_date)
             interest = self._calculate_interest(
                 current_balance, current_date, next_date)
