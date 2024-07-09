@@ -6,10 +6,6 @@ from config import adjusted_column_config
 from loan import Loan
 from property import Property
 
-# Initialize session state for properties if it doesn't exist
-if 'properties' not in st.session_state:
-    st.session_state.properties = []
-
 if 'properties' in st.session_state.properties:
     properties = st.session_state.properties
 
@@ -66,7 +62,7 @@ if 'properties' in st.session_state.properties:
 else:
     # New code for when no properties exist
     st.write("No properties exist. Add a new property:")
-
+    st.session_state.properties = []
     col1, col2 = st.columns(2)
 
     with col1:
