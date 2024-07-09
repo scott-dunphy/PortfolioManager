@@ -168,7 +168,7 @@ if 'properties' in st.session_state and st.session_state.properties:
             if selected_property.loan:
                 st.subheader("Loan Schedule")
                 st.dataframe(selected_property.loan.schedule)
-                                st.write("Amortization Period:", selected_property.loan.amortization_period)
+                st.write("Amortization Period:", selected_property.loan.amortization_period)
                 st.write("Monthly Payment:", selected_property.loan.monthly_payment)
 
     else:
