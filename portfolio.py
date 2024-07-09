@@ -79,6 +79,3 @@ class Portfolio:
 
         return aggregate_cf
 
-# Example debug statement
-# You can add these debug statements in various parts of your code to track values and state changes.
-st.write("Aggregate Cash Flows:", aggregate_cf)
