@@ -97,7 +97,7 @@ class Property:
 
     def _standardize_date(self, d: date) -> pd.Timestamp:
         """Standardize a date to the first of its month."""
-        return pd.Timestamp(date(d.year, d.month, 1))
+        return date(d.year, d.month, 1)
 
     def _standardize_cash_flow_dates(self, cash_flows: Dict[date, float]) -> Dict[pd.Timestamp, float]:
         """Standardize all dates in a cash flow dictionary to the first of their respective months."""
