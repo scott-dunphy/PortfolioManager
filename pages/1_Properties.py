@@ -1,5 +1,5 @@
 import streamlit as st
-from datetime import date, datetime
+from datetime import date
 from dateutil.relativedelta import relativedelta
 import uuid
 from config import adjusted_column_config
@@ -97,7 +97,7 @@ if 'properties' in st.session_state and st.session_state.properties:
             default_sale_date = selected_property.analysis_start_date.replace(day=1) + relativedelta(years=10)
             sale_date = st.date_input('Sale Date', value=selected_property.sale_date or default_sale_date)
             sale_price = st.number_input('Sale Price', min_value=0.0, value=float(selected_property.sale_price) if selected_property.sale_price else 0.0, format="%f")
-            buyout_date = st.date_input('Partner Buyout Date', value=selected_property.buyout_date or datetime(2100,12,1))
+            buyout_date = st.date_input('Partner Buyout Date', value=selected_property.buyout_date or date(2100,12,1))
             buyout_amount = st.number_input('Buyout Amount', min_value=0.0, value=float(selected_property.buyout_amount) if selected_property.buyout_amount else 0.0, format="%f")
 
         # Loan inputs
@@ -168,7 +168,7 @@ if 'properties' in st.session_state and st.session_state.properties:
             if selected_property.loan:
                 st.subheader("Loan Schedule")
                 st.dataframe(selected_property.loan.schedule)
-                st.write("Amortization Period:", selected_property.loan.amortization_period)
+                                st.write("Amortization Period:", selected_property.loan.amortization_period)
                 st.write("Monthly Payment:", selected_property.loan.monthly_payment)
 
     else:
