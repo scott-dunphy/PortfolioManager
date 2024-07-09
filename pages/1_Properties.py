@@ -26,8 +26,17 @@ def update_property(properties, selected_property, updated_data, noi_data, capex
             prop.buyout_amount = updated_data['buyout_amount']
             
             # Update NOI and CapEx
-            prop.noi = {k: float(v) for k, v in enumerate(noi_data.split())}
-            prop.capex = {k: float(v) for k, v in enumerate(capex_data.split())}
+                # Parse financial data and update the property
+            if noi_data:
+                try:
+                    prop.streamlit_add_noi(noi_data)
+                except ValueError as e:
+                    st.error(f"Error parsing NOI data: {e}")
+            if capex_data:
+                try:
+                    prop.streamlit_add_capex(capex_data)
+                except ValueError as e:
+                    st.error(f"Error parsing CapEx data: {e}")
             
             # Update loan if it exists or create a new loan
             if loan_data['loan_exists']:
