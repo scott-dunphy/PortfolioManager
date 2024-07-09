@@ -278,7 +278,7 @@ class Property:
         
         return cf_after_debt
     
-    def hold_period_cash_flows_x(self, ownership_adjusted: bool = True, start_date: Optional[pd.Timestamp] = None, end_date: Optional[pd.Timestamp] = None) -> Dict[pd.Timestamp, float]:
+    def hold_period_cash_flows_x(self, ownership_adjusted: bool = True, start_date: Optional[date] = None, end_date: Optional[date] = None) -> Dict[date, float]:
         if start_date is None:
             start_date = self.analysis_start_date
         if end_date is None:
