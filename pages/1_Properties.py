@@ -97,6 +97,16 @@ if 'properties' in st.session_state and st.session_state.properties:
         }
         update_property(properties, selected_property, updated_data)
         st.success("Property updated successfully.")
+        # Display cash flows
+        st.subheader("Hold Period Cash Flows")
+        hold_period_cf = selected_property.hold_period_cash_flows_x()
+        cf = selected_property.get_cash_flows_dataframe()
+        st.dataframe(hold_period_cf, column_config=adjusted_column_config, use_container_width=True)
+    
+        st.dataframe(selected_property.loan.schedule)
+    
+        st.write(selected_property.loan.amortization_period)
+        st.write(selected_property.loan.monthly_payment)
 
 else:
     # New code for when no properties exist
