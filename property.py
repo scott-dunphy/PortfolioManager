@@ -334,7 +334,7 @@ class Property:
             print(f"Debug: new_share type: {type(new_share)}, value: {new_share}")
             print(f"Debug: self.analysis_end_date type: {type(self.analysis_end_date)}, value: {self.analysis_end_date}")
     
-            start_date = pd.Timestamp(self._standardize_date(start_date))
+            start_date = self._standardize_date(start_date)
             print(f"Debug: Standardized start_date: {start_date}")
     
             # Update ownership share for the start_date and all subsequent dates
