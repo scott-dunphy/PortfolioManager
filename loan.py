@@ -131,7 +131,7 @@ class Loan:
 
     def _standardize_date(self, d: pd.Timestamp) -> pd.Timestamp:
         """Standardize a date to the first of its month."""
-        return d.replace(day=1)
+        return pd.Timestamp(d.replace(day=1))
 
     def get_schedule(self) -> List[Dict[str, float]]:
         self._calculate_monthly_payment()
