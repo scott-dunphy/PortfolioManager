@@ -61,5 +61,12 @@ class Portfolio:
                 st.dataframe(loan_cf)
                 loan_cf.set_index('date', inplace=True)
                 aggregate_cf = aggregate_cf.add(loan_cf, fill_value=0)
+        columns_order = [
+            'Adjusted Purchase Price', 'Adjusted Loan Proceeds', 'Adjusted Net Operating Income',
+            'Adjusted Capital Expenditures', 'Adjusted Interest Expense', 'Adjusted Principal Payments',
+            'Adjusted Debt Scheduled Repayment', 'Adjusted Debt Early Prepayment', 'Adjusted Sale Proceeds',
+            'Adjusted Partner Buyout', 'Total Cash Flow'
+        ]
+        aggregate_cf = aggregate_cf[columns_order]
     
         return aggregate_cf
