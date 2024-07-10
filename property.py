@@ -275,7 +275,7 @@ class Property:
             self.loan.get_schedule()
     
         if self.buyout_date:
-            self.update_ownership_share(self.buyout_date.date(), 1)
+            self.update_ownership_share(self.buyout_date, 1)
     
         df = self.get_cash_flows_dataframe(start_date=start_date, end_date=end_date)
     
