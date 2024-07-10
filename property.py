@@ -281,7 +281,7 @@ class Property:
         cf_df.loc[:, 'Total Cash Flow'] = cf_df.drop(columns=['Ownership Share']).sum(axis=1)
         
         # Ensure the index is in date format
-        cf_df.index = cf_df.index.map(lambda x: x.date())
+        cf_df.index = pd.to_datetime(cf_df.index).date
     
         return cf_df
     
