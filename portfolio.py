@@ -50,7 +50,9 @@ class Portfolio:
         return all(isinstance(idx, date) for idx in df.index)
     
     def aggregate_hold_period_cash_flows(self) -> pd.DataFrame:
-        date_range = pd.date_range(self.start_date, self.end_date, freq='MS').to_pydatetime()
+        start_date = self.start_date.date()
+        end_date = self.end_date.date()
+        date_range = pd.date_range(start_date, end_date, freq='MS').to_pydatetime()
         # Initialize an empty DataFrame with date range index
         columns_order = [
             'Adjusted Purchase Price', 'Adjusted Loan Proceeds', 'Adjusted Net Operating Income',
@@ -63,12 +65,12 @@ class Portfolio:
     
         # Aggregate property cash flows
         for property in self.properties:
-            property_cf = property.hold_period_cash_flows_x(start_date=self.start_date, end_date=self.end_date)
+            property_cf = property.hold_period_cash_flows_x(start_date=start_date, end_date=end_date)
             st.write(self.validate_date_index(aggregate_cf))
             st.write(self.validate_date_index(property_cf))
             property_cf.index = property_cf.index.map(lambda x: x)  # Ensure index is in date format
             # Ensure the DataFrame is within the specified date range
-            property_cf = property_cf[(property_cf.index >= self.start_date) & (property_cf.index <= self.end_date)]
+            property_cf = property_cf[(property_cf.index >= start_date) & (property_cf.index <= end_date)]
             aggregate_cf = aggregate_cf.add(property_cf, fill_value=0)
     
         # Aggregate loan cash flows
