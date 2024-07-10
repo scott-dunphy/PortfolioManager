@@ -49,9 +49,11 @@ class Portfolio:
         """
         return all(isinstance(idx, date) for idx in df.index)
     
-    def aggregate_hold_period_cash_flows(self) -> pd.DataFrame:
-        start_date = self.start_date
-        end_date = self.end_date
+    def aggregate_hold_period_cash_flows(self, start_date: Optional[date], end_date: Optional[date]) -> pd.DataFrame:
+        if not start_date:
+            start_date = self.start_date
+        if not end_date:
+            end_date = self.end_date
         date_range = pd.date_range(start_date, end_date, freq='MS').to_pydatetime()
         # Initialize an empty DataFrame with date range index
         columns_order = [
