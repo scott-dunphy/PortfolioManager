@@ -24,6 +24,11 @@ analysis_start_date = st.date_input('Analysis Start Date', value=start_date)
 st.write(analysis_start_date)
 analysis_end_date = st.date_input('Analysis End Date', value=end_date)
 
+if 'portfolio' in st.session_state:
+    st.session_state.portfolio.analysis_start_date = analysis_start_date
+    st.session_state.portfolio.analysis_end_date = analysis_end_date
+    
+
 # Initialize properties in session state if not already present
 if 'properties' in st.session_state:
     properties = st.session_state.properties
