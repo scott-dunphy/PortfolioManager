@@ -39,7 +39,7 @@ class Property:
         self.purchase_date = self._standardize_date(purchase_date)
         self.analysis_start_date = self._standardize_date(analysis_start_date)
         self.analysis_end_date = self._standardize_date(analysis_end_date)
-        self.sale_date = self._standardize_date(sale_date) if sale_date else None
+        self.sale_date = self._standardize_date(sale_date) if sale_date else date(2100,12,1)
         self.sale_price = sale_price
         self.current_value = current_value if current_value is not None else purchase_price
         self.loan = loan
