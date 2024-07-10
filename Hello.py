@@ -13,6 +13,7 @@ st.set_page_config(
 
 st.title("CRE Portfolio Manager 🏗️")
 
+
 # Get the current date
 now = date.today()
 start_date = date(now.year, now.month, 1)
@@ -38,6 +39,7 @@ if 'properties' in st.session_state:
     # Aggregate hold period cash flows
     cash_flows = st.session_state.portfolio.aggregate_hold_period_cash_flows()
     # Display the DataFrame with custom formatting
+    st.title(portfolio.name)
     st.dataframe(cash_flows, column_config=adjusted_column_config, use_container_width=True)
 else:
     st.write("Looks like you haven't uploaded any properties yet.\n Go to the Upload page to upload a portfolio or the Properties page to add individual properties.")
