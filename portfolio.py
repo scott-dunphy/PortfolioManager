@@ -69,7 +69,7 @@ class Portfolio:
             st.write(start_date)
             #st.write(property_cf.index[0])
             # Ensure the DataFrame is within the specified date range
-            property_cf = property_cf[(property_cf.index >= start_date) & (property_cf.index <= end_date)]
+            property_cf = property_cf.loc[(property_cf.index >= start_date) & (property_cf.index <= end_date)]
             aggregate_cf = aggregate_cf.add(property_cf, fill_value=0)
     
         # Aggregate loan cash flows
