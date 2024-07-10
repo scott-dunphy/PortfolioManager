@@ -90,6 +90,6 @@ class Portfolio:
         aggregate_cf = aggregate_cf[columns_order]
     
         # Ensure the dates are consistent
-        aggregate_cf = aggregate_cf.loc[start_date:end_date]
+        #aggregate_cf = aggregate_cf.loc[start_date:end_date]
     
         return aggregate_cf
