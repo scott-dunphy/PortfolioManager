@@ -43,6 +43,6 @@ if 'properties' in st.session_state:
     
     # Aggregate hold period cash flows
     if st.button("Calculate"):
-        cash_flows = update_portfolio_dates_and_calculate()
+        cash_flows = update_portfolio_dates_and_calculate(analysis_start_date, analysis_end_date)
         st.title(st.session_state.portfolio.name)
         st.dataframe(cash_flows, column_config=adjusted_column_config, use_container_width=True)
