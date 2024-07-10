@@ -42,7 +42,9 @@ if 'properties' in st.session_state:
         )
     
     # Aggregate hold period cash flows
-    cash_flows = update_portfolio_dates_and_calculate()
+    if st.button("Calculate"):
+        cash_flows = update_portfolio_dates_and_calculate()
+
 
     # Display the DataFrame with custom formatting
     if cash_flows is not None:
