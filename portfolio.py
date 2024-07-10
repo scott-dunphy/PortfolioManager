@@ -37,7 +37,7 @@ class Portfolio:
                 return loan
         raise ValueError(f"Unsecured loan with ID {loan_id} not found in the portfolio.")
 
-    def validate_date_index(df: pd.DataFrame) -> bool:
+    def validate_date_index(self, df: pd.DataFrame) -> bool:
         """
         Validate that the DataFrame index is of type date.
     
@@ -64,8 +64,8 @@ class Portfolio:
         # Aggregate property cash flows
         for property in self.properties:
             property_cf = property.hold_period_cash_flows_x(start_date=self.start_date, end_date=self.end_date)
-            st.write(validate_date_index(aggregate_cf))
-            st.write(validate_date_index(property_cf))
+            st.write(self.validate_date_index(aggregate_cf))
+            st.write(self.validate_date_index(property_cf))
             property_cf.index = property_cf.index.map(lambda x: x)  # Ensure index is in date format
             # Ensure the DataFrame is within the specified date range
             property_cf = property_cf[(property_cf.index >= self.start_date) & (property_cf.index <= self.end_date)]
