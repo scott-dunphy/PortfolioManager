@@ -49,7 +49,7 @@ class Portfolio:
         """
         return all(isinstance(idx, date) for idx in df.index)
     
-    def aggregate_hold_period_cash_flows(self, start_date: Optional[date], end_date: Optional[date]) -> pd.DataFrame:
+    def aggregate_hold_period_cash_flows(self, start_date: date=None, end_date: date=None) -> pd.DataFrame:
         if not start_date:
             start_date = self.start_date
         if not end_date:
