@@ -1,7 +1,7 @@
 from loan import Loan
 from property import Property
 import pandas as pd
-
+from datetime import date
 
 def load_properties_and_loans(file_path):
     properties_df = pd.read_excel(file_path, sheet_name='Properties')
@@ -11,8 +11,8 @@ def load_properties_and_loans(file_path):
     for _, row in loans_df.iterrows():
         loan = Loan(
             loan_id=row['Loan ID'],
-            origination_date=pd.Timestamp(row['Origination Date']),
-            maturity_date=pd.Timestamp(row['Maturity Date']),
+            origination_date=row['Origination Date'].date(),
+            maturity_date=row['Maturity Date'].date(),
             original_balance=row['Original Balance'],
             note_rate=row['Note Rate'],
             interest_only_period=row.get('Interest Only Period'),
@@ -32,15 +32,15 @@ def load_properties_and_loans(file_path):
             square_footage=row['Square Footage'],
             year_built=row['Year Built'],
             purchase_price=row['Purchase Price'],
-            purchase_date=pd.Timestamp(row['Purchase Date']),
-            analysis_start_date=pd.Timestamp(row['Analysis Start Date']),
-            analysis_end_date=pd.Timestamp(row['Analysis End Date']),
+            purchase_date=row['Purchase Date'].date(),
+            analysis_start_date=row['Analysis Start Date'].date(),
+            analysis_end_date=row['Analysis End Date'].date(),
             current_value=row.get('Current Value'),
-            sale_date=pd.Timestamp(row['Sale Date']) if pd.notna(row['Sale Date']) else None,
+            sale_date=row['Sale Date'].date() if pd.notna(row['Sale Date']) else None,
             sale_price=row.get('Sale Price'),
             loan=loan,
             ownership_share=row.get('Ownership Share', 1),
-            buyout_date=pd.Timestamp(row['Buyout Date']) if pd.notna(row['Buyout Date']) else None,
+            buyout_date=row['Buyout Date'].date() if pd.notna(row['Buyout Date']) else None,
             buyout_amount=row.get('Buyout Amount', 0)
         )
         properties.append(property_obj)
@@ -54,15 +54,15 @@ def load_cashflows(file_path):
 
     for _, row in df.iterrows():
         property_id = row['Property ID']
-        date = pd.to_datetime(row['Date'])
+        cashflow_date = row['Date'].date()
         amount = row['Amount']
         if row['Type'].lower() == 'noi':
             if property_id not in noi:
                 noi[property_id] = {}
-            noi[property_id][date] = amount
+            noi[property_id][cashflow_date] = amount
         elif row['Type'].lower() == 'capex':
             if property_id not in capex:
                 capex[property_id] = {}
-            capex[property_id][date] = amount
+            capex[property_id][cashflow_date] = amount
 
     return noi, capex
