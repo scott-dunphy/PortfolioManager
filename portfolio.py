@@ -38,7 +38,7 @@ class Portfolio:
         raise ValueError(f"Unsecured loan with ID {loan_id} not found in the portfolio.")
   
     def aggregate_hold_period_cash_flows(self) -> pd.DataFrame:
-        date_range = pd.date_range(self.start_date, self.end_date, freq='MS')
+        date_range = pd.date_range(self.start_date, self.end_date, freq='MS').to_pydatetime()
         # Initialize an empty DataFrame with date range index
         columns_order = [
             'Adjusted Purchase Price', 'Adjusted Loan Proceeds', 'Adjusted Net Operating Income',
@@ -47,12 +47,12 @@ class Portfolio:
             'Adjusted Partner Buyout', 'Total Cash Flow'
         ]
         aggregate_cf = pd.DataFrame(0, index=date_range, columns=columns_order)
-        aggregate_cf.index = [d.date() for d in aggregate_cf.index]  # Ensure index is in date format
+        aggregate_cf.index = aggregate_cf.index.map(lambda x: x.date())  # Ensure index is in date format
     
         # Aggregate property cash flows
         for property in self.properties:
             property_cf = property.hold_period_cash_flows_x(start_date=self.start_date, end_date=self.end_date)
-            property_cf.index = [d.date() for d in property_cf.index]  # Ensure index is in date format
+            property_cf.index = property_cf.index.map(lambda x: x.date())  # Ensure index is in date format
             # Ensure the DataFrame is within the specified date range
             property_cf = property_cf[(property_cf.index >= self.start_date) & (property_cf.index <= self.end_date)]
             aggregate_cf = aggregate_cf.add(property_cf, fill_value=0)
