@@ -6,7 +6,7 @@ from config import adjusted_column_config
 from loan import Loan
 from property import Property
 
-def _standardize_date(self, d: date) -> date:
+def _standardize_date(d: date) -> date:
     """Standardize a date to the first of its month."""
     return date(d.year, d.month, 1)
 
