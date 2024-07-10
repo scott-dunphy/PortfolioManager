@@ -164,7 +164,9 @@ class Property:
             start_date = self.analysis_start_date
         if end_date is None:
             end_date = self.analysis_end_date
-    
+        st.write(start_date)
+        st.write(end_date)
+        st.write(self.sale_date)
         # Ensure sale_date is a date before comparison
         if self.sale_date and isinstance(self.sale_date, datetime):
             self.sale_date = self.sale_date.date()
