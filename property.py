@@ -164,8 +164,13 @@ class Property:
             start_date = self.analysis_start_date
         if end_date is None:
             end_date = self.analysis_end_date
+    
+        # Ensure sale_date is a date before comparison
+        if self.sale_date and isinstance(self.sale_date, datetime):
+            self.sale_date = self.sale_date.date()
+    
         # Generate a date range for the entire analysis period
-        end_date = min(end_date, self.sale_date)
+        end_date = min(end_date, self.sale_date) if self.sale_date else end_date
         dates = pd.date_range(start=self._standardize_date(start_date), end=end_date, freq='MS')
         dates = [date(d.year, d.month, d.day) for d in dates]
     
