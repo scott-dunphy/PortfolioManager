@@ -268,12 +268,14 @@ class Property:
             start_date = self.analysis_start_date.date()
         if end_date is None:
             end_date = self.analysis_end_date.date()
+        start_date = start_date.date()
+        end_date = end_date.date()
     
         if self.loan:
             self.loan.get_schedule()
     
         if self.buyout_date:
-            self.update_ownership_share(self.buyout_date, 1)
+            self.update_ownership_share(self.buyout_date.date(), 1)
     
         df = self.get_cash_flows_dataframe(start_date=start_date, end_date=end_date)
     
