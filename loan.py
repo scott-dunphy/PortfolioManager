@@ -1,4 +1,4 @@
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 from dateutil.relativedelta import relativedelta
 from typing import List, Tuple, Optional, Dict
 import uuid
@@ -9,7 +9,6 @@ import streamlit as st
 
 
 class Loan:    
-        
     def __init__(
         self,
         origination_date: date,
@@ -66,9 +65,9 @@ class Loan:
             day_count_method=data['day_count_method']
         )
 
-    def _adjust_to_month_start(self, date_to_adjust: pd.Timestamp) -> pd.Timestamp:
+    def _adjust_to_month_start(self, date_to_adjust: date) -> date:
         """Adjust the given date to the first day of the current month if it's not already the first day of a month."""
-        return pd.Timestamp(date_to_adjust.replace(day=1))
+        return date_to_adjust.replace(day=1)
 
     def _validate_inputs(self):
         assert self.origination_date < self.maturity_date, "Origination date must be before maturity date."
@@ -88,7 +87,7 @@ class Loan:
             monthly_payment = 0
         return monthly_payment
 
-    def _calculate_interest(self, balance: float, start_date: pd.Timestamp, end_date: pd.Timestamp) -> float:
+    def _calculate_interest(self, balance: float, start_date: date, end_date: date) -> float:
         if self.fixed_floating == 'Fixed':
             note_rate = self.note_rate
         else:
@@ -110,7 +109,7 @@ class Loan:
 
         return balance * note_rate * days / year_basis
 
-    def get_monthly_interest_and_principal(self, current_date: pd.Timestamp) -> Tuple[float, float]:
+    def get_monthly_interest_and_principal(self, current_date: date) -> Tuple[float, float]:
         if current_date < self.origination_date or current_date > self.maturity_date:
             return 0, 0
 
@@ -122,20 +121,20 @@ class Loan:
             principal = 0
         else:
             current_balance = self.get_current_balance(
-                pd.Timestamp(current_date + relativedelta(months=-1)))
+                current_date + relativedelta(months=-1))
             interest = self._calculate_interest(
                 current_balance, current_date, current_date + relativedelta(months=1))
             principal = self._calculate_monthly_payment() - interest if self._calculate_monthly_payment() else 0
         return interest, principal
 
-    def _standardize_date(self, d: pd.Timestamp) -> pd.Timestamp:
+    def _standardize_date(self, d: date) -> date:
         """Standardize a date to the first of its month."""
-        return pd.Timestamp(d.replace(day=1))
+        return d.replace(day=1)
 
     def get_schedule(self) -> List[Dict[str, float]]:
         self._calculate_monthly_payment()
         cash_flows = []
-        current_date = pd.to_datetime(self.origination_date)
+        current_date = self.origination_date
         current_balance = self.original_balance
 
         # Add the initial cash flow (loan disbursement)
@@ -148,9 +147,9 @@ class Loan:
             'Ending Balance': self.original_balance
         })
 
-        while pd.Timestamp(current_date) < pd.Timestamp(self.maturity_date):
+        while current_date < self.maturity_date:
             next_date = min(
-                pd.Timestamp(current_date + relativedelta(months=1)), pd.Timestamp(self.maturity_date))
+                current_date + relativedelta(months=1), self.maturity_date)
             standardized_date = self._standardize_date(next_date)
             interest = self._calculate_interest(
                 current_balance, current_date, next_date)
@@ -219,124 +218,105 @@ class Loan:
 
             current_balance -= principal
             cash_flows.append({
-                'date': standardized_date,
-                'Adjusted Loan Proceeds': 0,
-                'Adjusted Interest Expense': -interest,
-                'Adjusted Principal Payments': -principal,
-                'Adjusted Debt Scheduled Repayment': 0
-            })
-            current_date = next_date
-        cash_flows[-1]['Adjusted Debt Scheduled Repayment'] = -current_balance
+                            'date': standardized_date,
+            'Adjusted Loan Proceeds': 0,
+            'Adjusted Interest Expense': -interest,
+            'Adjusted Principal Payments': -principal,
+            'Adjusted Debt Scheduled Repayment': 0
+        })
+        current_date = next_date
+    cash_flows[-1]['Adjusted Debt Scheduled Repayment'] = -current_balance
 
-        return cash_flows
+    return cash_flows
 
+def get_cash_flows(self) -> Dict[date, float]:
+    """
+    Calculate the total cash flows of the loan.
+    Includes loan proceeds as a positive cash flow, loan payments as negative cash flows,
+    and debt repayment at maturity as a negative cash flow.
+    Returns a dictionary with dates as keys and cash flows as values.
+    """
+    cash_flows = {}
 
+    # Add the loan proceeds at origination as a positive cash flow
+    cash_flows[self.origination_date] = self.original_balance
 
+    # Add the regular loan payments as negative cash flows
+    for entry in self.schedule[1:]:
+        date = entry['date']
+        cash_flows[date] = cash_flows.get(date, 0) - entry['Total Payment']
 
-        # Adjust final payment if necessary
-        if abs(current_balance) > 0.01:
-            final_payment = current_balance + cash_flows[-1]['Total Payment']
-            cash_flows[-1] = {
-                'date': self.maturity_date,
-                'Loan Proceeds': 0,
-                'Interest Expense': 0,
-                'Principal Payments': 0,
-                'Debt Repayment': current_balance,
-                'Total Payment': final_payment
-            }
+    # Add the debt repayment at maturity as a negative cash flow
+    maturity_date = self.maturity_date
+    if maturity_date in cash_flows:
+        cash_flows[maturity_date] -= self.get_current_balance(maturity_date)
+    else:
+        cash_flows[maturity_date] = -self.get_current_balance(maturity_date)
 
-        return cash_flows
+    return cash_flows
 
-    def get_cash_flows(self) -> Dict[pd.Timestamp, float]:
-        """
-        Calculate the total cash flows of the loan.
-        Includes loan proceeds as a positive cash flow, loan payments as negative cash flows,
-        and debt repayment at maturity as a negative cash flow.
-        Returns a dictionary with dates as keys and cash flows as values.
-        """
-        cash_flows = {}
-    
-        # Add the loan proceeds at origination as a positive cash flow
-        cash_flows[self.origination_date] = self.original_balance
-    
-        # Add the regular loan payments as negative cash flows
-        for entry in self.schedule[1:]:
-            date = entry['date']
-            cash_flows[date] = cash_flows.get(date, 0) - entry['Total Payment']
-    
-        # Add the debt repayment at maturity as a negative cash flow
-        maturity_date = self.maturity_date
-        if maturity_date in cash_flows:
-            cash_flows[maturity_date] -= self.get_current_balance(maturity_date)
+def calculate_debt_service(self, calculation_date: date) -> float:
+    if self.origination_date <= calculation_date <= self.maturity_date:
+        months_from_origination = (calculation_date.year - self.origination_date.year) * 12 + \
+            calculation_date.month - self.origination_date.month
+        if months_from_origination < self.interest_only_period:
+            return self._calculate_interest(self.original_balance, calculation_date, calculation_date + relativedelta(months=1))
         else:
-            cash_flows[maturity_date] = -self.get_current_balance(maturity_date)
-    
-        return cash_flows
+            return self._calculate_monthly_payment()
+    else:
+        return 0
 
-    def calculate_debt_service(self, calculation_date: pd.Timestamp) -> float:
-        if self.origination_date <= calculation_date <= self.maturity_date:
-            months_from_origination = (calculation_date.year - self.origination_date.year) * 12 + \
-                calculation_date.month - self.origination_date.month
-            if months_from_origination < self.interest_only_period:
-                return self._calculate_interest(self.original_balance, calculation_date, calculation_date + relativedelta(months=1))
-            else:
-                return self._calculate_monthly_payment()
+def get_current_balance(self, as_of_date: date) -> float:
+    self.get_schedule()
+    closest_entry = None
+    for entry in self.schedule:
+        entry_date = entry['date']
+        if entry_date <= as_of_date:
+            closest_entry = entry
         else:
-            return 0
+            break
 
-    def get_current_balance(self, as_of_date: pd.Timestamp) -> float:
-        self.get_schedule()
-        closest_entry = None
-        for entry in self.schedule:
-            entry_date = pd.Timestamp(entry['date'])
-            if entry_date <= as_of_date:
-                closest_entry = entry
-            else:
-                break
+    # If the as_of_date is past the maturity date, return the last entry's balance
+    if as_of_date > self.schedule[-1]['date']:
+        return 0
     
-        # If the as_of_date is past the maturity date, return the last entry's balance
-        if as_of_date > pd.Timestamp(self.schedule[-1]['date']):
-            return 0
-        
-        # If no entry is found before the as_of_date, return 0
-        if closest_entry is None:
-            return 0
-    
-        return closest_entry['Ending Balance']
+    # If no entry is found before the as_of_date, return 0
+    if closest_entry is None:
+        return 0
 
-    def get_payoff_amount(self, payoff_date: pd.Timestamp) -> float:
-        current_balance = self.get_current_balance(payoff_date)
-        return current_balance
+    return closest_entry['Ending Balance']
 
-    def get_payment_info(self, payment_date: pd.Timestamp) -> Dict[str, float]:
-        if payment_date < self.origination_date or payment_date > self.maturity_date:
-            return {
-                'interest': 0,
-                'principal': 0,
-                'total_payment': 0,
-                'remaining_balance': self.get_current_balance(payment_date)
-            }
+def get_payoff_amount(self, payoff_date: date) -> float:
+    current_balance = self.get_current_balance(payoff_date)
+    return current_balance
 
-        # Find the closest date in the schedule that is less than or equal to the payment_date
-        closest_date = max(pd.Timestamp(
-            d['date']) for d in self.schedule if pd.Timestamp(d['date']) <= payment_date)
-        schedule_entry = next(entry for entry in self.schedule if pd.Timestamp(
-            entry['date']) == closest_date)
-
-        interest = schedule_entry['Interest Expense']
-        principal = schedule_entry['Principal Payments']
-        total_payment = schedule_entry['Total Payment']
-        remaining_balance = schedule_entry['Ending Balance']
-
+def get_payment_info(self, payment_date: date) -> Dict[str, float]:
+    if payment_date < self.origination_date or payment_date > self.maturity_date:
         return {
-            'interest': interest,
-            'principal': principal,
-            'total_payment': total_payment,
-            'remaining_balance': remaining_balance
+            'interest': 0,
+            'principal': 0,
+            'total_payment': 0,
+            'remaining_balance': self.get_current_balance(payment_date)
         }
 
-    def __str__(self):
-        return (f"Loan {self.loan_id}: ${self.original_balance:,.2f} at {self.note_rate*100:.2f}% "
-                f"maturing on {self.maturity_date}, using {self.day_count_method} day count, "
-                f"with {self.interest_only_period} months interest-only")
+    # Find the closest date in the schedule that is less than or equal to the payment_date
+    closest_date = max(
+        d['date'] for d in self.schedule if d['date'] <= payment_date)
+    schedule_entry = next(entry for entry in self.schedule if entry['date'] == closest_date)
 
+    interest = schedule_entry['Interest Expense']
+    principal = schedule_entry['Principal Payments']
+    total_payment = schedule_entry['Total Payment']
+    remaining_balance = schedule_entry['Ending Balance']
+
+    return {
+        'interest': interest,
+        'principal': principal,
+        'total_payment': total_payment,
+        'remaining_balance': remaining_balance
+    }
+
+def __str__(self):
+    return (f"Loan {self.loan_id}: ${self.original_balance:,.2f} at {self.note_rate*100:.2f}% "
+            f"maturing on {self.maturity_date}, using {self.day_count_method} day count, "
+            f"with {self.interest_only_period} months interest-only")
