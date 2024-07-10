@@ -250,10 +250,10 @@ class Property:
             start_date = self.analysis_start_date
         if end_date is None:
             end_date = self.analysis_end_date
-
+    
         start_date = self._standardize_date(start_date)
         end_date = self._standardize_date(end_date)
-
+    
         if self.loan:
             self.loan.get_schedule()
         
@@ -262,7 +262,7 @@ class Property:
         df = self.get_cash_flows_dataframe(start_date=start_date, end_date=end_date)
     
         columns_to_change_sign = ['Capital Expenditures', 'Purchase Price', 'Interest Expense','Principal Payments','Partner Buyout','Debt Scheduled Repayment','Debt Early Prepayment']
-    
+        
         adjusted_columns = [col for col in df.columns if 'Adjusted' in col]
         if ownership_adjusted:
             cf_df = df[adjusted_columns]
@@ -279,8 +279,15 @@ class Property:
                 cf_df.loc[:, adjusted_col_name] = -cf_df[adjusted_col_name]
     
         cf_df.loc[:, 'Total Cash Flow'] = cf_df.drop(columns=['Ownership Share']).sum(axis=1)
+        
+        # Ensure the index is in date format
+        cf_df.index = cf_df.index.map(lambda x: x.date())
     
         return cf_df
+    
+    def _standardize_date(self, d: date) -> date:
+        """Standardize a date to the first of its month."""
+        return d.replace(day=1)
 
     def update_ownership_share(self, start_date: date, new_share: float):
         start_date = self._standardize_date(start_date)
