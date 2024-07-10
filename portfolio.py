@@ -55,7 +55,7 @@ class Portfolio:
             property_cf = property.hold_period_cash_flows_x(start_date=self.start_date, end_date=self.end_date)
             property_cf.index = property_cf.index.map(lambda x: x)  # Ensure index is in date format
             # Ensure the DataFrame is within the specified date range
-            property_cf = property_cf[(property_cf.index >= self.start_date) & (property_cf.index <= self.end_date)]
+            #property_cf = property_cf[(property_cf.index >= self.start_date) & (property_cf.index <= self.end_date)]
             aggregate_cf = aggregate_cf.add(property_cf, fill_value=0)
     
         # Aggregate loan cash flows
