@@ -161,9 +161,9 @@ class Property:
 
     def get_cash_flows_dataframe(self, start_date: Optional[date] = None, end_date: Optional[date] = None) -> pd.DataFrame:
         if start_date is None:
-            start_date = self.analysis_start_date
+            start_date = self.analysis_start_date.date()
         if end_date is None:
-            end_date = self.analysis_end_date
+            end_date = self.analysis_end_date.date()
         st.write(start_date)
         st.write(end_date)
         st.write(self.sale_date)
@@ -263,12 +263,9 @@ class Property:
     
     def hold_period_cash_flows_x(self, ownership_adjusted: bool = True, start_date: Optional[date] = None, end_date: Optional[date] = None) -> pd.DataFrame:
         if start_date is None:
-            start_date = self.analysis_start_date
+            start_date = self.analysis_start_date.date()
         if end_date is None:
-            end_date = self.analysis_end_date
-    
-        start_date = self._standardize_date(start_date)
-        end_date = self._standardize_date(end_date)
+            end_date = self.analysis_end_date.date()
     
         if self.loan:
             self.loan.get_schedule()
