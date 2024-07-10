@@ -225,9 +225,9 @@ class Loan:
             'Adjusted Debt Scheduled Repayment': 0
         })
         current_date = next_date
-    cash_flows[-1]['Adjusted Debt Scheduled Repayment'] = -current_balance
-
-    return cash_flows
+        cash_flows[-1]['Adjusted Debt Scheduled Repayment'] = -current_balance
+    
+        return cash_flows
 
     def get_cash_flows(self) -> Dict[date, float]:
         """
