@@ -7,6 +7,12 @@ from portfolio import Portfolio
 from datetime import date, datetime
 
 st.title('Property and Loan Importer')
+
+# Get the current date
+now = date.today()
+start_date = date(now.year, now.month, 1)
+end_date = date(start_date.year + 3, start_date.month, 1)
+
     
 properties_and_loans_file = st.file_uploader('Upload Properties and Loans Excel File', type=['xlsx'])
 #cashflows_file = st.file_uploader('Upload Cashflows Excel File', type=['xlsx'])
@@ -20,5 +26,5 @@ if st.button("Upload Portfolio"):
             property_obj.noi = noi.get(property_obj.property_id, {})
     
     st.session_state.properties = properties
-    portfolio = Portfolio(name='Dunphy', properties=properties)
+    portfolio = Portfolio(name='Dunphy', properties=properties, start_date=start_date, end_date=end_date)
     st.session_state.portfolio = portfolio
