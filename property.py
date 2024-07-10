@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 from typing import Optional, Dict, List
 import pandas as pd
