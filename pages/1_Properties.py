@@ -6,6 +6,10 @@ from config import adjusted_column_config
 from loan import Loan
 from property import Property
 
+def _standardize_date(self, d: date) -> date:
+    """Standardize a date to the first of its month."""
+    return date(d.year, d.month, 1)
+
 def update_property(properties, selected_property, updated_data, noi_data, capex_data, loan_data):
     for prop in properties:
         if prop.property_id == selected_property.property_id:
@@ -22,7 +26,7 @@ def update_property(properties, selected_property, updated_data, noi_data, capex
             prop.ownership_share = updated_data['ownership_share']
             prop.sale_date = updated_data['sale_date']
             prop.sale_price = updated_data['sale_price']
-            prop.buyout_date = updated_data['buyout_date']
+            prop.buyout_date = _standardize_date(updated_data['buyout_date'])
             prop.buyout_amount = updated_data['buyout_amount']
             
             # Update NOI and CapEx
