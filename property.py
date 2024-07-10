@@ -171,7 +171,7 @@ class Property:
     
         # Generate a date range for the entire analysis period
         end_date = min(end_date, self.sale_date) if self.sale_date else end_date
-        dates = pd.date_range(start=self._standardize_date(start_date), end=end_date, freq='MS')
+        dates = pd.date_range(start=self._standardize_date(start_date), end=self._standardize_date(end_date), freq='MS').date
         dates = [date(d.year, d.month, d.day) for d in dates]
     
         # Create a DataFrame with these dates as the index
@@ -188,7 +188,7 @@ class Property:
             'Debt Scheduled Repayment',
             'Debt Early Prepayment',
         ])
-        
+    
         cash_flows_df.at[self.purchase_date, 'Purchase Price'] = self.purchase_price
     
         # Fill in the DataFrame with cash flow data
@@ -227,6 +227,8 @@ class Property:
         cash_flows_df.fillna(0, inplace=True)
     
         return cash_flows_df
+
+
 
     def calculate_cash_flow_before_debt_service(self, start_date: date, end_date: date, ownership_adjusted: bool = True) -> Dict[date, float]:
         start_date = self._standardize_date(start_date)
@@ -268,9 +270,10 @@ class Property:
     
         if self.loan:
             self.loan.get_schedule()
-        
+    
         if self.buyout_date:
             self.update_ownership_share(self.buyout_date, 1)
+    
         df = self.get_cash_flows_dataframe(start_date=start_date, end_date=end_date)
     
         columns_to_change_sign = ['Capital Expenditures', 'Purchase Price', 'Interest Expense','Principal Payments','Partner Buyout','Debt Scheduled Repayment','Debt Early Prepayment']
@@ -284,16 +287,13 @@ class Property:
             non_adjusted_columns = [col for col in df.columns if 'Adjusted' not in col]
             cf_df = df[non_adjusted_columns]
             cf_df['Ownership Share'] = df['Ownership Share']
-        
+    
         for col in columns_to_change_sign:
             adjusted_col_name = f'Adjusted {col}' if ownership_adjusted else col
             if adjusted_col_name in cf_df.columns:
                 cf_df.loc[:, adjusted_col_name] = -cf_df[adjusted_col_name]
     
         cf_df.loc[:, 'Total Cash Flow'] = cf_df.drop(columns=['Ownership Share']).sum(axis=1)
-        
-        # Ensure the index is in date format
-        cf_df.index = cf_df.index.map(lambda x: x if isinstance(x, date) else x.date())
     
         return cf_df
 
