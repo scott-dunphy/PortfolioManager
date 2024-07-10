@@ -145,7 +145,7 @@ if 'properties' in st.session_state and st.session_state.properties:
                 'ownership_share': ownership_share,
                 'sale_date': sale_date,
                 'sale_price': sale_price,
-                'buyout_date': buyout_date,
+                'buyout_date': _standardize_date(buyout_date),
                 'buyout_amount': buyout_amount
             }
             
@@ -233,7 +233,7 @@ if 'properties' in st.session_state and st.session_state.properties:
                 ownership_share=ownership_share,
                 sale_date=sale_date,
                 sale_price=sale_price,
-                buyout_date=buyout_date,
+                buyout_date=_standardize_date(buyout_date),
                 buyout_amount=buyout_amount,
                 loan=None,  # Initialize with no loan
                 noi={},  # Initialize empty
