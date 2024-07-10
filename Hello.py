@@ -25,7 +25,7 @@ def update_portfolio_dates_and_calculate():
     if 'portfolio' in st.session_state:
         st.session_state.portfolio.analysis_start_date = analysis_start_date
         st.session_state.portfolio.analysis_end_date = analysis_end_date
-        return st.session_state.portfolio.aggregate_hold_period_cash_flows()
+        return st.session_state.portfolio.aggregate_hold_period_cash_flows(analysis_start_date, analysis_end_date)
     return None
 
 # Initialize properties in session state if not already present
