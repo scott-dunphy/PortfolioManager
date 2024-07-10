@@ -159,15 +159,18 @@ class Property:
         new_capex = dict(zip(dates, capex))
         self.capex = new_capex
 
-    def get_cash_flows_dataframe(self, ownership_adjusted: bool = True, start_date: Optional[date] = None, end_date: Optional[date] = None) -> pd.DataFrame:
+    def get_cash_flows_dataframe(self, start_date: Optional[date] = None, end_date: Optional[date] = None) -> pd.DataFrame:
         if start_date is None:
             start_date = self.analysis_start_date
         if end_date is None:
             end_date = self.analysis_end_date
+        # Generate a date range for the entire analysis period
         if self.sale_date:
             end_date = min(end_date, self.sale_date)
-        dates = pd.date_range(start=self._standardize_date(start_date), end=end_date, freq='MS').to_pydatetime()
+        dates = pd.date_range(start=self._standardize_date(start_date), end=end_date, freq='MS')
         dates = [date(d.year, d.month, d.day) for d in dates]
+    
+        # Create a DataFrame with these dates as the index
         cash_flows_df = pd.DataFrame(index=dates, columns=[
             'Ownership Share',
             'Purchase Price',
@@ -181,12 +184,16 @@ class Property:
             'Debt Scheduled Repayment',
             'Debt Early Prepayment',
         ])
+        
         cash_flows_df.at[self.purchase_date, 'Purchase Price'] = self.purchase_price
-        for d in dates:
-            standardized_date = self._standardize_date(d)
+    
+        # Fill in the DataFrame with cash flow data
+        for date in dates:
+            standardized_date = self._standardize_date(date)
             cash_flows_df.at[standardized_date, 'Ownership Share'] = self.ownership_share_series.get(standardized_date, 1.0)
             cash_flows_df.at[standardized_date, 'Net Operating Income'] = self.noi.get(standardized_date, 0)
             cash_flows_df.at[standardized_date, 'Capital Expenditures'] = self.capex.get(standardized_date, 0)
+    
         if self.loan:
             loan_cash_flows = self.loan.get_schedule()
             for loan_cf in loan_cash_flows:
@@ -196,24 +203,25 @@ class Property:
                 if standardized_date == self.loan.origination_date:
                     cash_flows_df.at[standardized_date, 'Loan Proceeds'] = self.loan.original_balance
                 if standardized_date == self.loan.maturity_date and not self.sale_date:
-                                        cash_flows_df.at[standardized_date, 'Debt Scheduled Repayment'] = self.loan.get_current_balance(self.loan.maturity_date)
-
+                    cash_flows_df.at[standardized_date, 'Debt Repayment'] = self.loan.get_current_balance(self.loan.maturity_date)
+    
         if self.sale_date is not None:
             cash_flows_df.at[self.sale_date, 'Sale Proceeds'] = self.sale_price
             if self.loan:
                 cash_flows_df.at[self.sale_date, 'Debt Early Prepayment'] = self.loan.get_current_balance(self.sale_date)
-
+    
         for col in cash_flows_df.columns[1:]:
             adjusted_column = "Adjusted " + col
             cash_flows_df[adjusted_column] = cash_flows_df[col] * cash_flows_df['Ownership Share']
-
+    
         if self.buyout_date:
-            cash_flows_df.at[self.buyout_date, 'Partner Buyout'] = self.buyout_amount
-            cash_flows_df.at[self.buyout_date, 'Adjusted Partner Buyout'] = self.buyout_amount
-
+            standardized_buyout_date = self._standardize_date(self.buyout_date)
+            cash_flows_df.at[standardized_buyout_date, 'Partner Buyout'] = self.buyout_amount
+            cash_flows_df.at[standardized_buyout_date, 'Adjusted Partner Buyout'] = self.buyout_amount
+    
         # Replace NaN values with 0
         cash_flows_df.fillna(0, inplace=True)
-
+    
         return cash_flows_df
 
     def calculate_cash_flow_before_debt_service(self, start_date: date, end_date: date, ownership_adjusted: bool = True) -> Dict[date, float]:
@@ -281,9 +289,10 @@ class Property:
         cf_df.loc[:, 'Total Cash Flow'] = cf_df.drop(columns=['Ownership Share']).sum(axis=1)
         
         # Ensure the index is in date format
-        cf_df.index = cf_df.index.map(lambda x: x.date() if isinstance(x, (pd.Timestamp, datetime)) else x)
+        cf_df.index = cf_df.index.map(lambda x: x if isinstance(x, date) else x.date())
     
         return cf_df
+
     
     def _standardize_date(self, d: date) -> date:
         """Standardize a date to the first of its month."""
