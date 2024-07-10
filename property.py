@@ -91,7 +91,7 @@ class Property:
 
     def _standardize_date(self, d: date) -> date:
         """Standardize a date to the first of its month."""
-        return date(d.year, d.month, 1)
+        return date(d.year, d.month, 1).date()
 
     def _standardize_cash_flow_dates(self, cash_flows: Dict[date, float]) -> Dict[date, float]:
         """Standardize all dates in a cash flow dictionary to the first of their respective months."""
@@ -174,7 +174,7 @@ class Property:
             self.sale_date = self.sale_date.date()
     
         # Generate a date range for the entire analysis period
-        end_date = min(end_date, self.sale_date) if self.sale_date else end_date
+        end_date = min(end_date, self.sale_date) if self.sale_date.date() else end_date
         dates = pd.date_range(start=self._standardize_date(start_date), end=self._standardize_date(end_date), freq='MS').date
         dates = [date(d.year, d.month, d.day) for d in dates]
     
