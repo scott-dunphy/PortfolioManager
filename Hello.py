@@ -1,5 +1,5 @@
 import streamlit as st
-from datetime import datetime, timedelta
+from datetime import date, timedelta
 import pandas as pd
 from portfolio import Portfolio
 from property import Property
@@ -13,15 +13,15 @@ st.set_page_config(
 
 st.title("CRE Portfolio Manager 🏗️")
 
-# Get the current date and time
-now = datetime.now()
-start_date = pd.Timestamp(datetime(now.year, now.month, 1))
-end_date = pd.Timestamp(datetime(start_date.year + 3, start_date.month, 1))
+# Get the current date
+now = date.today()
+start_date = date(now.year, now.month, 1)
+end_date = date(start_date.year + 3, start_date.month, 1)
 
 # User input for analysis start and end dates
-analysis_start_date = pd.Timestamp(st.date_input('Analysis Start Date', value=start_date))
+analysis_start_date = st.date_input('Analysis Start Date', value=start_date)
 st.write(analysis_start_date)
-analysis_end_date = pd.Timestamp(st.date_input('Analysis End Date', value=end_date))
+analysis_end_date = st.date_input('Analysis End Date', value=end_date)
 
 # Initialize properties in session state if not already present
 if 'properties' in st.session_state:
@@ -41,8 +41,3 @@ if 'properties' in st.session_state:
     st.dataframe(cash_flows, column_config=adjusted_column_config, use_container_width=True)
 else:
     st.write("Looks like you haven't uploaded any properties yet.\n Go to the Upload page to upload a portfolio or the Properties page to add individual properties.")
-
-
-
-
-
