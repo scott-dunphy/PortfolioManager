@@ -229,94 +229,94 @@ class Loan:
 
     return cash_flows
 
-def get_cash_flows(self) -> Dict[date, float]:
-    """
-    Calculate the total cash flows of the loan.
-    Includes loan proceeds as a positive cash flow, loan payments as negative cash flows,
-    and debt repayment at maturity as a negative cash flow.
-    Returns a dictionary with dates as keys and cash flows as values.
-    """
-    cash_flows = {}
-
-    # Add the loan proceeds at origination as a positive cash flow
-    cash_flows[self.origination_date] = self.original_balance
-
-    # Add the regular loan payments as negative cash flows
-    for entry in self.schedule[1:]:
-        date = entry['date']
-        cash_flows[date] = cash_flows.get(date, 0) - entry['Total Payment']
-
-    # Add the debt repayment at maturity as a negative cash flow
-    maturity_date = self.maturity_date
-    if maturity_date in cash_flows:
-        cash_flows[maturity_date] -= self.get_current_balance(maturity_date)
-    else:
-        cash_flows[maturity_date] = -self.get_current_balance(maturity_date)
-
-    return cash_flows
-
-def calculate_debt_service(self, calculation_date: date) -> float:
-    if self.origination_date <= calculation_date <= self.maturity_date:
-        months_from_origination = (calculation_date.year - self.origination_date.year) * 12 + \
-            calculation_date.month - self.origination_date.month
-        if months_from_origination < self.interest_only_period:
-            return self._calculate_interest(self.original_balance, calculation_date, calculation_date + relativedelta(months=1))
-        else:
-            return self._calculate_monthly_payment()
-    else:
-        return 0
-
-def get_current_balance(self, as_of_date: date) -> float:
-    self.get_schedule()
-    closest_entry = None
-    for entry in self.schedule:
-        entry_date = entry['date']
-        if entry_date <= as_of_date:
-            closest_entry = entry
-        else:
-            break
-
-    # If the as_of_date is past the maturity date, return the last entry's balance
-    if as_of_date > self.schedule[-1]['date']:
-        return 0
+    def get_cash_flows(self) -> Dict[date, float]:
+        """
+        Calculate the total cash flows of the loan.
+        Includes loan proceeds as a positive cash flow, loan payments as negative cash flows,
+        and debt repayment at maturity as a negative cash flow.
+        Returns a dictionary with dates as keys and cash flows as values.
+        """
+        cash_flows = {}
     
-    # If no entry is found before the as_of_date, return 0
-    if closest_entry is None:
-        return 0
-
-    return closest_entry['Ending Balance']
-
-def get_payoff_amount(self, payoff_date: date) -> float:
-    current_balance = self.get_current_balance(payoff_date)
-    return current_balance
-
-def get_payment_info(self, payment_date: date) -> Dict[str, float]:
-    if payment_date < self.origination_date or payment_date > self.maturity_date:
+        # Add the loan proceeds at origination as a positive cash flow
+        cash_flows[self.origination_date] = self.original_balance
+    
+        # Add the regular loan payments as negative cash flows
+        for entry in self.schedule[1:]:
+            date = entry['date']
+            cash_flows[date] = cash_flows.get(date, 0) - entry['Total Payment']
+    
+        # Add the debt repayment at maturity as a negative cash flow
+        maturity_date = self.maturity_date
+        if maturity_date in cash_flows:
+            cash_flows[maturity_date] -= self.get_current_balance(maturity_date)
+        else:
+            cash_flows[maturity_date] = -self.get_current_balance(maturity_date)
+    
+        return cash_flows
+    
+    def calculate_debt_service(self, calculation_date: date) -> float:
+        if self.origination_date <= calculation_date <= self.maturity_date:
+            months_from_origination = (calculation_date.year - self.origination_date.year) * 12 + \
+                calculation_date.month - self.origination_date.month
+            if months_from_origination < self.interest_only_period:
+                return self._calculate_interest(self.original_balance, calculation_date, calculation_date + relativedelta(months=1))
+            else:
+                return self._calculate_monthly_payment()
+        else:
+            return 0
+    
+    def get_current_balance(self, as_of_date: date) -> float:
+        self.get_schedule()
+        closest_entry = None
+        for entry in self.schedule:
+            entry_date = entry['date']
+            if entry_date <= as_of_date:
+                closest_entry = entry
+            else:
+                break
+    
+        # If the as_of_date is past the maturity date, return the last entry's balance
+        if as_of_date > self.schedule[-1]['date']:
+            return 0
+        
+        # If no entry is found before the as_of_date, return 0
+        if closest_entry is None:
+            return 0
+    
+        return closest_entry['Ending Balance']
+    
+    def get_payoff_amount(self, payoff_date: date) -> float:
+        current_balance = self.get_current_balance(payoff_date)
+        return current_balance
+    
+    def get_payment_info(self, payment_date: date) -> Dict[str, float]:
+        if payment_date < self.origination_date or payment_date > self.maturity_date:
+            return {
+                'interest': 0,
+                'principal': 0,
+                'total_payment': 0,
+                'remaining_balance': self.get_current_balance(payment_date)
+            }
+    
+        # Find the closest date in the schedule that is less than or equal to the payment_date
+        closest_date = max(
+            d['date'] for d in self.schedule if d['date'] <= payment_date)
+        schedule_entry = next(entry for entry in self.schedule if entry['date'] == closest_date)
+    
+        interest = schedule_entry['Interest Expense']
+        principal = schedule_entry['Principal Payments']
+        total_payment = schedule_entry['Total Payment']
+        remaining_balance = schedule_entry['Ending Balance']
+    
         return {
-            'interest': 0,
-            'principal': 0,
-            'total_payment': 0,
-            'remaining_balance': self.get_current_balance(payment_date)
+            'interest': interest,
+            'principal': principal,
+            'total_payment': total_payment,
+            'remaining_balance': remaining_balance
         }
-
-    # Find the closest date in the schedule that is less than or equal to the payment_date
-    closest_date = max(
-        d['date'] for d in self.schedule if d['date'] <= payment_date)
-    schedule_entry = next(entry for entry in self.schedule if entry['date'] == closest_date)
-
-    interest = schedule_entry['Interest Expense']
-    principal = schedule_entry['Principal Payments']
-    total_payment = schedule_entry['Total Payment']
-    remaining_balance = schedule_entry['Ending Balance']
-
-    return {
-        'interest': interest,
-        'principal': principal,
-        'total_payment': total_payment,
-        'remaining_balance': remaining_balance
-    }
-
-def __str__(self):
-    return (f"Loan {self.loan_id}: ${self.original_balance:,.2f} at {self.note_rate*100:.2f}% "
-            f"maturing on {self.maturity_date}, using {self.day_count_method} day count, "
-            f"with {self.interest_only_period} months interest-only")
+    
+    def __str__(self):
+        return (f"Loan {self.loan_id}: ${self.original_balance:,.2f} at {self.note_rate*100:.2f}% "
+                f"maturing on {self.maturity_date}, using {self.day_count_method} day count, "
+                f"with {self.interest_only_period} months interest-only")
