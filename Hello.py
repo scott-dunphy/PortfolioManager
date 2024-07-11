@@ -3,6 +3,7 @@ from datetime import date
 import pandas as pd
 from portfolio import Portfolio
 from config import adjusted_column_config
+from portfolioviz import Portfolioviz
 
 st.set_page_config(
     page_title="CRE Portfolio Manager",
@@ -46,3 +47,6 @@ if 'properties' in st.session_state:
         cash_flows = update_portfolio_dates_and_calculate()
         st.title(st.session_state.portfolio.name)
         st.dataframe(cash_flows, column_config=adjusted_column_config, use_container_width=True)
+
+viz = Portfolioviz(session_state.portfolio)
+viz.plot_property_type_distribution()
