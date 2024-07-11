@@ -50,7 +50,7 @@ class Portfolioviz:
 
     def plot_property_type_distribution(self):
         """Plots the distribution of properties by type."""
-        property_types = [property_.type for property_ in self.portfolio.properties]
+        property_types = [property_.property_type for property_ in self.portfolio.properties]
         plt.figure(figsize=(10, 6))
         plt.hist(property_types, bins=len(set(property_types)), edgecolor='k', alpha=0.7)
         plt.title('Distribution of Property Types')
