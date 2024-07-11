@@ -48,5 +48,5 @@ if 'properties' in st.session_state:
         st.title(st.session_state.portfolio.name)
         st.dataframe(cash_flows, column_config=adjusted_column_config, use_container_width=True)
 
-viz = Portfolioviz(session_state.portfolio)
+viz = Portfolioviz(st.session_state.portfolio)
 viz.plot_property_type_distribution()
