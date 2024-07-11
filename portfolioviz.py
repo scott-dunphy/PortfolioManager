@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+import streamlit as st
 from portfolio import Portfolio
 
 class Portfolioviz:
@@ -15,7 +16,7 @@ class Portfolioviz:
         plt.xlabel('Loan Balance')
         plt.ylabel('Frequency')
         plt.grid(True)
-        plt.show()
+        st.pyplot(plt)
 
     def plot_interest_rate_distribution(self):
         """Plots the distribution of interest rates in the portfolio."""
@@ -26,7 +27,7 @@ class Portfolioviz:
         plt.xlabel('Interest Rate (%)')
         plt.ylabel('Frequency')
         plt.grid(True)
-        plt.show()
+        st.pyplot(plt)
 
     def plot_loan_balance_over_time(self):
         """Plots the loan balances over time."""
@@ -46,19 +47,23 @@ class Portfolioviz:
         plt.xlabel('Date')
         plt.ylabel('Total Loan Balance')
         plt.grid(True)
-        plt.show()
+        st.pyplot(plt)
 
     def plot_property_type_distribution(self):
-        """Plots the distribution of properties by type."""
-        property_types = [property_.property_type for property_ in self.portfolio.properties]
-        plt.figure(figsize=(10, 6))
-        plt.hist(property_types, bins=len(set(property_types)), edgecolor='k', alpha=0.7)
-        plt.title('Distribution of Property Types')
-        plt.xlabel('Property Type')
-        plt.ylabel('Frequency')
-        plt.xticks(rotation=45)
-        plt.grid(True)
-        plt.show()
+        """Plots the distribution of properties by type as a donut chart."""
+        try:
+            property_types = [property_.property_type for property_ in self.portfolio.properties]
+            property_type_counts = pd.Series(property_types).value_counts()
+
+            plt.figure(figsize=(10, 6))
+            plt.pie(property_type_counts, labels=property_type_counts.index, autopct='%1.1f%%', startangle=140, wedgeprops=dict(width=0.3))
+            plt.title('Distribution of Property Types')
+            plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+            st.pyplot(plt)
+        except AttributeError as e:
+            st.error(f"Error accessing property type: {e}")
+        except Exception as e:
+            st.error(f"An unexpected error occurred: {e}")
 
 # Usage example:
 # portfolio = Portfolio()
