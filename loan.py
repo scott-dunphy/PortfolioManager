@@ -181,53 +181,53 @@ class Loan:
 
         return cash_flows
 
-    def get_unsecured_schedule(self) -> List[Dict[str, float]]:
-        self._calculate_monthly_payment()
-        cash_flows = []
-        current_date = self.origination_date
-        current_balance = self.original_balance
-
-        # Add the initial cash flow (loan disbursement)
-        cash_flows.append({
-            'date': self._standardize_date(current_date),
-            'Adjusted Loan Proceeds': self.original_balance,
-            'Adjusted Interest Expense': 0,
-            'Adjusted Principal Payments': 0,
-            'Adjusted Debt Scheduled Repayment': 0
-        })
-
-        while current_date < self.maturity_date:
-            next_date = min(
-                current_date + relativedelta(months=1), self.maturity_date)
-            standardized_date = self._standardize_date(next_date)
-            interest = self._calculate_interest(
-                current_balance, current_date, next_date)
-
-            months_since_origination = (current_date.year - self.origination_date.year) * 12 + \
-                current_date.month - self.origination_date.month
-
-            if self.interest_only_period == 0 and self.amortization_period == 0:
-                principal = 0
-                payment = interest
-            elif months_since_origination < self.interest_only_period:
-                principal = 0
-                payment = interest
-            else:
-                payment = self._calculate_monthly_payment()
-                principal = payment - interest
-
-            current_balance -= principal
-            cash_flows.append({
-                            'date': standardized_date,
-            'Adjusted Loan Proceeds': 0,
-            'Adjusted Interest Expense': -interest,
-            'Adjusted Principal Payments': -principal,
-            'Adjusted Debt Scheduled Repayment': 0
-        })
-        current_date = next_date
-        cash_flows[-1]['Adjusted Debt Scheduled Repayment'] = -current_balance
+        def get_unsecured_schedule(self) -> List[Dict[str, float]]:
+            self._calculate_monthly_payment()
+            cash_flows = []
+            current_date = self.origination_date
+            current_balance = self.original_balance
     
-        return cash_flows
+            # Add the initial cash flow (loan disbursement)
+            cash_flows.append({
+                'date': self._standardize_date(current_date),
+                'Adjusted Loan Proceeds': self.original_balance,
+                'Adjusted Interest Expense': 0,
+                'Adjusted Principal Payments': 0,
+                'Adjusted Debt Scheduled Repayment': 0
+            })
+    
+            while current_date < self.maturity_date:
+                next_date = min(current_date + relativedelta(months=1), self.maturity_date)
+                standardized_date = self._standardize_date(next_date)
+                interest = self._calculate_interest(current_balance, current_date, next_date)
+    
+                months_since_origination = (current_date.year - self.origination_date.year) * 12 + \
+                    current_date.month - self.origination_date.month
+    
+                if self.interest_only_period == 0 and self.amortization_period == 0:
+                    principal = 0
+                    payment = interest
+                elif months_since_origination < self.interest_only_period:
+                    principal = 0
+                    payment = interest
+                else:
+                    payment = self._calculate_monthly_payment()
+                    principal = payment - interest
+    
+                current_balance -= principal
+                cash_flows.append({
+                    'date': standardized_date,
+                    'Adjusted Loan Proceeds': 0,
+                    'Adjusted Interest Expense': -interest,
+                    'Adjusted Principal Payments': -principal,
+                    'Adjusted Debt Scheduled Repayment': 0
+                })
+                current_date = next_date
+    
+            # Add the final repayment adjustment
+            cash_flows[-1]['Adjusted Debt Scheduled Repayment'] = -current_balance
+        
+            return cash_flows
 
     def get_cash_flows(self) -> Dict[date, float]:
         """
