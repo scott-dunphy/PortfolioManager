@@ -1,6 +1,5 @@
-import matplotlib.pyplot as plt
-import pandas as pd
 import streamlit as st
+import pandas as pd
 from portfolio import Portfolio
 
 class Portfolioviz:
@@ -10,24 +9,14 @@ class Portfolioviz:
     def plot_loan_balance_distribution(self):
         """Plots the distribution of loan balances in the portfolio."""
         loan_balances = [loan.original_balance for loan in self.portfolio.unsecured_loans]
-        plt.figure(figsize=(10, 6))
-        plt.hist(loan_balances, bins=20, edgecolor='k', alpha=0.7)
-        plt.title('Distribution of Loan Balances')
-        plt.xlabel('Loan Balance')
-        plt.ylabel('Frequency')
-        plt.grid(True)
-        st.pyplot(plt)
+        chart_data = pd.DataFrame(loan_balances, columns=['Loan Balance'])
+        st.bar_chart(chart_data)
 
     def plot_interest_rate_distribution(self):
         """Plots the distribution of interest rates in the portfolio."""
         interest_rates = [loan.note_rate for loan in self.portfolio.unsecured_loans]
-        plt.figure(figsize=(10, 6))
-        plt.hist(interest_rates, bins=20, edgecolor='k', alpha=0.7)
-        plt.title('Distribution of Interest Rates')
-        plt.xlabel('Interest Rate (%)')
-        plt.ylabel('Frequency')
-        plt.grid(True)
-        st.pyplot(plt)
+        chart_data = pd.DataFrame(interest_rates, columns=['Interest Rate'])
+        st.bar_chart(chart_data)
 
     def plot_loan_balance_over_time(self):
         """Plots the loan balances over time."""
@@ -41,27 +30,18 @@ class Portfolioviz:
         df['date'] = pd.to_datetime(df['date'])
         df = df.groupby('date')['balance'].sum().reset_index()
 
-        plt.figure(figsize=(10, 6))
-        plt.plot(df['date'], df['balance'], marker='o')
-        plt.title('Loan Balances Over Time')
-        plt.xlabel('Date')
-        plt.ylabel('Total Loan Balance')
-        plt.grid(True)
-        st.pyplot(plt)
+        st.line_chart(df.set_index('date'))
 
     def plot_property_type_distribution(self):
-        """Plots the distribution of properties by type as a donut chart."""
+        """Plots the distribution of properties by type as a bar chart based on current value."""
         try:
-            property_types = [property_.property_type for property_ in self.portfolio.properties]
-            property_type_counts = pd.Series(property_types).value_counts()
+            data = [(property_.property_type, property_.current_value) for property_ in self.portfolio.properties]
+            df = pd.DataFrame(data, columns=['property_type', 'current_value'])
+            property_type_values = df.groupby('property_type')['current_value'].sum().reset_index()
 
-            plt.figure(figsize=(10, 6))
-            plt.pie(property_type_counts, labels=property_type_counts.index, autopct='%1.1f%%', startangle=140, wedgeprops=dict(width=0.3))
-            plt.title('Distribution of Property Types')
-            plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-            st.pyplot(plt)
+            st.bar_chart(property_type_values.set_index('property_type'))
         except AttributeError as e:
-            st.error(f"Error accessing property type: {e}")
+            st.error(f"Error accessing property attributes: {e}")
         except Exception as e:
             st.error(f"An unexpected error occurred: {e}")
 
