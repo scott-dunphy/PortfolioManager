@@ -5,8 +5,13 @@ import pandas as pd
 import uuid
 from loan import Loan
 
-# Assuming you have a list of unsecured loans stored in st.session_state.unsecured_loans
-unsecured_loans = st.session_state.portfolio.unsecured_loans if 'portfolio' in st.session_state else []
+# Debugging: Check if 'portfolio' is in session state
+if 'portfolio' not in st.session_state:
+    st.error("Portfolio not found in session state.")
+    st.stop()
+
+# Assuming you have a list of unsecured loans stored in st.session_state.portfolio.unsecured_loans
+unsecured_loans = st.session_state.portfolio.unsecured_loans
 
 loan_names = [loan.loan_id for loan in unsecured_loans]
 selected_loan_name = st.selectbox("Select Unsecured Loan", loan_names)
@@ -55,21 +60,25 @@ loan = Loan(
 
 # Display the unsecured loan schedule
 st.write("Unsecured Loan Schedule:")
-st.dataframe(pd.DataFrame(loan.get_unsecured_schedule()))
+try:
+    schedule_df = pd.DataFrame(loan.get_unsecured_schedule())
+    st.dataframe(schedule_df)
+except Exception as e:
+    st.error(f"Error generating schedule: {e}")
 
 # Add buttons for adding new and updating existing loan
 if st.button("Add New Unsecured Loan"):
-    if 'portfolio' in st.session_state:
+    try:
         st.session_state.portfolio.add_unsecured_loan(loan)
         st.success("New Unsecured Loan added successfully.")
-    else:
-        st.error("Portfolio not found in session state.")
+    except Exception as e:
+        st.error(f"Error adding new unsecured loan: {e}")
 
 if st.button("Update Unsecured Loan"):
-    if 'portfolio' in st.session_state:
+    try:
         if selected_loan:
             st.session_state.portfolio.remove_unsecured_loan(selected_loan.loan_id)
         st.session_state.portfolio.add_unsecured_loan(loan)
         st.success("Unsecured Loan updated successfully.")
-    else:
-        st.error("Portfolio not found in session state.")
+    except Exception as e:
+        st.error(f"Error updating unsecured loan: {e}")
