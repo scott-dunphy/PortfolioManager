@@ -355,4 +355,6 @@ if st.button("Save Session State"):
 
 if 'properties' in st.session_state and property_id in [prop.property_id for prop in st.session_state.properties]:
     if st.button("Delete Property"):
-        st.session_state.properties.pop(property_id)
+        st.session_state.properties = [prop for prop in st.session_state.properties if prop.property_id != property_id]
+        st.rerun()
+            
