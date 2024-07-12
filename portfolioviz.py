@@ -25,7 +25,7 @@ class Portfolioviz:
             schedule = loan.get_unsecured_schedule()
             for entry in schedule:
                 date = entry['date']
-                balance = entry['Adjusted Loan Proceeds'] - entry['Adjusted Principal Payments']
+                balance = entry['Adjusted Loan Proceeds'] + entry['Adjusted Principal Payments']
                 data.append({'date': date, 'balance': balance, 'loan_id': loan.loan_id})
 
         if not data:
