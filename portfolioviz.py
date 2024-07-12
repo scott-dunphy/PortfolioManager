@@ -23,6 +23,7 @@ class Portfolioviz:
         data = []
         for loan in self.portfolio.unsecured_loans:
             schedule = loan.get_unsecured_schedule()
+            balance = 0
             for entry in schedule:
                 date = entry['date']
                 balance = balance + entry['Adjusted Loan Proceeds'] + entry['Adjusted Principal Payments']
