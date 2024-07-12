@@ -352,3 +352,7 @@ else:
 if st.button("Save Session State"):
     save_session_state()
     st.success("Session state saved to file.")
+
+if 'properties' in st.session_state and property_id in [prop.property_id for prop in st.session_state.properties]:
+    if st.button("Delete Property"):
+        st.session_state.properties.pop(property_id)
