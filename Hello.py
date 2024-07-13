@@ -46,7 +46,8 @@ if 'properties' in st.session_state:
     if st.button("Calculate"):
         cash_flows = update_portfolio_dates_and_calculate()
         st.title(st.session_state.portfolio.name)
-        st.dataframe(cash_flows, column_config=adjusted_column_config, use_container_width=True)
+        st.dataframe(cash_flows.T, column_config=adjusted_column_config, use_container_width=True)
+        
 
         st.write("Market Value by Property Type")
         viz = Portfolioviz(st.session_state.portfolio)
