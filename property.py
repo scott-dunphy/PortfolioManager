@@ -190,9 +190,9 @@ class Property:
             standardized_date = self._standardize_date(d)
             cash_flows_df.at[standardized_date, 'Ownership Share'] = self.ownership_share_series.get(standardized_date, 1.0)
 
-        st.write("Fin DF")
-        fin_df = self.noi_capex[['Net Operating Income', 'Capital Expenditures']]
-        st.write(fin_df)
+        #st.write("Fin DF")
+        #fin_df = self.noi_capex[['Net Operating Income', 'Capital Expenditures']]
+        #st.write(fin_df)
         
         cash_flows_df.add(fin_df,fill_value=0)
 
