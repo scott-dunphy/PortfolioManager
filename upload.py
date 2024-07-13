@@ -40,7 +40,7 @@ def load_properties_and_loans(file_path):
             sale_price=row.get('Sale Price'),
             loan=loan,
             ownership_share=row.get('Ownership Share', 1),
-            buyout_date=row['Buyout Date'].date() if pd.notna(row['Buyout Date']) else date(2100,12,1),
+            buyout_date=row['Buyout Date'].date() if pd.notna(row['Buyout Date']) else date(2100, 12, 1),
             buyout_amount=row.get('Buyout Amount', 0)
         )
         properties.append(property_obj)
