@@ -42,8 +42,6 @@ class Property:
         self.sale_price = sale_price
         self.current_value = current_value if current_value is not None else purchase_price
         self.loan = loan
-        self.noi = self._standardize_cash_flow_dates(noi) if noi is not None else {}
-        self.capex = self._standardize_cash_flow_dates(capex) if capex is not None else {}
         self.ownership_share = ownership_share
         self._initialize_ownership_share()
         self.buyout_date = self._standardize_date(buyout_date) if buyout_date else None
@@ -154,10 +152,10 @@ class Property:
         new_noi = dict(zip(dates, noi))
         self.noi = new_noi
 
-    def add_noi(self, noi: dict):
+    def add_noi(self, noi: pd.DataFrame):
         self.noi = noi
 
-    def add_capex(self, capex: dict):
+    def add_capex(self, capex: pd.DataFrame):
         self.capex = capex
 
     def streamlit_add_capex(self, capex: str):
