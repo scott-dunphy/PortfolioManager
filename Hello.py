@@ -47,18 +47,18 @@ if 'properties' in st.session_state:
         cash_flows = update_portfolio_dates_and_calculate()
         st.title(st.session_state.portfolio.name)
         #st.dataframe(cash_flows.T, column_config=adjusted_column_config, use_container_width=True)
-    cash_flows = st.data_editor(cash_flows.T, column_config=adjusted_column_config, use_container_width=True)
-    transposed_df = cash_flows.T.sum()
-    transposed_df = transposed_df.to_frame().T
-    transposed_df.index = ['Total']
+cash_flows = st.data_editor(cash_flows.T, column_config=adjusted_column_config, use_container_width=True)
+transposed_df = cash_flows.T.sum()
+transposed_df = transposed_df.to_frame().T
+transposed_df.index = ['Total']
 
-    # Display in Streamlit without the index
-    st.dataframe(transposed_df)
-    
+# Display in Streamlit without the index
+st.dataframe(transposed_df)
 
-    st.write("Market Value by Property Type")
-    viz = Portfolioviz(st.session_state.portfolio)
-    viz.plot_property_type_distribution()
 
-    st.write("Unsecured Loan Balance")
-    viz.plot_loan_balance_over_time()
+st.write("Market Value by Property Type")
+viz = Portfolioviz(st.session_state.portfolio)
+viz.plot_property_type_distribution()
+
+st.write("Unsecured Loan Balance")
+viz.plot_loan_balance_over_time()
