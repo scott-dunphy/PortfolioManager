@@ -22,8 +22,8 @@ class Property:
         sale_date: Optional[date] = None,
         sale_price: Optional[float] = None,
         loan: Optional['Loan'] = None,
-        noi: Optional[Dict[date, float]] = None,
-        capex: Optional[Dict[date, float]] = None,
+        noi: Optional[pd.DataFrame] = None,
+        capex: Optional[pd.DataFrame] = None,
         ownership_share: float = 1,
         buyout_date: Optional[date] = None,
         buyout_amount: Optional[float] = None
@@ -46,6 +46,8 @@ class Property:
         self._initialize_ownership_share()
         self.buyout_date = self._standardize_date(buyout_date) if buyout_date else None
         self.buyout_amount = buyout_amount
+        self.noi = noi
+        self.capex = capex
 
     def to_dict(self):
         return {
