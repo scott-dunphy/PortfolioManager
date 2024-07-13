@@ -204,7 +204,6 @@ class Property:
         
         fin_df = self.noi_capex.copy()
         cash_flows_df = cash_flows_df.add(fin_df[['Net Operating Income', 'Capital Expenditures']], fill_value=0)
-        st.write(cash_flows_df)
         
         if self.loan:
             loan_cash_flows = self.loan.get_schedule()
@@ -222,6 +221,9 @@ class Property:
             if self.loan:
                 cash_flows_df.at[self.sale_date, 'Debt Early Prepayment'] = self.loan.get_current_balance(self.sale_date)
 
+        col_order = ['Ownership Share', 'Purchase Price', 'Loan Proceeds', 'Net Operating Income', 'Capital Expenditures', 'Interest Expense', 'Principal Payments', 'Debt Scheduled Repayment', 'Debt Early Prepayment', 'Sale Proceeds', 'Partner Buyout']
+        cash_flows_df = cash_flows_df[col_order]
+        
         for col in cash_flows_df.columns[1:]:
             adjusted_column = "Adjusted " + col
             cash_flows_df[adjusted_column] = cash_flows_df[col] * cash_flows_df['Ownership Share']
