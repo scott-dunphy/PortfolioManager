@@ -190,9 +190,10 @@ class Property:
             cash_flows_df.at[standardized_date, 'Ownership Share'] = self.ownership_share_series.get(standardized_date, 1.0)
 
         fin_df = self.noi_capex.set_index("Date")
-        fin_df = fin_df[['Net Operating Income', 'Capital Expenditures']]
         st.write("Fin DF")
         st.write(fin_df)
+        fin_df = fin_df[['Net Operating Income', 'Capital Expenditures']]
+        
         cash_flows_df.add(fin_df,fill_value=0)
 
         if self.loan:
