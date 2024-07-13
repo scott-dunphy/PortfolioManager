@@ -245,10 +245,8 @@ if 'properties' in st.session_state and st.session_state.properties:
                 )
                 new_property.add_loan(new_loan)
 
-            if noi_data:
-                new_property.streamlit_add_noi(noi_data)
-            if capex_data:
-                new_property.streamlit_add_capex(capex_data)
+            
+            new_property.add_noi_capex(fin_df)
 
             st.session_state.properties.append(new_property)
             st.success("New property added successfully.")
