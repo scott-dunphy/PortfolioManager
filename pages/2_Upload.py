@@ -18,18 +18,14 @@ properties_and_loans_file = st.file_uploader('Upload Properties and Loans Excel 
 if st.button("Upload Portfolio"):
     if properties_and_loans_file:
         properties, loans = load_properties_and_loans(properties_and_loans_file)
-        noi_df, capex_df = load_cashflows(properties_and_loans_file)
+        df = load_cashflows(properties_and_loans_file)
         
         for property_obj in properties:
             property_id = property_obj.property_id
-            
             # Filter NOI and CapEx data for the current property
-            property_noi_df = noi_df[noi_df['Property ID'] == property_id]
-            property_capex_df = capex_df[capex_df['Property ID'] == property_id]
-            
+            fin_df = df[df['Property ID'] == property_id]
             # Convert to dictionary with date keys
-            property_obj.add_noi(property_noi_df)
-            property_obj.add_capex(property_capex_df)
+            property_obj.add_noi_capex(fin_df)
         
         st.session_state.properties = properties
         portfolio = Portfolio(name='Dunphy', properties=properties, start_date=start_date, end_date=end_date)
