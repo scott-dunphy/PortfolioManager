@@ -51,7 +51,7 @@ def load_cashflows(file_path):
     df = pd.read_excel(file_path, sheet_name='Cashflows')
     # Convert the Date column to datetime.date
     df['Date'] = pd.to_datetime(df['Date']).dt.date
-    df = df[['Date','Net Operating Income','Capital Expenditures']]
+    df = df[['Property ID','Date','Net Operating Income','Capital Expenditures']]
     return df
 
 # Example usage:
