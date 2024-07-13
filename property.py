@@ -203,7 +203,7 @@ class Property:
         
         
         fin_df = self.noi_capex.copy()
-        cash_flows_df = cash_flows_df.add(fin_df[['Net Operating Income', 'Capital Expenditures']], fill_value=0)
+        #cash_flows_df = cash_flows_df.add(fin_df[['Net Operating Income', 'Capital Expenditures']], fill_value=0)
         
         if self.loan:
             loan_cash_flows = self.loan.get_schedule()
