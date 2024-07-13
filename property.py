@@ -192,8 +192,8 @@ class Property:
             cash_flows_df.at[standardized_date, 'Ownership Share'] = self.ownership_share_series.get(standardized_date, 1.0)
 
         # Ensure 'Date' is a date object and set it as the index
-        self.noi_capex['Date'] = pd.to_datetime(self.noi_capex['Date']).dt.date
-        self.noi_capex.set_index('Date', inplace=True)
+        #self.noi_capex['Date'] = pd.to_datetime(self.noi_capex['Date']).dt.date
+        #self.noi_capex.set_index('Date', inplace=True)
 
         # Check if the indices are dates
         if not all(isinstance(i, date) for i in self.noi_capex.index):
@@ -202,7 +202,7 @@ class Property:
             raise ValueError("Index of cash_flows_df is not of type date")
         
         # Reindex to ensure both DataFrames have the same index
-        fin_df = self.noi_capex.reindex(index=cash_flows_df.index, fill_value=0)
+        #fin_df = self.noi_capex.reindex(index=cash_flows_df.index, fill_value=0)
 
         # Add financial data to the cash flows DataFrame
         cash_flows_df = cash_flows_df.add(fin_df[['Net Operating Income', 'Capital Expenditures']], fill_value=0)
