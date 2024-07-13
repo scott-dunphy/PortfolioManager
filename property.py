@@ -22,8 +22,7 @@ class Property:
         sale_date: Optional[date] = None,
         sale_price: Optional[float] = None,
         loan: Optional['Loan'] = None,
-        noi: Optional[pd.DataFrame] = None,
-        capex: Optional[pd.DataFrame] = None,
+        noi_capex: Optional[pd.DataFrame] = None,
         ownership_share: float = 1,
         buyout_date: Optional[date] = None,
         buyout_amount: Optional[float] = None
@@ -46,8 +45,7 @@ class Property:
         self._initialize_ownership_share()
         self.buyout_date = self._standardize_date(buyout_date) if buyout_date else None
         self.buyout_amount = buyout_amount
-        self.noi = noi
-        self.capex = capex
+        self.noi_capex = noi_capex
 
     def to_dict(self):
         return {
@@ -108,12 +106,6 @@ class Property:
     def add_loan(self, loan: 'Loan'):
         self.loan = loan
 
-    def add_noi(self, _date: date, noi: float):
-        self.noi[_date] = noi
-
-    def add_capex(self, _date: date, capex: float):
-        self.capex[_date] = capex
-
     def remove_loan(self):
         self.loan = None
 
@@ -154,13 +146,8 @@ class Property:
         new_noi = dict(zip(dates, noi))
         self.noi = new_noi
 
-    def add_noi(self, df: pd.DataFrame):
-        df = df[['Date','Amount']]
-        self.noi = df
-
-    def add_capex(self, df: pd.DataFrame):
-        df = df[['Date','Amount']]
-        self.capex = df
+    def add_noi_capex(self, df: pd.DataFrame):
+        self.noi_capex = df
 
     def streamlit_add_capex(self, capex: str):
         capex_length = len(capex.split())
