@@ -231,8 +231,6 @@ if 'properties' in st.session_state and st.session_state.properties:
                 buyout_date=_standardize_date(buyout_date),
                 buyout_amount=buyout_amount,
                 loan=None,  # Initialize with no loan
-                noi={},  # Initialize empty
-                capex={}  # Initialize empty
             )
 
             if loan_exists:
