@@ -22,9 +22,10 @@ if st.button("Upload Portfolio"):
         
         for property_obj in properties:
             property_id = property_obj.property_id
+            st.write(property_id)
             property_obj.noi = noi.get(property_id, {})
             property_obj.capex = capex.get(property_id, {})
-            st.datafrme(noi.get(property_id, {}))
+            
         
         st.session_state.properties = properties
         portfolio = Portfolio(name='Dunphy', properties=properties, start_date=start_date, end_date=end_date)
