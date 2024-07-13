@@ -8,7 +8,7 @@ rates = chatham.get_monthly_rates()
 
 # Convert the rates to a DataFrame if it's not already one
 if not isinstance(rates, pd.DataFrame):
-    rates = pd.DataFrame(rates, columns=["Date","SOFR"])
+    rates = pd.DataFrame(rates)
 st.write(rates)
 # Plot the rates in a line chart
 #st.line_chart(rates)
