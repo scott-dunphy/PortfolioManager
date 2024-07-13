@@ -191,7 +191,7 @@ class Property:
 
         #st.write("Fin DF")
         fin_df = self.noi_capex[['Net Operating Income', 'Capital Expenditures']]
-        st.write(fin_df)
+        
         
         cash_flows_df = cash_flows_df.add(fin_df,fill_value=0)
 
