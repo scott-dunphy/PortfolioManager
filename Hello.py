@@ -47,7 +47,7 @@ if 'properties' in st.session_state:
         cash_flows = update_portfolio_dates_and_calculate()
         st.title(st.session_state.portfolio.name)
         st.dataframe(cash_flows.T, column_config=adjusted_column_config, use_container_width=True)
-        st.dataframe(cashflows.sum().T)
+        st.dataframe(cashflows.sum())
         
 
         st.write("Market Value by Property Type")
