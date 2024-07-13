@@ -47,11 +47,15 @@ def load_properties_and_loans(file_path):
 
     return properties, loans
 
+def _standardize_date(d: date) -> date:
+    """Standardize a date to the first of its month."""
+    return date(d.year, d.month, 1)
+
 def load_cashflows(file_path):
     df = pd.read_excel(file_path, sheet_name='Cashflows')
     
-    # Convert the Date column to datetime.date
-    df['Date'] = pd.to_datetime(df['Date']).dt.date
+    # Convert the Date column to datetime.date and standardize the dates
+    df['Date'] = pd.to_datetime(df['Date']).dt.date.apply(_standardize_date)
     
     # Ensure that Net Operating Income and Capital Expenditures are numbers and convert them to float64
     df['Net Operating Income'] = pd.to_numeric(df['Net Operating Income'], errors='coerce').fillna(0).astype('float64')
@@ -61,9 +65,3 @@ def load_cashflows(file_path):
     df = df[['Property ID', 'Date', 'Net Operating Income', 'Capital Expenditures']]
     
     return df
-
-# Example usage:
-# properties, loans = load_properties_and_loans("/path/to/properties_loans.xlsx")
-# noi_df, capex_df = load_cashflows("/path/to/properties_loans_cashflows.xlsx")
-
-# Now you have the noi_df and capex_df DataFrames which you can use directly
