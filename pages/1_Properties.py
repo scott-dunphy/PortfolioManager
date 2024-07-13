@@ -124,6 +124,7 @@ if 'properties' in st.session_state and st.session_state.properties:
                 amortization_period = 0
                 day_count_method = "Actual/360"
 
+        st.write(selected_property.noi)
         # Financial Data inputs
         with st.expander("Financial Data"):
             noi_data = st.text_area("Net Operating Income (space-separated values)", value=' '.join([str(v) for v in selected_property.noi.values()]))
@@ -357,4 +358,5 @@ if 'properties' in st.session_state and property_id in [prop.property_id for pro
     if st.button("Delete Property"):
         st.session_state.properties = [prop for prop in st.session_state.properties if prop.property_id != property_id]
         st.rerun()
+
             
