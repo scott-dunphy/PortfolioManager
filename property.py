@@ -184,7 +184,6 @@ class Property:
         ])
 
         cash_flows_df.at[self.purchase_date, 'Purchase Price'] = self.purchase_price
-        st.write(self.noi_capex.dtypes)
         # Fill in the DataFrame with cash flow data
         for d in dates:
             standardized_date = self._standardize_date(d)
@@ -193,7 +192,6 @@ class Property:
         #st.write("Fin DF")
         fin_df = self.noi_capex[['Net Operating Income', 'Capital Expenditures']]
         st.write(fin_df)
-        #st.write(fin_df)
         
         cash_flows_df.add(fin_df,fill_value=0)
 
