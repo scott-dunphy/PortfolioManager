@@ -162,12 +162,12 @@ class Property:
             start_date = self.analysis_start_date
         if end_date is None:
             end_date = self.analysis_end_date
-
+    
         # Generate a date range for the entire analysis period
         end_date = min(end_date, self.sale_date)
         dates = pd.date_range(start=start_date, end=end_date, freq='MS')
         dates = [date(d.year, d.month, d.day) for d in dates]
-
+    
         # Create a DataFrame with these dates as the index
         cash_flows_df = pd.DataFrame(index=dates, columns=[
             'Ownership Share',
@@ -183,28 +183,32 @@ class Property:
             'Debt Early Prepayment',
         ])
         cash_flows_df = cash_flows_df.fillna(0)  # Initialize with 0s
-
+    
         cash_flows_df.at[self.purchase_date, 'Purchase Price'] = self.purchase_price
-
+    
         # Fill in the DataFrame with cash flow data
         for d in dates:
             standardized_date = self._standardize_date(d)
             cash_flows_df.at[standardized_date, 'Ownership Share'] = self.ownership_share_series.get(standardized_date, 1.0)
-
+    
         # Ensure 'Date' is a date object and set it as the index
-        #self.noi_capex['Date'] = pd.to_datetime(self.noi_capex['Date']).dt.date
-        #self.noi_capex.set_index('Date', inplace=True)
-
+        if 'Date' in self.noi_capex.columns:
+            self.noi_capex['Date'] = pd.to_datetime(self.noi_capex['Date']).dt.date
+            self.noi_capex.set_index('Date', inplace=True)
+        else:
+            raise ValueError("Date column missing in noi_capex DataFrame")
+    
         # Check if the indices are dates
         if not all(isinstance(i, date) for i in self.noi_capex.index):
             st.write("Index of self.noi_capex is not of type date")
         if not all(isinstance(i, date) for i in cash_flows_df.index):
             st.write("Index of cash_flows_df is not of type date")
         
-        
+        # Assign financial data to the cash flows DataFrame
         fin_df = self.noi_capex.copy()
-        #cash_flows_df = cash_flows_df.add(fin_df[['Net Operating Income', 'Capital Expenditures']], fill_value=0)
-        
+        cash_flows_df['Net Operating Income'] = fin_df['Net Operating Income']
+        cash_flows_df['Capital Expenditures'] = fin_df['Capital Expenditures']
+            
         if self.loan:
             loan_cash_flows = self.loan.get_schedule()
             for loan_cf in loan_cash_flows:
@@ -215,28 +219,27 @@ class Property:
                     cash_flows_df.at[standardized_date, 'Loan Proceeds'] = self.loan.original_balance
                 if standardized_date == self.loan.maturity_date and not self.sale_date:
                     cash_flows_df.at[standardized_date, 'Debt Repayment'] = self.loan.get_current_balance(self.loan.maturity_date)
-
+    
         if self.sale_date is not None:
             cash_flows_df.at[self.sale_date, 'Sale Proceeds'] = self.sale_price
             if self.loan:
                 cash_flows_df.at[self.sale_date, 'Debt Early Prepayment'] = self.loan.get_current_balance(self.sale_date)
-
+    
         col_order = ['Ownership Share', 'Purchase Price', 'Loan Proceeds', 'Net Operating Income', 'Capital Expenditures', 'Interest Expense', 'Principal Payments', 'Debt Scheduled Repayment', 'Debt Early Prepayment', 'Sale Proceeds', 'Partner Buyout']
         cash_flows_df = cash_flows_df[col_order]
-        st.write(cash_flows_df)
         
         for col in cash_flows_df.columns[1:]:
             adjusted_column = "Adjusted " + col
             cash_flows_df[adjusted_column] = cash_flows_df[col] * cash_flows_df['Ownership Share']
-
+    
         if self.buyout_date:
             standardized_buyout_date = self._standardize_date(self.buyout_date)
             cash_flows_df.at[standardized_buyout_date, 'Partner Buyout'] = self.buyout_amount
             cash_flows_df.at[standardized_buyout_date, 'Adjusted Partner Buyout'] = self.buyout_amount
-
+    
         # Replace NaN values with 0
         cash_flows_df.fillna(0, inplace=True)
-
+    
         return cash_flows_df
 
     def calculate_cash_flow_before_debt_service(self, start_date: date, end_date: date, ownership_adjusted: bool = True) -> Dict[date, float]:
