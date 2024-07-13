@@ -51,8 +51,15 @@ def load_cashflows(file_path):
     df = pd.read_excel(file_path, sheet_name='Cashflows')
     # Convert the Date column to datetime.date
     df['Date'] = pd.to_datetime(df['Date']).dt.date
-    df = df[['Property ID','Date','Net Operating Income','Capital Expenditures']]
-    df.set_index("Date",inplace=True)
+    
+    # Ensure that Net Operating Income and Capital Expenditures are numbers
+    df['Net Operating Income'] = pd.to_numeric(df['Net Operating Income'], errors='coerce').fillna(0)
+    df['Capital Expenditures'] = pd.to_numeric(df['Capital Expenditures'], errors='coerce').fillna(0)
+    
+    # Select and set the index
+    df = df[['Property ID', 'Date', 'Net Operating Income', 'Capital Expenditures']]
+    df.set_index('Date', inplace=True)
+    
     return df
 
 # Example usage:
