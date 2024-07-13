@@ -147,7 +147,6 @@ class Property:
         self.noi = new_noi
 
     def add_noi_capex(self, df: pd.DataFrame):
-        df.set_index("Date",inplace=True)
         self.noi_capex = df
 
     def streamlit_add_capex(self, capex: str):
