@@ -25,8 +25,8 @@ if st.button("Upload Portfolio"):
         
         for property_obj in properties:
             property_id = property_obj.property_id
-            property_obj.noi = convert_serialized_date_dict(noi.get(property_id, {}))
-            property_obj.capex = convert_serialized_date_dict(capex.get(property_id, {}))
+            property_obj.add_noi(convert_serialized_date_dict(noi.get(property_id, {})))
+            property_obj.add_capex(convert_serialized_date_dict(capex.get(property_id, {})))
             
         
         st.session_state.properties = properties
