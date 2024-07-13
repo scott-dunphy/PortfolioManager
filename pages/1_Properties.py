@@ -10,7 +10,7 @@ def _standardize_date(d: date) -> date:
     """Standardize a date to the first of its month."""
     return date(d.year, d.month, 1)
 
-def update_property(properties, selected_property, updated_data, noi_data, capex_data, loan_data):
+def update_property(properties, selected_property, updated_data, fin_df, capex_data, loan_data):
     for prop in properties:
         if prop.property_id == selected_property.property_id:
             prop.name = updated_data['name']
@@ -30,16 +30,7 @@ def update_property(properties, selected_property, updated_data, noi_data, capex
             prop.buyout_amount = updated_data['buyout_amount']
             
             # Update NOI and CapEx
-            if noi_data:
-                try:
-                    prop.streamlit_add_noi(noi_data)
-                except ValueError as e:
-                    st.error(f"Error parsing NOI data: {e}")
-            if capex_data:
-                try:
-                    prop.streamlit_add_capex(capex_data)
-                except ValueError as e:
-                    st.error(f"Error parsing CapEx data: {e}")
+            prop.add_noi_capex(fin_df)
             
             # Update loan if it exists or create a new loan
             if loan_data['loan_exists']:
@@ -161,7 +152,7 @@ if 'properties' in st.session_state and st.session_state.properties:
                 'day_count_method': day_count_method
             }
             
-            update_property(properties, selected_property, updated_data, noi_data, capex_data, loan_data)
+            update_property(properties, selected_property, updated_data, fin_df, capex_data, loan_data)
             st.success("Property updated successfully.")
             
             # Display cash flows
@@ -214,9 +205,11 @@ if 'properties' in st.session_state and st.session_state.properties:
                 day_count_method = st.selectbox('Day Count Method', options=["Actual/360", "Actual/365", "30/360"])
 
         # Financial Data inputs for new property
-        with st.expander("Financial Data"):
-            noi_data = st.text_area("Net Operating Income (space-separated values)")
-            capex_data = st.text_area("Capital Expenditures (space-separated values)")
+        #with st.expander("Financial Data"):
+            columns = ['Date', 'Net Operating Income', 'Capital Expenditures']
+            # Create a blank DataFrame
+            fin_df = pd.DataFrame(columns=columns)
+            find_df = st.edit_data(fin_df)
 
         if st.button('Add Property'):
             new_property = Property(
