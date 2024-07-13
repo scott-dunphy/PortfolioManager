@@ -165,6 +165,7 @@ class Property:
     
         # Generate a date range for the entire analysis period
         end_date is min(end_date, self.sale_date)
+        start_date is max(start_date, self.purchase_date)
         dates = pd.date_range(start=start_date, end=end_date, freq='MS')
         dates = [date(d.year, d.month, d.day) for d in dates]
     
