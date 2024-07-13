@@ -4,6 +4,7 @@ from typing import Optional, Dict, List
 import pandas as pd
 import uuid
 from loan import Loan
+import streamlit as st
 
 class Property:
     def __init__(
