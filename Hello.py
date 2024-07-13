@@ -48,6 +48,7 @@ if 'properties' in st.session_state:
         st.title(st.session_state.portfolio.name)
         st.dataframe(cash_flows.T, column_config=adjusted_column_config, use_container_width=True)
         transposed_df = cash_flows.T.sum()
+        transposed_df.index = ['Total']
 
         # Display in Streamlit without the index
         st.dataframe(transposed_df)
