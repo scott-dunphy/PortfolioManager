@@ -6,9 +6,17 @@ import pandas as pd
 chatham = Chatham()
 rates = chatham.get_monthly_rates()
 
-# Convert the rates to a DataFrame if it's not already one
-#if not isinstance(rates, pd.DataFrame):
-#    rates = pd.DataFrame(rates)
-st.write(rates)
+# Convert the rates dictionary to a DataFrame
+rates_df = pd.DataFrame(list(rates.items()), columns=['Date', 'Rate'])
+
+# Convert the Date column to datetime format
+rates_df['Date'] = pd.to_datetime(rates_df['Date'])
+
+# Set the Date column as the index
+rates_df.set_index('Date', inplace=True)
+
+# Display the rates DataFrame
+st.write(rates_df)
+
 # Plot the rates in a line chart
-#st.line_chart(rates)
+st.line_chart(rates_df)
