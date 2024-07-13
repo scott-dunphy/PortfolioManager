@@ -194,7 +194,6 @@ class Property:
         # Ensure 'Date' is a date object and set it as the index
         #self.noi_capex['Date'] = pd.to_datetime(self.noi_capex['Date']).dt.date
         #self.noi_capex.set_index('Date', inplace=True)
-        st.write(fin_df)
 
         # Check if the indices are dates
         if not all(isinstance(i, date) for i in self.noi_capex.index):
