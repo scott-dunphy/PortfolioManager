@@ -15,19 +15,21 @@ end_date = date(start_date.year + 3, start_date.month, 1)
 
 properties_and_loans_file = st.file_uploader('Upload Properties and Loans Excel File', type=['xlsx'])
 
-def convert_serialized_date_dict(serialized_dict):
-    return {datetime.strptime(date_str, "%Y-%m-%d").date(): amount for date_str, amount in serialized_dict.items()}
-    
 if st.button("Upload Portfolio"):
     if properties_and_loans_file:
         properties, loans = load_properties_and_loans(properties_and_loans_file)
-        noi, capex = load_cashflows(properties_and_loans_file)
+        noi_df, capex_df = load_cashflows(properties_and_loans_file)
         
         for property_obj in properties:
             property_id = property_obj.property_id
-            property_obj.add_noi(convert_serialized_date_dict(noi.get(property_id, {})))
-            property_obj.add_capex(convert_serialized_date_dict(capex.get(property_id, {})))
             
+            # Filter NOI and CapEx data for the current property
+            property_noi_df = noi_df[noi_df['Property ID'] == property_id]
+            property_capex_df = capex_df[capex_df['Property ID'] == property_id]
+            
+            # Convert to dictionary with date keys
+            property_obj.noi = {row['Date']: row['Amount'] for _, row in property_noi_df.iterrows()}
+            property_obj.capex = {row['Date']: row['Amount'] for _, row in property_capex_df.iterrows()}
         
         st.session_state.properties = properties
         portfolio = Portfolio(name='Dunphy', properties=properties, start_date=start_date, end_date=end_date)
