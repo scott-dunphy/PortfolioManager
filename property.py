@@ -204,7 +204,7 @@ class Property:
         
         fin_df = self.noi_capex.copy()
         st.write(fin_df)
-        st.write(find_df.dtypes)
+        st.write(fin_df.dtypes)
         cash_flows_df = cash_flows_df.add(fin_df[['Net Operating Income', 'Capital Expenditures']], fill_value=0)
 
         if self.loan:
