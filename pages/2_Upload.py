@@ -15,6 +15,9 @@ end_date = date(start_date.year + 3, start_date.month, 1)
 
 properties_and_loans_file = st.file_uploader('Upload Properties and Loans Excel File', type=['xlsx'])
 
+def convert_serialized_date_dict(serialized_dict):
+    return {datetime.strptime(date_str, "%Y-%m-%d").date(): amount for date_str, amount in serialized_dict.items()}
+    
 if st.button("Upload Portfolio"):
     if properties_and_loans_file:
         properties, loans = load_properties_and_loans(properties_and_loans_file)
@@ -22,8 +25,8 @@ if st.button("Upload Portfolio"):
         
         for property_obj in properties:
             property_id = property_obj.property_id
-            property_obj.noi = noi.get(property_id, {})
-            property_obj.capex = capex.get(property_id, {})
+            property_obj.noi = convert_serialized_date_dict(noi.get(property_id, {}))
+            property_obj.capex = convert_serialized_date_dict(capex.get(property_id, {}))
             
         
         st.session_state.properties = properties
