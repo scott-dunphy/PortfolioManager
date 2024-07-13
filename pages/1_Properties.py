@@ -5,6 +5,7 @@ import uuid
 from config import adjusted_column_config
 from loan import Loan
 from property import Property
+import pandas as pd
 
 def _standardize_date(d: date) -> date:
     """Standardize a date to the first of its month."""
