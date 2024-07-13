@@ -45,20 +45,24 @@ if 'properties' in st.session_state:
     # Aggregate hold period cash flows
     if st.button("Calculate"):
         cash_flows = update_portfolio_dates_and_calculate()
-        st.title(st.session_state.portfolio.name)
-        #st.dataframe(cash_flows.T, column_config=adjusted_column_config, use_container_width=True)
-cash_flows = st.data_editor(cash_flows.T, column_config=adjusted_column_config, use_container_width=True)
-transposed_df = cash_flows.T.sum()
-transposed_df = transposed_df.to_frame().T
-transposed_df.index = ['Total']
+        st.session_state.cash_flows = cash_flows.T  # Store transposed cash_flows in session state
 
-# Display in Streamlit without the index
-st.dataframe(transposed_df)
+# Check if 'cash_flows' is in session state and set it if not
+if 'cash_flows' in st.session_state:
+    cash_flows = st.session_state.cash_flows
+    cash_flows = st.data_editor(cash_flows, column_config=adjusted_column_config, use_container_width=True)
+    st.session_state.cash_flows = cash_flows  # Update session state with any changes made in the editor
 
+    # Sum the transposed DataFrame
+    transposed_df = cash_flows.sum().to_frame().T
+    transposed_df.index = ['Total']
 
-st.write("Market Value by Property Type")
-viz = Portfolioviz(st.session_state.portfolio)
-viz.plot_property_type_distribution()
+    # Display in Streamlit without the index
+    st.dataframe(transposed_df)
 
-st.write("Unsecured Loan Balance")
-viz.plot_loan_balance_over_time()
+    st.write("Market Value by Property Type")
+    viz = Portfolioviz(st.session_state.portfolio)
+    viz.plot_property_type_distribution()
+
+    st.write("Unsecured Loan Balance")
+    viz.plot_loan_balance_over_time()
