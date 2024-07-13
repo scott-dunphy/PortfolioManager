@@ -191,6 +191,8 @@ class Property:
 
         fin_df = self.noi_capex.set_index("Date")
         fin_df = fin_df[['Net Operating Income', 'Capital Expenditures']]
+        st.write("Fin DF")
+        st.write(fin_df)
         cash_flows_df.add(fin_df,fill_value=0)
 
         if self.loan:
