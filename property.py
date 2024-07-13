@@ -203,8 +203,10 @@ class Property:
         
         # Reindex to ensure both DataFrames have the same index
         #fin_df = self.noi_capex.reindex(index=cash_flows_df.index, fill_value=0)
-
+        
+ 
         # Add financial data to the cash flows DataFrame
+        fin_df = self.noi_capex
         cash_flows_df = cash_flows_df.add(fin_df[['Net Operating Income', 'Capital Expenditures']], fill_value=0)
 
         if self.loan:
