@@ -184,7 +184,7 @@ class Property:
         ])
 
         cash_flows_df.at[self.purchase_date, 'Purchase Price'] = self.purchase_price
-
+        st.write(self.noi_capex.dtypes)
         # Fill in the DataFrame with cash flow data
         for d in dates:
             standardized_date = self._standardize_date(d)
