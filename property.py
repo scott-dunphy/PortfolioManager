@@ -192,8 +192,8 @@ class Property:
             cash_flows_df.at[standardized_date, 'Ownership Share'] = self.ownership_share_series.get(standardized_date, 1.0)
     
         # Debug: Print the first few rows of self.noi_capex
-        st.write("NOI and CapEx DataFrame:")
-        st.write(self.noi_capex.head())
+        #st.write("NOI and CapEx DataFrame:")
+        #st.write(self.noi_capex.head())
     
         # Check if the indices are dates
         if not all(isinstance(i, date) for i in self.noi_capex.index):
@@ -206,23 +206,23 @@ class Property:
         fin_df = self.noi_capex.groupby(self.noi_capex.index).sum()
     
         # Debug: Print the aggregated fin_df
-        st.write("Aggregated NOI and CapEx DataFrame:")
-        st.write(fin_df.head())
+        #st.write("Aggregated NOI and CapEx DataFrame:")
+        #st.write(fin_df.head())
     
         # Reindex fin_df to match cash_flows_df
         fin_df = fin_df.reindex(cash_flows_df.index, fill_value=0)
     
         # Debug: Print the reindexed fin_df
-        st.write("Reindexed NOI and CapEx DataFrame:")
-        st.write(fin_df.head())
+        #st.write("Reindexed NOI and CapEx DataFrame:")
+        #st.write(fin_df.head())
     
         # Add financial data to the cash flows DataFrame
         cash_flows_df['Net Operating Income'] = cash_flows_df['Net Operating Income'].add(fin_df['Net Operating Income'], fill_value=0)
         cash_flows_df['Capital Expenditures'] = cash_flows_df['Capital Expenditures'].add(fin_df['Capital Expenditures'], fill_value=0)
     
         # Debug: Print the cash_flows_df after adding financial data
-        st.write("Cash Flows DataFrame after adding NOI and CapEx:")
-        st.write(cash_flows_df.head())
+        #st.write("Cash Flows DataFrame after adding NOI and CapEx:")
+        #st.write(cash_flows_df.head())
         
         if self.loan:
             loan_cash_flows = self.loan.get_schedule()
