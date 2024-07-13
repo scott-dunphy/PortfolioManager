@@ -66,3 +66,4 @@ def load_cashflows(file_path):
             capex[property_id][cashflow_date] = amount
 
     return noi, capex
+
