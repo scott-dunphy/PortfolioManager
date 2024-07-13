@@ -154,6 +154,12 @@ class Property:
         new_noi = dict(zip(dates, noi))
         self.noi = new_noi
 
+    def add_noi(self, noi: dict):
+        self.noi = noi
+
+    def add_capex(self, capex: dict):
+        self.capex = capex
+
     def streamlit_add_capex(self, capex: str):
         capex_length = len(capex.split())
         capex = [float(x) for x in capex.split()]
