@@ -194,15 +194,18 @@ class Property:
         # Ensure 'Date' is a date object and set it as the index
         #self.noi_capex['Date'] = pd.to_datetime(self.noi_capex['Date']).dt.date
         #self.noi_capex.set_index('Date', inplace=True)
+        st.write(fin_df)
 
         # Check if the indices are dates
         if not all(isinstance(i, date) for i in self.noi_capex.index):
-            raise ValueError("Index of self.noi_capex is not of type date")
+            st.write("Index of self.noi_capex is not of type date")
         if not all(isinstance(i, date) for i in cash_flows_df.index):
-            raise ValueError("Index of cash_flows_df is not of type date")
+            st.write("Index of cash_flows_df is not of type date")
         
         
         fin_df = self.noi_capex.copy()
+        st.write(fin_df)
+        st.write(find_df.dtypes)
         cash_flows_df = cash_flows_df.add(fin_df[['Net Operating Income', 'Capital Expenditures']], fill_value=0)
 
         if self.loan:
