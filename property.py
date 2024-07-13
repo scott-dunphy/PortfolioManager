@@ -152,11 +152,13 @@ class Property:
         new_noi = dict(zip(dates, noi))
         self.noi = new_noi
 
-    def add_noi(self, noi: pd.DataFrame):
-        self.noi = noi
+    def add_noi(self, df: pd.DataFrame):
+        df = df[['Date','Amount']]
+        self.noi = df
 
-    def add_capex(self, capex: pd.DataFrame):
-        self.capex = capex
+    def add_capex(self, df: pd.DataFrame):
+        df = df[['Date','Amount']]
+        self.capex = df
 
     def streamlit_add_capex(self, capex: str):
         capex_length = len(capex.split())
