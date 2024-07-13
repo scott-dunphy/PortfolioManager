@@ -219,7 +219,21 @@ class Property:
         if self.sale_date is not None:
             cash_flows_df.at[self.sale_date, 'Sale Proceeds'] = self.sale_price
             if self.loan:
-                cash_flows_df.at[self.sale_date, 'Debt Early Prepayment'] = self.loan.get_curr
+                cash_flows_df.at[self.sale_date, 'Debt Early Prepayment'] = self.loan.get_current_balance(self.sale_date)
+
+        for col in cash_flows_df.columns[1:]:
+            adjusted_column = "Adjusted " + col
+            cash_flows_df[adjusted_column] = cash_flows_df[col] * cash_flows_df['Ownership Share']
+
+        if self.buyout_date:
+            standardized_buyout_date = self._standardize_date(self.buyout_date)
+            cash_flows_df.at[standardized_buyout_date, 'Partner Buyout'] = self.buyout_amount
+            cash_flows_df.at[standardized_buyout_date, 'Adjusted Partner Buyout'] = self.buyout_amount
+
+        # Replace NaN values with 0
+        cash_flows_df.fillna(0, inplace=True)
+
+        return cash_flows_df
 
     def calculate_cash_flow_before_debt_service(self, start_date: date, end_date: date, ownership_adjusted: bool = True) -> Dict[date, float]:
         start_date = self._standardize_date(start_date)
