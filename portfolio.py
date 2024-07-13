@@ -90,7 +90,7 @@ class Portfolio:
     
         # Reorder the columns
         aggregate_cf = aggregate_cf[columns_order]
-        aggregate_cf.drop(columns=['Total Cash FLow'],inplace=True)
+        aggregate_cf.drop(columns=['Total Cash Flow'],inplace=True)
     
         # Ensure the dates are consistent
         #aggregate_cf = aggregate_cf.loc[start_date:end_date]
