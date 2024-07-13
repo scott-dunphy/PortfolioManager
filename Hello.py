@@ -47,19 +47,13 @@ if 'properties' in st.session_state:
         cash_flows = update_portfolio_dates_and_calculate()
         st.title(st.session_state.portfolio.name)
         st.dataframe(cash_flows.T, column_config=adjusted_column_config, use_container_width=True)
-        transposed_df = cash_flows.T
-
-        # Sum the columns
-        column_sums = transposed_df.sum(axis=1)
-        
-        # Convert the Series to a DataFrame
-        column_sums_df = column_sums.to_frame().T
+        transposed_df = cash_flows.T.sum()
         
         # Reset the index and drop it
-        column_sums_df.reset_index(drop=True, inplace=True)
+        transposed_df.reset_index(drop=True, inplace=True)
         
         # Display in Streamlit without the index
-        st.dataframe(column_sums_df)
+        st.dataframe(transposed_df)
         
 
         st.write("Market Value by Property Type")
