@@ -223,6 +223,7 @@ class Property:
 
         col_order = ['Ownership Share', 'Purchase Price', 'Loan Proceeds', 'Net Operating Income', 'Capital Expenditures', 'Interest Expense', 'Principal Payments', 'Debt Scheduled Repayment', 'Debt Early Prepayment', 'Sale Proceeds', 'Partner Buyout']
         cash_flows_df = cash_flows_df[col_order]
+        st.write(cash_flows_df)
         
         for col in cash_flows_df.columns[1:]:
             adjusted_column = "Adjusted " + col
