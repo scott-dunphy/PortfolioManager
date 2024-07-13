@@ -16,7 +16,7 @@ rates_df['Date'] = pd.to_datetime(rates_df['Date'])
 rates_df.set_index('Date', inplace=True)
 
 # Display the rates DataFrame
-st.write(rates_df)
+#st.write(rates_df)
 
 # Plot the rates in a line chart
 st.line_chart(rates_df)
