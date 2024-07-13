@@ -58,7 +58,6 @@ def load_cashflows(file_path):
     
     # Select and set the index
     df = df[['Property ID', 'Date', 'Net Operating Income', 'Capital Expenditures']]
-    df.set_index('Date', inplace=True)
     
     return df
 
