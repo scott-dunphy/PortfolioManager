@@ -190,19 +190,17 @@ class Property:
         for d in dates:
             standardized_date = self._standardize_date(d)
             cash_flows_df.at[standardized_date, 'Ownership Share'] = self.ownership_share_series.get(standardized_date, 1.0)
-
     
         # Check if the indices are dates
         if not all(isinstance(i, date) for i in self.noi_capex.index):
             st.write("Index of self.noi_capex is not of type date")
         if not all(isinstance(i, date) for i in cash_flows_df.index):
             st.write("Index of cash_flows_df is not of type date")
-        
-        # Assign financial data to the cash flows DataFrame
-        fin_df = self.noi_capex.copy()
-        cash_flows_df['Net Operating Income'] = fin_df['Net Operating Income']
-        cash_flows_df['Capital Expenditures'] = fin_df['Capital Expenditures']
             
+        # Add financial data to the cash flows DataFrame
+        cash_flows_df['Net Operating Income'] = cash_flows_df['Net Operating Income'].add(fin_df['Net Operating Income'], fill_value=0)
+        cash_flows_df['Capital Expenditures'] = cash_flows_df['Capital Expenditures'].add(fin_df['Capital Expenditures'], fill_value=0)
+        
         if self.loan:
             loan_cash_flows = self.loan.get_schedule()
             for loan_cf in loan_cash_flows:
@@ -235,7 +233,6 @@ class Property:
         cash_flows_df.fillna(0, inplace=True)
     
         return cash_flows_df
-
     def calculate_cash_flow_before_debt_service(self, start_date: date, end_date: date, ownership_adjusted: bool = True) -> Dict[date, float]:
         start_date = self._standardize_date(start_date)
         end_date = self._standardize_date(end_date)
