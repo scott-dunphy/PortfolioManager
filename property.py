@@ -191,6 +191,12 @@ class Property:
 
         #st.write("Fin DF")
         fin_df = self.noi_capex[['Net Operating Income', 'Capital Expenditures']]
+
+                # Check if the indices are dates
+        if not all(isinstance(i, date) for i in self.noi_capex.index):
+            st.write("FIN DF not date.")
+        if not all(isinstance(i, date) for i in cash_flows_df.index):
+            st.write("DF not date")
         
         
         cash_flows_df = cash_flows_df.add(fin_df,fill_value=0)
