@@ -28,8 +28,8 @@ if st.button("Upload Portfolio"):
             property_capex_df = capex_df[capex_df['Property ID'] == property_id]
             
             # Convert to dictionary with date keys
-            property_obj.noi = {row['Date']: row['Amount'] for _, row in property_noi_df.iterrows()}
-            property_obj.capex = {row['Date']: row['Amount'] for _, row in property_capex_df.iterrows()}
+            property_obj.add_noi(property_noi_df)
+            property_obj.add_capex(property_capex_df)
         
         st.session_state.properties = properties
         portfolio = Portfolio(name='Dunphy', properties=properties, start_date=start_date, end_date=end_date)
