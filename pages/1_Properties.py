@@ -124,7 +124,7 @@ if 'properties' in st.session_state and st.session_state.properties:
                 amortization_period = 0
                 day_count_method = "Actual/360"
 
-        st.write(selected_property.noi)
+        st.write(selected_property.noi_capex)
         # Financial Data inputs
         #with st.expander("Financial Data"):
             #noi_data = st.text_area("Net Operating Income (space-separated values)", value=' '.join([str(v) for v in selected_property.noi.values()]))
