@@ -164,7 +164,7 @@ class Property:
             end_date = self.analysis_end_date
     
         # Generate a date range for the entire analysis period
-        end_date = min(end_date, self.sale_date)
+        end_date is min(end_date, self.sale_date)
         dates = pd.date_range(start=start_date, end=end_date, freq='MS')
         dates = [date(d.year, d.month, d.day) for d in dates]
     
@@ -191,21 +191,37 @@ class Property:
             standardized_date = self._standardize_date(d)
             cash_flows_df.at[standardized_date, 'Ownership Share'] = self.ownership_share_series.get(standardized_date, 1.0)
     
+        # Debug: Print the first few rows of self.noi_capex
+        st.write("NOI and CapEx DataFrame:")
+        st.write(self.noi_capex.head())
+    
         # Check if the indices are dates
         if not all(isinstance(i, date) for i in self.noi_capex.index):
-            st.write("Index of self.noi_capex is not of type date")
+            st.write("Error: Index of self.noi_capex is not of type date")
         if not all(isinstance(i, date) for i in cash_flows_df.index):
-            st.write("Index of cash_flows_df is not of type date")
+            st.write("Error: Index of cash_flows_df is not of type date")
         
         # Aggregate the values for duplicate dates
         fin_df = self.noi_capex.groupby(self.noi_capex.index).sum()
     
+        # Debug: Print the aggregated fin_df
+        st.write("Aggregated NOI and CapEx DataFrame:")
+        st.write(fin_df.head())
+    
         # Reindex fin_df to match cash_flows_df
         fin_df = fin_df.reindex(cash_flows_df.index, fill_value=0)
+    
+        # Debug: Print the reindexed fin_df
+        st.write("Reindexed NOI and CapEx DataFrame:")
+        st.write(fin_df.head())
     
         # Add financial data to the cash flows DataFrame
         cash_flows_df['Net Operating Income'] = cash_flows_df['Net Operating Income'].add(fin_df['Net Operating Income'], fill_value=0)
         cash_flows_df['Capital Expenditures'] = cash_flows_df['Capital Expenditures'].add(fin_df['Capital Expenditures'], fill_value=0)
+    
+        # Debug: Print the cash_flows_df after adding financial data
+        st.write("Cash Flows DataFrame after adding NOI and CapEx:")
+        st.write(cash_flows_df.head())
         
         if self.loan:
             loan_cash_flows = self.loan.get_schedule()
@@ -225,8 +241,7 @@ class Property:
     
         col_order = ['Ownership Share', 'Purchase Price', 'Loan Proceeds', 'Net Operating Income', 'Capital Expenditures', 'Interest Expense', 'Principal Payments', 'Debt Scheduled Repayment', 'Debt Early Prepayment', 'Sale Proceeds', 'Partner Buyout']
         cash_flows_df = cash_flows_df[col_order]
-        st.write(cash_flows_df)
-        
+    
         for col in cash_flows_df.columns[1:]:
             adjusted_column = "Adjusted " + col
             cash_flows_df[adjusted_column] = cash_flows_df[col] * cash_flows_df['Ownership Share']
@@ -238,6 +253,10 @@ class Property:
     
         # Replace NaN values with 0
         cash_flows_df.fillna(0, inplace=True)
+    
+        # Debug: Print the final cash_flows_df
+        st.write("Final Cash Flows DataFrame:")
+        st.write(cash_flows_df.head())
     
         return cash_flows_df
         
