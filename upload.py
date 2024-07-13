@@ -52,6 +52,7 @@ def load_cashflows(file_path):
     # Convert the Date column to datetime.date
     df['Date'] = pd.to_datetime(df['Date']).dt.date
     df = df[['Property ID','Date','Net Operating Income','Capital Expenditures']]
+    df.set_index("Date",inplace=True)
     return df
 
 # Example usage:
