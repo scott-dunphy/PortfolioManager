@@ -49,16 +49,10 @@ def load_properties_and_loans(file_path):
 
 def load_cashflows(file_path):
     df = pd.read_excel(file_path, sheet_name='Cashflows')
-
-    # Separate the NOI and CapEx data into two DataFrames
-    noi_df = df[df['Type'].str.lower() == 'noi'].copy()
-    capex_df = df[df['Type'].str.lower() == 'capex'].copy()
-
     # Convert the Date column to datetime.date
-    noi_df['Date'] = pd.to_datetime(noi_df['Date']).dt.date
-    capex_df['Date'] = pd.to_datetime(capex_df['Date']).dt.date
-
-    return noi_df, capex_df
+    df['Date'] = pd.to_datetime(df['Date']).dt.date
+    df = df[['Date','Net Operating Income','Capital Expenditures']]
+    return df
 
 # Example usage:
 # properties, loans = load_properties_and_loans("/path/to/properties_loans.xlsx")
