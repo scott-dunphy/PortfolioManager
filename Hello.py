@@ -53,7 +53,7 @@ if 'properties' in st.session_state:
         transposed_df.reset_index(drop=True, inplace=True)
         
         # Display in Streamlit without the index
-        st.dataframe(transposed_df)
+        st.dataframe(transposed_df.T)
         
 
         st.write("Market Value by Property Type")
