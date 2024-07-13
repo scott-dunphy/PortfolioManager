@@ -197,8 +197,8 @@ class Property:
         for d in dates:
             standardized_date = self._standardize_date(d)
             cash_flows_df.at[standardized_date, 'Ownership Share'] = self.ownership_share_series.get(standardized_date, 1.0)
-            cash_flows_df.at[standardized_date, 'Net Operating Income'] = self.noi.get(standardized_date, 0)
-            cash_flows_df.at[standardized_date, 'Capital Expenditures'] = self.capex.get(standardized_date, 0)
+            cash_flows_df.at[standardized_date, 'Net Operating Income'] = self.noi[self.noi['Date'] == standardized_date]['Amount'].sum()
+            cash_flows_df.at[standardized_date, 'Capital Expenditures'] = self.capex[self.capex['Date'] == standardized_date]['Amount'].sum()
 
         if self.loan:
             loan_cash_flows = self.loan.get_schedule()
