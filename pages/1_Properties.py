@@ -250,7 +250,7 @@ if 'properties' in st.session_state and st.session_state.properties:
 
             st.session_state.properties.append(new_property)
             st.success("New property added successfully.")
-            st.experimental_rerun()  # Rerun to reflect the new property in the session state
+            st.rerun()  # Rerun to reflect the new property in the session state
 
 else:
     # New code for when no properties exist
@@ -337,7 +337,7 @@ else:
 
         st.session_state.properties.append(new_property)
         st.success("New property added successfully.")
-        st.experimental_rerun()  # Rerun to reflect the new property in the session state
+        st.rerun()  # Rerun to reflect the new property in the session state
 
 # Save session state button
 if st.button("Save Session State"):
