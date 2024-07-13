@@ -19,4 +19,5 @@ rates_df.set_index('Date', inplace=True)
 #st.write(rates_df)
 
 # Plot the rates in a line chart
+st.title("SOFR Forward Curve (Source: Chatham Financial)")
 st.line_chart(rates_df)
