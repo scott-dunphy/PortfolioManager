@@ -118,9 +118,8 @@ if 'properties' in st.session_state and st.session_state.properties:
 
         st.write(selected_property.noi_capex)
         # Financial Data inputs
-        #with st.expander("Financial Data"):
-            #noi_data = st.text_area("Net Operating Income (space-separated values)", value=' '.join([str(v) for v in selected_property.noi.values()]))
-            #capex_data = st.text_area("Capital Expenditures (space-separated values)", value=' '.join([str(v) for v in selected_property.capex.values()]))
+        with st.expander("Financial Data"):
+            fin_df = st.data_editor(selected_property.noi_capex)
 
         if st.button('Update and Recalculate'):
             updated_data = {
