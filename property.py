@@ -202,7 +202,7 @@ class Property:
             raise ValueError("Index of cash_flows_df is not of type date")
         
         
-        fin_df = self.noi_capex
+        fin_df = self.noi_capex.copy()
         cash_flows_df = cash_flows_df.add(fin_df[['Net Operating Income', 'Capital Expenditures']], fill_value=0)
 
         if self.loan:
