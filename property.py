@@ -139,6 +139,20 @@ class Property:
         else:
             return 0.0
 
+    from datetime import datetime
+
+def convert_serialized_date_dict(serialized_dict):
+    return {datetime.strptime(date_str, "%Y-%m-%d").date(): amount for date_str, amount in serialized_dict.items()}
+
+# Example usage:
+serialized_noi = {
+    "2023-01-01": 10000,
+    "2023-02-01": 12000
+}
+
+converted_noi = convert_serialized_date_dict(serialized_noi)
+print(converted_noi)
+
     def add_financial_data(self, _date: date, noi: float, capex: float = 0):
         _date = self._standardize_date(_date)
         self.noi[_date] = noi
