@@ -206,7 +206,7 @@ if 'properties' in st.session_state and st.session_state.properties:
                 day_count_method = st.selectbox('Day Count Method', options=["Actual/360", "Actual/365", "30/360"])
 
         # Financial Data inputs for new property
-        #with st.expander("Financial Data"):
+        with st.expander("Financial Data"):
             columns = ['Date', 'Net Operating Income', 'Capital Expenditures']
             # Create a blank DataFrame
             fin_df = pd.DataFrame(columns=columns)
