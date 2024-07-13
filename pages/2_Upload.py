@@ -25,6 +25,7 @@ if st.button("Upload Portfolio"):
             # Filter NOI and CapEx data for the current property
             fin_df = df[df['Property ID'] == property_id]
             fin_df.set_index("Date",inplace=True)
+            fin_df = fin_df[['Net Operating Income','Capital Expenditures']]
             # Convert to dictionary with date keys
             property_obj.add_noi_capex(fin_df)
         
