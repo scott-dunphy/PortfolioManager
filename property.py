@@ -205,6 +205,13 @@ class Property:
         # Debug: Print the aggregated fin_df
         st.write("Aggregated NOI and CapEx DataFrame:")
         st.write(fin_df.head())
+
+        # Aggregate the values for duplicate dates
+        fin_df = self.noi_capex.groupby(self.noi_capex.index).sum()
+    
+        # Debug: Print the aggregated fin_df
+        st.write("Aggregated NOI and CapEx DataFrame:")
+        st.write(fin_df.head())
     
         # Reindex fin_df to match cash_flows_df
         fin_df = fin_df.reindex(cash_flows_df.index, fill_value=0)
