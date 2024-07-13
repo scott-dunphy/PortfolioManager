@@ -190,13 +190,7 @@ class Property:
         for d in dates:
             standardized_date = self._standardize_date(d)
             cash_flows_df.at[standardized_date, 'Ownership Share'] = self.ownership_share_series.get(standardized_date, 1.0)
-    
-        # Ensure 'Date' is a date object and set it as the index
-        if 'Date' in self.noi_capex.columns:
-            self.noi_capex['Date'] = pd.to_datetime(self.noi_capex['Date']).dt.date
-            self.noi_capex.set_index('Date', inplace=True)
-        else:
-            raise ValueError("Date column missing in noi_capex DataFrame")
+
     
         # Check if the indices are dates
         if not all(isinstance(i, date) for i in self.noi_capex.index):
