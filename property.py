@@ -297,8 +297,8 @@ class Property:
         if end_date is None:
             end_date = self.analysis_end_date
 
-        start_date = self._standardize_date(start_date)
-        end_date = self._standardize_date(end_date)
+        start_date = max(self.purchase_date, self._standardize_date(start_date))
+        end_date = max(self.sale_date, self._standardize_date(end_date))
 
         if self.loan:
             self.loan.get_schedule()
