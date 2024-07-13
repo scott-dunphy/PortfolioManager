@@ -11,7 +11,7 @@ def _standardize_date(d: date) -> date:
     """Standardize a date to the first of its month."""
     return date(d.year, d.month, 1)
 
-def update_property(properties, selected_property, updated_data, fin_df, capex_data, loan_data):
+def update_property(properties, selected_property, updated_data, fin_df, loan_data):
     for prop in properties:
         if prop.property_id == selected_property.property_id:
             prop.name = updated_data['name']
@@ -152,7 +152,7 @@ if 'properties' in st.session_state and st.session_state.properties:
                 'day_count_method': day_count_method
             }
             
-            update_property(properties, selected_property, updated_data, fin_df, capex_data, loan_data)
+            update_property(properties, selected_property, updated_data, fin_df, loan_data)
             st.success("Property updated successfully.")
             
             # Display cash flows
