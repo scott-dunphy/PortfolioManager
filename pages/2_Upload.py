@@ -19,11 +19,10 @@ if st.button("Upload Portfolio"):
     if properties_and_loans_file:
         properties, loans = load_properties_and_loans(properties_and_loans_file)
         noi, capex = load_cashflows(properties_and_loans_file)
-        print(noi)
+        st.write(noi[0])
         
         for property_obj in properties:
             property_id = property_obj.property_id
-            st.write(property_id)
             property_obj.noi = noi.get(property_id, {})
             property_obj.capex = capex.get(property_id, {})
             
