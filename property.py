@@ -200,9 +200,7 @@ class Property:
             st.write("Error: Index of self.noi_capex is not of type date")
         if not all(isinstance(i, date) for i in cash_flows_df.index):
             st.write("Error: Index of cash_flows_df is not of type date")
-        
-        # Aggregate the values for duplicate dates
-        fin_df = self.noi_capex.groupby(self.noi_capex.index).sum()
+
     
         # Debug: Print the aggregated fin_df
         st.write("Aggregated NOI and CapEx DataFrame:")
