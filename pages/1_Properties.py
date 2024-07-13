@@ -210,7 +210,7 @@ if 'properties' in st.session_state and st.session_state.properties:
             columns = ['Date', 'Net Operating Income', 'Capital Expenditures']
             # Create a blank DataFrame
             fin_df = pd.DataFrame(columns=columns)
-            find_df = st.edit_data(fin_df)
+            fin_df = st.edit_data(fin_df)
 
         if st.button('Add Property'):
             new_property = Property(
