@@ -49,8 +49,7 @@ if 'properties' in st.session_state:
         st.dataframe(cash_flows.T, column_config=adjusted_column_config, use_container_width=True)
         transposed_df = cash_flows.T.sum()
         
-        # Reset the index and drop it
-        transposed_df.reset_index(drop=True, inplace=True)
+
         
         # Display in Streamlit without the index
         st.dataframe(transposed_df.T)
