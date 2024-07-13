@@ -67,7 +67,7 @@ class Portfolio:
     
         # Aggregate property cash flows
         for property in self.properties:
-            st.write(property.noi[date(2024,7,1)]
+            st.write(property.noi[date(2024,7,1)])
             property_cf = property.hold_period_cash_flows_x(start_date=start_date, end_date=end_date)
             # Ensure the DataFrame is within the specified date range
             property_cf = property_cf.loc[(property_cf.index >= start_date) & (property_cf.index <= end_date)]
