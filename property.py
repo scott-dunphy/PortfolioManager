@@ -256,8 +256,8 @@ class Property:
         cash_flows_df.fillna(0, inplace=True)
     
         # Debug: Print the final cash_flows_df
-        st.write("Final Cash Flows DataFrame:")
-        st.write(cash_flows_df.head())
+        #st.write("Final Cash Flows DataFrame:")
+        #st.write(cash_flows_df.head())
     
         return cash_flows_df
         
