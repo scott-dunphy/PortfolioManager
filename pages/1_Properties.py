@@ -126,7 +126,7 @@ if 'properties' in st.session_state and st.session_state.properties:
 
         st.write(selected_property.noi)
         # Financial Data inputs
-        with st.expander("Financial Data"):
+        #with st.expander("Financial Data"):
             #noi_data = st.text_area("Net Operating Income (space-separated values)", value=' '.join([str(v) for v in selected_property.noi.values()]))
             #capex_data = st.text_area("Capital Expenditures (space-separated values)", value=' '.join([str(v) for v in selected_property.capex.values()]))
 
