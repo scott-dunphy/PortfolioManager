@@ -60,6 +60,18 @@ if 'cash_flows' in st.session_state:
     # Display in Streamlit without the index
     st.dataframe(transposed_df)
 
+    # Define the form
+    with st.form("capital_call_form"):
+        date = st.date_input("Date")
+        capital_call = st.number_input("Capital Call", min_value=0.0, step=0.01)
+        
+        # Form submission button
+        submit = st.form_submit_button("Submit")
+    
+    # Handle form submission
+    if submit:
+        st.success(f"Data submitted successfully! Capital call: {capital_call}")
+        
     st.write("Market Value by Property Type")
     viz = Portfolioviz(st.session_state.portfolio)
     viz.plot_property_type_distribution()
