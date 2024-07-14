@@ -51,8 +51,12 @@ if cash_flows is not None:
 # Check if 'cash_flows' is in session state and set it if not
 if 'cash_flows' in st.session_state:
     cash_flows = st.session_state.cash_flows
-    cash_flows = st.data_editor(cash_flows, column_config=adjusted_column_config, use_container_width=True)
-    st.session_state.cash_flows = cash_flows  # Update session state with any changes made in the editor
+    edited_cash_flows = st.data_editor(cash_flows, column_config=adjusted_column_config, use_container_width=True)
+    
+    # Update portfolio capital flows with edited data
+    if not edited_cash_flows.equals(st.session_state.cash_flows):
+        st.session_state.portfolio.capital_flows = edited_cash_flows.T
+        st.session_state.cash_flows = edited_cash_flows
 
     # Sum the transposed DataFrame
     transposed_df = cash_flows.sum().to_frame().T
@@ -89,7 +93,6 @@ if 'cash_flows' in st.session_state:
     if not st.session_state.portfolio.capital_flows.empty:
         st.write("Capital Flows:")
         st.write(st.session_state.portfolio.capital_flows)
-        
         
     st.write("Market Value by Property Type")
     viz = Portfolioviz(st.session_state.portfolio)
