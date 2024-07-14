@@ -7,6 +7,10 @@ def load_properties_and_loans(file_path):
     properties_df = pd.read_excel(file_path, sheet_name='Properties')
     loans_df = pd.read_excel(file_path, sheet_name='Loans')
 
+    # Check if Property ID column exists in the loans DataFrame
+    if 'Property ID' not in loans_df.columns:
+        raise KeyError("The 'Loans' sheet does not contain a 'Property ID' column.")
+
     loans = {}
     for _, row in loans_df.iterrows():
         loan = Loan(
