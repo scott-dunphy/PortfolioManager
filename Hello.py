@@ -1,6 +1,6 @@
-import streamlit as st
-from datetime import date
 import pandas as pd
+from datetime import date
+import streamlit as st
 from portfolio import Portfolio
 from config import adjusted_column_config
 from portfolioviz import Portfolioviz
@@ -51,7 +51,11 @@ if cash_flows is not None:
 # Check if 'cash_flows' is in session state and set it if not
 if 'cash_flows' in st.session_state:
     cash_flows = st.session_state.cash_flows
-    edited_cash_flows = st.data_editor(cash_flows, column_config=adjusted_column_config, use_container_width=True)
+    
+    # Ensure the DataFrame contains only supported data types
+    cash_flows = cash_flows.astype({'Capital Call': 'float64', 'Redemption Payment': 'float64'})
+    
+    edited_cash_flows = st.experimental_data_editor(cash_flows, column_config=adjusted_column_config, use_container_width=True)
     
     # Update portfolio capital flows with edited data
     if not edited_cash_flows.equals(st.session_state.cash_flows):
