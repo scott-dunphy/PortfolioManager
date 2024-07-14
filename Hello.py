@@ -76,13 +76,13 @@ if 'cash_flows' in st.session_state:
         if 'capital_flows' not in st.session_state:
             st.session_state.capital_flows = []
 
-        st.session_state.capital_flows.append({
+        flow = {
             'Date': date_input,
             'Capital Call': capital_call,
             'Redemption Payment': redemption
-        })
+        }
 
-        flows = pd.DataFrame(st.session_state.capital_flows)
+        flows = pd.DataFrame(flow)
         flows.set_index('Date', inplace=True)
         st.session_state.portfolio.add_capital_flows(flows)
         st.success("Data submitted successfully!")
