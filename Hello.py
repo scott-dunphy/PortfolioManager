@@ -49,7 +49,7 @@ if cash_flows is not None:
     st.write(st.session_state.portfolio.calculate_monthly_cash().T)
 
 # Check if 'cash_flows' is in session state and set it if not
-if 'cash_flows' is in st.session_state:
+if 'cash_flows' in st.session_state:
     cash_flows = st.session_state.cash_flows
     
     # Debugging: Print DataFrame columns and data types
