@@ -41,11 +41,12 @@ if 'properties' in st.session_state:
             properties=properties,
             unsecured_loans=[]  # Add your unsecured loans here if any
         )
-    
-    # Aggregate hold period cash flows
-    if st.button("Calculate"):
-        cash_flows = update_portfolio_dates_and_calculate()
-        st.session_state.cash_flows = cash_flows.T  # Store transposed cash_flows in session state
+
+# Recalculate cash flows whenever the dates or portfolio changes
+cash_flows = update_portfolio_dates_and_calculate()
+if cash_flows is not None:
+    st.session_state.cash_flows = cash_flows.T  # Store transposed cash_flows in session state
+    st.rerun()
 
 # Check if 'cash_flows' is in session state and set it if not
 if 'cash_flows' in st.session_state:
@@ -83,7 +84,7 @@ if 'cash_flows' in st.session_state:
         # Add the new flow to the portfolio
         st.session_state.portfolio.add_capital_flows(new_flow)
         st.success("Data submitted successfully!")
-        st.experimental_rerun()
+        st.rerun()
 
     if not st.session_state.portfolio.capital_flows.empty:
         st.write("Capital Flows:")
