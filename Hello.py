@@ -61,13 +61,14 @@ if 'cash_flows' in st.session_state:
     st.dataframe(transposed_df)
 
     with st.form("capital_call_form"):
-        col1, col2 = st.columns(2)
+        col1, col2, col3 = st.columns(3)
         
         with col1:
             date = st.date_input("Date")
         with col2:
             capital_call = st.number_input("Capital Call", min_value=0.0, step=0.01)
-        submit = st.form_submit_button("Submit")
+        with col3:
+            submit = st.form_submit_button("Submit")
         
         # Handle form submission
         if submit:
