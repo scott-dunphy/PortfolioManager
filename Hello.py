@@ -1,6 +1,6 @@
-import pandas as pd
-from datetime import date
 import streamlit as st
+from datetime import date
+import pandas as pd
 from portfolio import Portfolio
 from config import adjusted_column_config
 from portfolioviz import Portfolioviz
@@ -49,32 +49,10 @@ if cash_flows is not None:
     st.write(st.session_state.portfolio.calculate_monthly_cash().T)
 
 # Check if 'cash_flows' is in session state and set it if not
-if 'cash_flows' in st.session_state:
+if 'cash_flows' is in st.session_state:
     cash_flows = st.session_state.cash_flows
-    
-    # Print DataFrame for debugging
-    st.write("Cash Flows DataFrame:")
-    st.write(cash_flows)
-    
-    # Ensure the DataFrame contains only supported data types
-    try:
-        cash_flows = cash_flows.astype({'Capital Call': 'float64', 'Redemption Payment': 'float64'})
-    except KeyError as e:
-        st.error(f"Column not found: {e}")
-    except ValueError as e:
-        st.error(f"Value error: {e}")
-    
-    # Check for and handle missing values
-    if cash_flows.isnull().values.any():
-        st.error("DataFrame contains missing values. Please check your data.")
-        st.write(cash_flows[cash_flows.isnull().any(axis=1)])  # Display rows with missing values
-    
-    edited_cash_flows = st.data_editor(cash_flows, column_config=adjusted_column_config, use_container_width=True)
-    
-    # Update portfolio capital flows with edited data
-    if not edited_cash_flows.equals(st.session_state.cash_flows):
-        st.session_state.portfolio.capital_flows = edited_cash_flows.T
-        st.session_state.cash_flows = edited_cash_flows
+    cash_flows = st.data_editor(cash_flows, column_config=adjusted_column_config, use_container_width=True)
+    st.session_state.cash_flows = cash_flows  # Update session state with any changes made in the editor
 
     # Sum the transposed DataFrame
     transposed_df = cash_flows.sum().to_frame().T
