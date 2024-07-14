@@ -52,16 +52,24 @@ if cash_flows is not None:
 if 'cash_flows' in st.session_state:
     cash_flows = st.session_state.cash_flows
     
-    # Print columns for debugging
-    st.write("Columns in cash_flows DataFrame:", cash_flows.columns.tolist())
+    # Print DataFrame for debugging
+    st.write("Cash Flows DataFrame:")
+    st.write(cash_flows)
     
     # Ensure the DataFrame contains only supported data types
     try:
         cash_flows = cash_flows.astype({'Capital Call': 'float64', 'Redemption Payment': 'float64'})
     except KeyError as e:
         st.error(f"Column not found: {e}")
+    except ValueError as e:
+        st.error(f"Value error: {e}")
     
-    edited_cash_flows = st.experimental_data_editor(cash_flows, column_config=adjusted_column_config, use_container_width=True)
+    # Check for and handle missing values
+    if cash_flows.isnull().values.any():
+        st.error("DataFrame contains missing values. Please check your data.")
+        st.write(cash_flows[cash_flows.isnull().any(axis=1)])  # Display rows with missing values
+    
+    edited_cash_flows = st.data_editor(cash_flows, column_config=adjusted_column_config, use_container_width=True)
     
     # Update portfolio capital flows with edited data
     if not edited_cash_flows.equals(st.session_state.cash_flows):
