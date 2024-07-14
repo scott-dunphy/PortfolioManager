@@ -78,10 +78,10 @@ if 'cash_flows' in st.session_state:
                 'Capital Call': capital_call,
                 'Redemption': redemption
             })
-            portfolio.add_capital_flows(flows)
+            st.session_state.portfolio.add_capital_flows(flows)
             st.rerun()
 
-    st.write(portfolio.capital_flows)
+    st.write(st.session_state.portfolio.capital_flows)
         
     st.write("Market Value by Property Type")
     viz = Portfolioviz(st.session_state.portfolio)
