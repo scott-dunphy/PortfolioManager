@@ -64,7 +64,7 @@ if 'cash_flows' in st.session_state:
         col1, col2, col3 = st.columns(3)
         
         with col1:
-            date = st.date_input("Date")
+            date_input = st.date_input("Date")
         with col2:
             capital_call = st.number_input("Capital Call", min_value=0.0, step=0.01)
         with col3:
@@ -73,17 +73,24 @@ if 'cash_flows' in st.session_state:
         
     # Handle form submission
     if submit:
-        flows = pd.DataFrame({
-            'Date': date,
+        if 'capital_flows' not in st.session_state:
+            st.session_state.capital_flows = []
+
+        st.session_state.capital_flows.append({
+            'Date': date_input,
             'Capital Call': capital_call,
-            'Redemption': redemption
+            'Redemption Payment': redemption
         })
+
+        flows = pd.DataFrame(st.session_state.capital_flows)
         flows.set_index('Date', inplace=True)
         st.session_state.portfolio.add_capital_flows(flows)
         st.success("Data submitted successfully!")
-        st.rerun()
+        st.experimental_rerun()
 
-    st.write(st.session_state.portfolio.capital_flows)
+    if 'capital_flows' in st.session_state:
+        st.write("Capital Flows:")
+        st.write(st.session_state.portfolio.capital_flows)
         
     st.write("Market Value by Property Type")
     viz = Portfolioviz(st.session_state.portfolio)
