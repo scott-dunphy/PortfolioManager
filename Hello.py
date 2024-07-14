@@ -54,7 +54,7 @@ if 'cash_flows' in st.session_state:
     cash_flows = st.data_editor(cash_flows, column_config=adjusted_column_config, use_container_width=True)
     st.session_state.cash_flows = cash_flows  # Update session state with any changes made in the editor
     for index,row in cash_flows.iterrows():
-        st.write(f"{index} : {row}")
+        st.write(f"{index} : {row[date(2024,7,1)}")
 
     # Sum the transposed DataFrame
     transposed_df = cash_flows.sum().to_frame().T
