@@ -7,10 +7,6 @@ def load_properties_and_loans(file_path):
     properties_df = pd.read_excel(file_path, sheet_name='Properties')
     loans_df = pd.read_excel(file_path, sheet_name='Loans')
 
-    # Check if Property ID column exists in the loans DataFrame
-    if 'Property ID' not in loans_df.columns:
-        raise KeyError("The 'Loans' sheet does not contain a 'Property ID' column.")
-
     loans = {}
     for _, row in loans_df.iterrows():
         loan = Loan(
@@ -23,11 +19,12 @@ def load_properties_and_loans(file_path):
             amortization_period=row.get('Amortization Period'),
             day_count_method=row.get('Day Count Method', '30/360')
         )
-        loans.setdefault(row['Property ID'], []).append(loan)
+        loans[loan.loan_id] = loan
 
     properties = []
     for _, row in properties_df.iterrows():
-        property_loans = loans.get(row['Property ID'], [])
+        property_loan_ids = [loan_id.strip() for loan_id in str(row['Loan ID']).split(',')]
+        property_loans = [loans[loan_id] for loan_id in property_loan_ids if loan_id in loans]
         property_obj = Property(
             property_id=row['Property ID'],
             name=row['Name'],
