@@ -78,7 +78,9 @@ if 'cash_flows' in st.session_state:
                 'Capital Call': capital_call,
                 'Redemption': redemption
             })
+            flows.set_index('Date', inplace=True)
             st.session_state.portfolio.add_capital_flows(flows)
+            st.success("Data submitted successfully!")
             st.rerun()
 
     st.write(st.session_state.portfolio.capital_flows)
