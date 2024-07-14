@@ -20,10 +20,11 @@ class Portfolio:
         return date(d.year, d.month, 1)
         
     def add_property(self, property: 'Property'):
-        df.index = df.index.map(self._standardize_date)
+
         self.properties.append(property)
 
     def add_capital_flows(self, df: pd.DataFrame):
+        df.index = df.index.map(self._standardize_date)
         self.capital_flows = pd.concat([self.capital_flows, df])
   
     def remove_property(self, property_id: str):
