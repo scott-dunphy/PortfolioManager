@@ -109,3 +109,17 @@ class Portfolio:
         #aggregate_cf = aggregate_cf.loc[start_date:end_date]
     
         return aggregate_cf
+
+    def calculate_monthly_cash(self) -> pd.DataFrame:
+            aggregate_cf = self.aggregate_hold_period_cash_flows()
+            monthly_cash = pd.DataFrame(index=aggregate_cf.index, columns=['Beginning Cash', 'Monthly Cash Flow', 'Ending Cash'])
+            
+            monthly_cash['Monthly Cash Flow'] = aggregate_cf.sum(axis=1)
+            monthly_cash['Beginning Cash'].iloc[0] = self.beg_cash
+            monthly_cash['Ending Cash'].iloc[0] = self.beg_cash + monthly_cash['Monthly Cash Flow'].iloc[0]
+            
+            for i in range(1, len(monthly_cash)):
+                monthly_cash['Beginning Cash'].iloc[i] = monthly_cash['Ending Cash'].iloc[i-1]
+                monthly_cash['Ending Cash'].iloc[i] = monthly_cash['Beginning Cash'].iloc[i] + monthly_cash['Monthly Cash Flow'].iloc[i]
+            
+            return monthly_cash
