@@ -19,7 +19,7 @@ class Portfolio:
         self.properties.append(property)
 
     def add_capital_flows(self, df: pd.DataFrame):
-        self.capital_flows.append(df)
+        self.capital_flows = pd.concat([self.capital_flows, df])
   
     def remove_property(self, property_id: str):
         self.properties = [p for p in self.properties if p.property_id != property_id]
