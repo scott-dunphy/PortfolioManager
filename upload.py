@@ -19,11 +19,11 @@ def load_properties_and_loans(file_path):
             amortization_period=row.get('Amortization Period'),
             day_count_method=row.get('Day Count Method', '30/360')
         )
-        loans[loan.loan_id] = loan
+        loans.setdefault(row['Property ID'], []).append(loan)
 
     properties = []
     for _, row in properties_df.iterrows():
-        loan = loans.get(row['Loan ID'])
+        property_loans = loans.get(row['Property ID'], [])
         property_obj = Property(
             property_id=row['Property ID'],
             name=row['Name'],
@@ -38,7 +38,7 @@ def load_properties_and_loans(file_path):
             current_value=row.get('Current Value'),
             sale_date=row['Sale Date'].date() if pd.notna(row['Sale Date']) else None,
             sale_price=row.get('Sale Price'),
-            loan=loan,
+            loans=property_loans,
             ownership_share=row.get('Ownership Share', 1),
             buyout_date=row['Buyout Date'].date() if pd.notna(row['Buyout Date']) else date(2100, 12, 1),
             buyout_amount=row.get('Buyout Amount', 0)
