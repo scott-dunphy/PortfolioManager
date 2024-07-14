@@ -53,7 +53,7 @@ if 'cash_flows' in st.session_state:
     cash_flows = st.session_state.cash_flows
     cash_flows = st.data_editor(cash_flows, column_config=adjusted_column_config, use_container_width=True)
     st.session_state.cash_flows = cash_flows  # Update session state with any changes made in the editor
-    st.write(df.at[date(2024,7,1), "Capital Call"])
+    st.write(cash_flows.at[date(2024,7,1), "Capital Call"])
 
     # Sum the transposed DataFrame
     transposed_df = cash_flows.sum().to_frame().T
