@@ -71,17 +71,17 @@ if 'cash_flows' in st.session_state:
             redemption = st.number_input("Redemption Payment", min_value=0.0, step=0.01)
         submit = st.form_submit_button("Submit")
         
-        # Handle form submission
-        if submit:
-            flows = pd.DataFrame({
-                'Date': date,
-                'Capital Call': capital_call,
-                'Redemption': redemption
-            })
-            flows.set_index('Date', inplace=True)
-            st.session_state.portfolio.add_capital_flows(flows)
-            st.success("Data submitted successfully!")
-            st.rerun()
+    # Handle form submission
+    if submit:
+        flows = pd.DataFrame({
+            'Date': date,
+            'Capital Call': capital_call,
+            'Redemption': redemption
+        })
+        flows.set_index('Date', inplace=True)
+        st.session_state.portfolio.add_capital_flows(flows)
+        st.success("Data submitted successfully!")
+        st.rerun()
 
     st.write(st.session_state.portfolio.capital_flows)
         
