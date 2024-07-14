@@ -46,6 +46,7 @@ if 'properties' in st.session_state:
 cash_flows = update_portfolio_dates_and_calculate()
 if cash_flows is not None:
     st.session_state.cash_flows = cash_flows.T  # Store transposed cash_flows in session state
+st.write(st.session_state.portfolio.calculate_monthly_cash())
 
 # Check if 'cash_flows' is in session state and set it if not
 if 'cash_flows' in st.session_state:
@@ -88,6 +89,7 @@ if 'cash_flows' in st.session_state:
     if not st.session_state.portfolio.capital_flows.empty:
         st.write("Capital Flows:")
         st.write(st.session_state.portfolio.capital_flows)
+        
         
     st.write("Market Value by Property Type")
     viz = Portfolioviz(st.session_state.portfolio)
