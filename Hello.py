@@ -51,8 +51,23 @@ if cash_flows is not None:
 # Check if 'cash_flows' is in session state and set it if not
 if 'cash_flows' in st.session_state:
     cash_flows = st.session_state.cash_flows
-    cash_flows = st.data_editor(cash_flows, column_config=adjusted_column_config, use_container_width=True)
-    st.session_state.cash_flows = cash_flows  # Update session state with any changes made in the editor
+    
+    # Ensure the DataFrame contains only supported data types
+    try:
+        cash_flows = cash_flows.astype({'Capital Call': 'float64', 'Redemption Payment': 'float64'})
+    except KeyError as e:
+        st.error(f"Column not found: {e}")
+    except ValueError as e:
+        st.error(f"Value error: {e}")
+    
+    edited_cash_flows = st.experimental_data_editor(cash_flows, column_config=adjusted_column_config, use_container_width=True)
+    
+    # Update portfolio capital flows with edited data
+    for index, row in edited_cash_flows.iterrows():
+        st.session_state.portfolio.capital_flows.loc[index, 'Capital Call'] = row['Capital Call']
+        st.session_state.portfolio.capital_flows.loc[index, 'Redemption Payment'] = row['Redemption Payment']
+    
+    st.session_state.cash_flows = edited_cash_flows
 
     # Sum the transposed DataFrame
     transposed_df = cash_flows.sum().to_frame().T
