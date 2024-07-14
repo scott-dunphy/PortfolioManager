@@ -6,12 +6,13 @@ from typing import List
 import streamlit as st
 
 class Portfolio:
-    def __init__(self, name: str, start_date: date, end_date: date, properties: List['Property'] = None, unsecured_loans: List['Loan'] = None):
+    def __init__(self, name: str, start_date: date, end_date: date, properties: List['Property'] = None, unsecured_loans: List['Loan'] = None, beg_cash = 0):
         self.name = name
         self.start_date = start_date
         self.end_date = end_date
         self.properties = properties or []
         self.unsecured_loans = unsecured_loans or []
+        self.beg_cash = beg_cash or 0
 
     def add_property(self, property: 'Property'):
         self.properties.append(property)
