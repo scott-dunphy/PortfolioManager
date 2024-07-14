@@ -199,41 +199,41 @@ class Property:
         # Add financial data to the cash flows DataFrame
         cash_flows_df['Net Operating Income'] = cash_flows_df['Net Operating Income'].add(fin_df['Net Operating Income'], fill_value=0)
             0)
-    cash_flows_df['Capital Expenditures'] = cash_flows_df['Capital Expenditures'].add(fin_df['Capital Expenditures'], fill_value=0)
-
-    # Add loan cash flows to the DataFrame
-    for loan in self.loans:
-        loan_cash_flows = loan.get_schedule()
-        for loan_cf in loan_cash_flows:
-            standardized_date = self._standardize_date(loan_cf['date'])
-            cash_flows_df.at[standardized_date, 'Interest Expense'] += loan_cf['Interest Expense']
-            cash_flows_df.at[standardized_date, 'Principal Payments'] += loan_cf['Principal Payments']
-            if standardized_date == loan.origination_date:
-                cash_flows_df.at[standardized_date, 'Loan Proceeds'] += loan.original_balance
-            if standardized_date == loan.maturity_date and not self.sale_date:
-                cash_flows_df.at[standardized_date, 'Debt Scheduled Repayment'] += loan.get_current_balance(loan.maturity_date)
-
-    if self.sale_date is not None:
-        cash_flows_df.at[self.sale_date, 'Sale Proceeds'] = self.sale_price
+        cash_flows_df['Capital Expenditures'] = cash_flows_df['Capital Expenditures'].add(fin_df['Capital Expenditures'], fill_value=0)
+    
+        # Add loan cash flows to the DataFrame
         for loan in self.loans:
-            cash_flows_df.at[self.sale_date, 'Debt Early Prepayment'] += loan.get_current_balance(self.sale_date)
-
-    col_order = ['Ownership Share', 'Purchase Price', 'Loan Proceeds', 'Net Operating Income', 'Capital Expenditures', 'Interest Expense', 'Principal Payments', 'Debt Scheduled Repayment', 'Debt Early Prepayment', 'Sale Proceeds', 'Partner Buyout']
-    cash_flows_df = cash_flows_df[col_order]
-
-    for col in cash_flows_df.columns[1:]:
-        adjusted_column = "Adjusted " + col
-        cash_flows_df[adjusted_column] = cash_flows_df[col] * cash_flows_df['Ownership Share']
-
-    if self.buyout_date:
-        standardized_buyout_date = self._standardize_date(self.buyout_date)
-        cash_flows_df.at[standardized_buyout_date, 'Partner Buyout'] = self.buyout_amount
-        cash_flows_df.at[standardized_buyout_date, 'Adjusted Partner Buyout'] = self.buyout_amount
-
-    # Replace NaN values with 0
-    cash_flows_df.fillna(0, inplace=True)
-
-    return cash_flows_df
+            loan_cash_flows = loan.get_schedule()
+            for loan_cf in loan_cash_flows:
+                standardized_date = self._standardize_date(loan_cf['date'])
+                cash_flows_df.at[standardized_date, 'Interest Expense'] += loan_cf['Interest Expense']
+                cash_flows_df.at[standardized_date, 'Principal Payments'] += loan_cf['Principal Payments']
+                if standardized_date == loan.origination_date:
+                    cash_flows_df.at[standardized_date, 'Loan Proceeds'] += loan.original_balance
+                if standardized_date == loan.maturity_date and not self.sale_date:
+                    cash_flows_df.at[standardized_date, 'Debt Scheduled Repayment'] += loan.get_current_balance(loan.maturity_date)
+    
+        if self.sale_date is not None:
+            cash_flows_df.at[self.sale_date, 'Sale Proceeds'] = self.sale_price
+            for loan in self.loans:
+                cash_flows_df.at[self.sale_date, 'Debt Early Prepayment'] += loan.get_current_balance(self.sale_date)
+    
+        col_order = ['Ownership Share', 'Purchase Price', 'Loan Proceeds', 'Net Operating Income', 'Capital Expenditures', 'Interest Expense', 'Principal Payments', 'Debt Scheduled Repayment', 'Debt Early Prepayment', 'Sale Proceeds', 'Partner Buyout']
+        cash_flows_df = cash_flows_df[col_order]
+    
+        for col in cash_flows_df.columns[1:]:
+            adjusted_column = "Adjusted " + col
+            cash_flows_df[adjusted_column] = cash_flows_df[col] * cash_flows_df['Ownership Share']
+    
+        if self.buyout_date:
+            standardized_buyout_date = self._standardize_date(self.buyout_date)
+            cash_flows_df.at[standardized_buyout_date, 'Partner Buyout'] = self.buyout_amount
+            cash_flows_df.at[standardized_buyout_date, 'Adjusted Partner Buyout'] = self.buyout_amount
+    
+        # Replace NaN values with 0
+        cash_flows_df.fillna(0, inplace=True)
+    
+        return cash_flows_df
 
     def calculate_cash_flow_before_debt_service(self, start_date: date, end_date: date, ownership_adjusted: bool = True) -> Dict[date, float]:
         start_date = self._standardize_date(start_date)
