@@ -49,7 +49,7 @@ if cash_flows is not None:
     st.write(st.session_state.portfolio.calculate_monthly_cash().T)
 
 # Check if 'cash_flows' is in session state and set it if not
-if 'cash_flows' is in st.session_state:
+if 'cash_flows' in st.session_state:
     cash_flows = st.session_state.cash_flows
     cash_flows = st.data_editor(cash_flows, column_config=adjusted_column_config, use_container_width=True)
     st.session_state.cash_flows = cash_flows  # Update session state with any changes made in the editor
