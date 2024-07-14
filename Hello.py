@@ -68,12 +68,12 @@ if 'cash_flows' in st.session_state:
         with col2:
             capital_call = st.number_input("Capital Call", min_value=0.0, step=0.01)
         
-    # Form submission button
-    submit = st.form_submit_button("Submit")
-    
-    # Handle form submission
-    if submit:
-        st.success(f"Data submitted successfully! Capital call: {capital_call}")
+        # Form submission button
+        submit = st.form_submit_button("Submit")
+        
+        # Handle form submission
+        if submit:
+            st.success(f"Data submitted successfully! Capital call: {capital_call}")
         
     st.write("Market Value by Property Type")
     viz = Portfolioviz(st.session_state.portfolio)
