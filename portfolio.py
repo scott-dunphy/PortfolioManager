@@ -13,6 +13,7 @@ class Portfolio:
         self.properties = properties or []
         self.unsecured_loans = unsecured_loans or []
         self.beg_cash = beg_cash or 0
+        self.capita_flows = pd.DataFrame(columns=['Capital Call', 'Redemption Payment']).rename_axis('Date')
 
     def add_property(self, property: 'Property'):
         self.properties.append(property)
