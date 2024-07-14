@@ -15,7 +15,12 @@ class Portfolio:
         self.beg_cash = beg_cash or 0
         self.capital_flows = pd.DataFrame(columns=['Capital Call', 'Redemption Payment']).rename_axis('Date')
 
+    def _standardize_date(self, d: date) -> date:
+        """Standardize a date to the first of its month."""
+        return date(d.year, d.month, 1)
+        
     def add_property(self, property: 'Property'):
+        df.index = df.index.map(self._standardize_date)
         self.properties.append(property)
 
     def add_capital_flows(self, df: pd.DataFrame):
