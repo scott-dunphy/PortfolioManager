@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 from typing import Optional, Dict, List
 import pandas as pd
@@ -22,7 +22,7 @@ class Property:
         current_value: Optional[float] = None,
         sale_date: Optional[date] = None,
         sale_price: Optional[float] = None,
-        loan: Optional['Loan'] = None,
+        loans: Optional[List['Loan']] = None,
         noi_capex: Optional[pd.DataFrame] = None,
         ownership_share: float = 1,
         buyout_date: Optional[date] = None,
@@ -41,7 +41,7 @@ class Property:
         self.sale_date = self._standardize_date(sale_date) if sale_date else date(2100, 12, 1)
         self.sale_price = sale_price
         self.current_value = current_value if current_value is not None else purchase_price
-        self.loan = loan
+        self.loans = loans if loans else []
         self.ownership_share = ownership_share
         self._initialize_ownership_share()
         self.buyout_date = self._standardize_date(buyout_date) if buyout_date else None
@@ -64,7 +64,7 @@ class Property:
             'current_value': self.current_value,
             'sale_date': self.sale_date.isoformat() if self.sale_date else None,
             'sale_price': self.sale_price,
-            'loan': self.loan.to_dict() if self.loan else None
+            'loans': [loan.to_dict() for loan in self.loans]
         }
 
     @classmethod
@@ -84,7 +84,7 @@ class Property:
             current_value=data['current_value'],
             sale_date=date.fromisoformat(data['sale_date']) if data['sale_date'] else None,
             sale_price=data['sale_price'],
-            loan=Loan.from_dict(data['loan']) if data['loan'] else None
+            loans=[Loan.from_dict(loan_data) for loan_data in data['loans']]
         )
 
     def _standardize_date(self, d: date) -> date:
@@ -105,32 +105,30 @@ class Property:
         self.ownership_share_series = ownership_dict
 
     def add_loan(self, loan: 'Loan'):
-        self.loan = loan
+        self.loans.append(loan)
 
-    def remove_loan(self):
-        self.loan = None
+    def remove_loan(self, loan_id: str):
+        self.loans = [loan for loan in self.loans if loan.loan_id != loan_id]
 
     def get_loan_details(self) -> str:
-        if self.loan:
-            return f"Loan Details: Original Balance: ${self.loan.original_balance:,.2f}, " \
-                   f"Interest Rate: {self.loan.note_rate * 100:.2f}%, " \
-                   f"Maturity Date: {self.loan.maturity_date}"
+        if self.loans:
+            loan_details = []
+            for loan in self.loans:
+                loan_details.append(f"Loan ID: {loan.loan_id}, Original Balance: ${loan.original_balance:,.2f}, "
+                                    f"Interest Rate: {loan.note_rate * 100:.2f}%, Maturity Date: {loan.maturity_date}")
+            return "\n".join(loan_details)
         else:
             return "This property is not encumbered."
 
     def calculate_equity(self, as_of_date: date = date.today()) -> float:
         as_of_date = self._standardize_date(as_of_date)
-        if self.loan:
-            return self.current_value - self.loan.get_current_balance(as_of_date)
-        else:
-            return self.current_value
+        total_loan_balance = sum(loan.get_current_balance(as_of_date) for loan in self.loans)
+        return self.current_value - total_loan_balance
 
     def calculate_ltv(self, as_of_date: date = date.today()) -> float:
         as_of_date = self._standardize_date(as_of_date)
-        if self.loan:
-            return self.loan.get_current_balance(as_of_date) / self.current_value
-        else:
-            return 0.0
+        total_loan_balance = sum(loan.get_current_balance(as_of_date) for loan in self.loans)
+        return total_loan_balance / self.current_value
 
     def convert_serialized_date_dict(serialized_dict):
         return {datetime.strptime(date_str, "%Y-%m-%d").date(): amount for date_str, amount in serialized_dict.items()}
@@ -162,13 +160,13 @@ class Property:
             start_date = self.analysis_start_date
         if end_date is None:
             end_date = self.analysis_end_date
-    
+
         # Generate a date range for the entire analysis period
-        end_date is min(end_date, self.sale_date)
-        start_date is max(start_date, self.purchase_date)
+        end_date = min(end_date, self.sale_date)
+        start_date = max(start_date, self.purchase_date)
         dates = pd.date_range(start=start_date, end=end_date, freq='MS')
         dates = [date(d.year, d.month, d.day) for d in dates]
-    
+
         # Create a DataFrame with these dates as the index
         cash_flows_df = pd.DataFrame(index=dates, columns=[
             'Ownership Share',
@@ -184,195 +182,167 @@ class Property:
             'Debt Early Prepayment',
         ])
         cash_flows_df = cash_flows_df.fillna(0)  # Initialize with 0s
-    
+
         cash_flows_df.at[self.purchase_date, 'Purchase Price'] = self.purchase_price
-    
+
         # Fill in the DataFrame with cash flow data
         for d in dates:
             standardized_date = self._standardize_date(d)
             cash_flows_df.at[standardized_date, 'Ownership Share'] = self.ownership_share_series.get(standardized_date, 1.0)
-    
-        # Debug: Print the first few rows of self.noi_capex
-        #st.write("NOI and CapEx DataFrame:")
-        #st.write(self.noi_capex.head())
-    
-        # Check if the indices are dates
-        if not all(isinstance(i, date) for i in self.noi_capex.index):
-            st.write("Error: Index of self.noi_capex is not of type date")
-        if not all(isinstance(i, date) for i in cash_flows_df.index):
-            st.write("Error: Index of cash_flows_df is not of type date")
-
 
         # Aggregate the values for duplicate dates
         fin_df = self.noi_capex.groupby(self.noi_capex.index).sum()
-    
-        # Debug: Print the aggregated fin_df
-        #st.write("Aggregated NOI and CapEx DataFrame:")
-        #st.write(fin_df.head())
-    
+
         # Reindex fin_df to match cash_flows_df
         fin_df = fin_df.reindex(cash_flows_df.index, fill_value=0)
-    
-        # Debug: Print the reindexed fin_df
-        #st.write("Reindexed NOI and CapEx DataFrame:")
-        #st.write(fin_df.head())
-    
+
         # Add financial data to the cash flows DataFrame
         cash_flows_df['Net Operating Income'] = cash_flows_df['Net Operating Income'].add(fin_df['Net Operating Income'], fill_value=0)
-        cash_flows_df['Capital Expenditures'] = cash_flows_df['Capital Expenditures'].add(fin_df['Capital Expenditures'], fill_value=0)
-    
-        # Debug: Print the cash_flows_df after adding financial data
-        #st.write("Cash Flows DataFrame after adding NOI and CapEx:")
-        #st.write(cash_flows_df.head())
-        
-        if self.loan:
-            loan_cash_flows = self.loan.get_schedule()
-            for loan_cf in loan_cash_flows:
-                standardized_date = self._standardize_date(loan_cf['date'])
-                cash_flows_df.at[standardized_date, 'Interest Expense'] = loan_cf['Interest Expense']
-                cash_flows_df.at[standardized_date, 'Principal Payments'] = loan_cf['Principal Payments']
-                if standardized_date == self.loan.origination_date:
-                    cash_flows_df.at[standardized_date, 'Loan Proceeds'] = self.loan.original_balance
-                if standardized_date == self.loan.maturity_date and not self.sale_date:
-                    cash_flows_df.at[standardized_date, 'Debt Repayment'] = self.loan.get_current_balance(self.loan.maturity_date)
-    
-        if self.sale_date is not None:
-            cash_flows_df.at[self.sale_date, 'Sale Proceeds'] = self.sale_price
-            if self.loan:
-                cash_flows_df.at[self.sale_date, 'Debt Early Prepayment'] = self.loan.get_current_balance(self.sale_date)
-    
-        col_order = ['Ownership Share', 'Purchase Price', 'Loan Proceeds', 'Net Operating Income', 'Capital Expenditures', 'Interest Expense', 'Principal Payments', 'Debt Scheduled Repayment', 'Debt Early Prepayment', 'Sale Proceeds', 'Partner Buyout']
-        cash_flows_df = cash_flows_df[col_order]
-    
-        for col in cash_flows_df.columns[1:]:
-            adjusted_column = "Adjusted " + col
-            cash_flows_df[adjusted_column] = cash_flows_df[col] * cash_flows_df['Ownership Share']
-    
-        if self.buyout_date:
-            standardized_buyout_date = self._standardize_date(self.buyout_date)
-            cash_flows_df.at[standardized_buyout_date, 'Partner Buyout'] = self.buyout_amount
-            cash_flows_df.at[standardized_buyout_date, 'Adjusted Partner Buyout'] = self.buyout_amount
-    
-        # Replace NaN values with 0
-        cash_flows_df.fillna(0, inplace=True)
-    
-        # Debug: Print the final cash_flows_df
-        #st.write("Final Cash Flows DataFrame:")
-        #st.write(cash_flows_df.head())
-    
-        return cash_flows_df
-        
-    def calculate_cash_flow_before_debt_service(self, start_date: date, end_date: date, ownership_adjusted: bool = True) -> Dict[date, float]:
-        start_date = self._standardize_date(start_date)
-        end_date = self._standardize_date(end_date)
-        cf_before_debt = {}
-        for d in self.noi.keys():
-            if start_date <= d <= end_date:
-                noi = self.noi[d]
-                capex = self.capex[d]
-                if ownership_adjusted:
-                    ownership_share = self.ownership_share_series.get(d, 1.0)
-                    noi *= ownership_share
-                    capex *= ownership_share
-                cf_before_debt[d] = noi - capex
+            0)
+    cash_flows_df['Capital Expenditures'] = cash_flows_df['Capital Expenditures'].add(fin_df['Capital Expenditures'], fill_value=0)
+
+    # Add loan cash flows to the DataFrame
+    for loan in self.loans:
+        loan_cash_flows = loan.get_schedule()
+        for loan_cf in loan_cash_flows:
+            standardized_date = self._standardize_date(loan_cf['date'])
+            cash_flows_df.at[standardized_date, 'Interest Expense'] += loan_cf['Interest Expense']
+            cash_flows_df.at[standardized_date, 'Principal Payments'] += loan_cf['Principal Payments']
+            if standardized_date == loan.origination_date:
+                cash_flows_df.at[standardized_date, 'Loan Proceeds'] += loan.original_balance
+            if standardized_date == loan.maturity_date and not self.sale_date:
+                cash_flows_df.at[standardized_date, 'Debt Scheduled Repayment'] += loan.get_current_balance(loan.maturity_date)
+
+    if self.sale_date is not None:
+        cash_flows_df.at[self.sale_date, 'Sale Proceeds'] = self.sale_price
+        for loan in self.loans:
+            cash_flows_df.at[self.sale_date, 'Debt Early Prepayment'] += loan.get_current_balance(self.sale_date)
+
+    col_order = ['Ownership Share', 'Purchase Price', 'Loan Proceeds', 'Net Operating Income', 'Capital Expenditures', 'Interest Expense', 'Principal Payments', 'Debt Scheduled Repayment', 'Debt Early Prepayment', 'Sale Proceeds', 'Partner Buyout']
+    cash_flows_df = cash_flows_df[col_order]
+
+    for col in cash_flows_df.columns[1:]:
+        adjusted_column = "Adjusted " + col
+        cash_flows_df[adjusted_column] = cash_flows_df[col] * cash_flows_df['Ownership Share']
+
+    if self.buyout_date:
+        standardized_buyout_date = self._standardize_date(self.buyout_date)
+        cash_flows_df.at[standardized_buyout_date, 'Partner Buyout'] = self.buyout_amount
+        cash_flows_df.at[standardized_buyout_date, 'Adjusted Partner Buyout'] = self.buyout_amount
+
+    # Replace NaN values with 0
+    cash_flows_df.fillna(0, inplace=True)
+
+    return cash_flows_df
+
+def calculate_cash_flow_before_debt_service(self, start_date: date, end_date: date, ownership_adjusted: bool = True) -> Dict[date, float]:
+    start_date = self._standardize_date(start_date)
+    end_date = self._standardize_date(end_date)
+    cf_before_debt = {}
+    for d in self.noi.keys():
+        if start_date <= d <= end_date:
+            noi = self.noi[d]
+            capex = self.capex[d]
+            if ownership_adjusted:
+                ownership_share = self.ownership_share_series.get(d, 1.0)
+                noi *= ownership_share
+                capex *= ownership_share
+            cf_before_debt[d] = noi - capex
+    return cf_before_debt
+
+def calculate_cash_flow_after_debt_service(self, start_date: date, end_date: date, ownership_adjusted: bool = True) -> Dict[date, float]:
+    cf_before_debt = self.calculate_cash_flow_before_debt_service(start_date, end_date, ownership_adjusted)
+
+    if not self.loans:
         return cf_before_debt
 
-    def calculate_cash_flow_after_debt_service(self, start_date: date, end_date: date, ownership_adjusted: bool = True) -> Dict[date, float]:
-        cf_before_debt = self.calculate_cash_flow_before_debt_service(start_date, end_date, ownership_adjusted)
+    cf_after_debt = {}
+    for d in cf_before_debt.keys():
+        total_loan_payment = sum(loan.get_monthly_payment(d) for loan in self.loans)
+        cf_after_debt[d] = cf_before_debt[d] - total_loan_payment
 
-        if not self.loan:
-            return cf_before_debt
+    return cf_after_debt
 
-        cf_after_debt = {}
-        for d in cf_before_debt.keys():
-            interest, principal = self.loan.get_monthly_interest_and_principal(d)
-            loan_payment = interest + principal
-            cf_after_debt[d] = cf_before_debt[d] - loan_payment
+def hold_period_cash_flows(self, ownership_adjusted: bool = True, start_date: Optional[date] = None, end_date: Optional[date] = None) -> pd.DataFrame:
+    if start_date is None:
+        start_date = self.analysis_start_date
+    if end_date is None:
+        end_date = self.analysis_end_date
 
-        return cf_after_debt
+    start_date = max(self.purchase_date, self._standardize_date(start_date))
+    end_date = min(self.sale_date, self._standardize_date(end_date))
 
-    def hold_period_cash_flows_x(self, ownership_adjusted: bool = True, start_date: Optional[date] = None, end_date: Optional[date] = None) -> pd.DataFrame:
-        if start_date is None:
-            start_date = self.analysis_start_date
-        if end_date is None:
-            end_date = self.analysis_end_date
+    if self.buyout_date:
+        self.update_ownership_share(self.buyout_date, 1)
 
-        start_date = max(self.purchase_date, self._standardize_date(start_date))
-        end_date = min(self.sale_date, self._standardize_date(end_date))
+    df = self.get_cash_flows_dataframe(start_date=start_date, end_date=end_date)
 
-        if self.loan:
-            self.loan.get_schedule()
+    columns_to_change_sign = ['Capital Expenditures', 'Purchase Price', 'Interest Expense', 'Principal Payments', 'Partner Buyout', 'Debt Scheduled Repayment', 'Debt Early Prepayment']
 
-        if self.buyout_date:
-            self.update_ownership_share(self.buyout_date, 1)
+    adjusted_columns = [col for col in df.columns if 'Adjusted' in col]
+    if ownership_adjusted:
+        cf_df = df[adjusted_columns]
+        cf_df['Ownership Share'] = df['Ownership Share']
+        cf_df = cf_df[['Ownership Share', 'Adjusted Purchase Price', 'Adjusted Loan Proceeds', 'Adjusted Net Operating Income', 'Adjusted Capital Expenditures', 'Adjusted Interest Expense', 'Adjusted Principal Payments', 'Adjusted Debt Scheduled Repayment', 'Adjusted Debt Early Prepayment', 'Adjusted Sale Proceeds', 'Adjusted Partner Buyout']]
+    else:
+        non_adjusted_columns = [col for col in df.columns if 'Adjusted' not in col]
+        cf_df = df[non_adjusted_columns]
+        cf_df['Ownership Share'] = df['Ownership Share']
 
-        df = self.get_cash_flows_dataframe(start_date=start_date, end_date=end_date)
+    for col in columns_to_change_sign:
+        adjusted_col_name = f'Adjusted {col}' if ownership_adjusted else col
+        if adjusted_col_name in cf_df.columns:
+            cf_df.loc[:, adjusted_col_name] = -cf_df[adjusted_col_name]
 
-        columns_to_change_sign = ['Capital Expenditures', 'Purchase Price', 'Interest Expense', 'Principal Payments', 'Partner Buyout', 'Debt Scheduled Repayment', 'Debt Early Prepayment']
+    cf_df.loc[:, 'Total Cash Flow'] = cf_df.drop(columns=['Ownership Share']).sum(axis=1)
 
-        adjusted_columns = [col for col in df.columns if 'Adjusted' in col]
-        if ownership_adjusted:
-            cf_df = df[adjusted_columns]
-            cf_df['Ownership Share'] = df['Ownership Share']
-            cf_df = cf_df[['Ownership Share', 'Adjusted Purchase Price', 'Adjusted Loan Proceeds', 'Adjusted Net Operating Income', 'Adjusted Capital Expenditures', 'Adjusted Interest Expense', 'Adjusted Principal Payments', 'Adjusted Debt Scheduled Repayment', 'Adjusted Debt Early Prepayment', 'Adjusted Sale Proceeds', 'Adjusted Partner Buyout']]
-        else:
-            non_adjusted_columns = [col for col in df.columns if 'Adjusted' not in col]
-            cf_df = df[non_adjusted_columns]
-            cf_df['Ownership Share'] = df['Ownership Share']
+    return cf_df
 
-        for col in columns_to_change_sign:
-            adjusted_col_name = f'Adjusted {col}' if ownership_adjusted else col
-            if adjusted_col_name in cf_df.columns:
-                cf_df.loc[:, adjusted_col_name] = -cf_df[adjusted_col_name]
+def update_ownership_share(self, start_date: date, new_share: float):
+    start_date = self._standardize_date(start_date)
 
-        cf_df.loc[:, 'Total Cash Flow'] = cf_df.drop(columns=['Ownership Share']).sum(axis=1)
+    for d in sorted(self.ownership_share_series.keys()):
+        if d >= start_date:
+            self.ownership_share_series[d] = new_share
 
-        return cf_df
+    max_existing_date = max(self.ownership_share_series.keys(), default=start_date)
+    current_date = max(start_date, max_existing_date)
 
-    def update_ownership_share(self, start_date: date, new_share: float):
-        start_date = self._standardize_date(start_date)
+    try:
+        while current_date <= self.analysis_end_date:
+            self.ownership_share_series[current_date] = new_share
+            current_date += relativedelta(months=1)
+    except TypeError as e:
+        print(f"TypeError occurred: {e}")
 
-        for d in sorted(self.ownership_share_series.keys()):
-            if d >= start_date:
-                self.ownership_share_series[d] = new_share
+def buy_out_partner(self, buyout_date: date, buyout_amount: float):
+    standardized_date = self._standardize_date(buyout_date)
+    self.update_ownership_share(standardized_date, 1.0)
+    self.buyout_amount = buyout_amount
+    self.buyout_date = standardized_date
 
-        max_existing_date = max(self.ownership_share_series.keys(), default=start_date)
-        current_date = max(start_date, max_existing_date)
+def sell_property(self, sale_date: date, sale_price: float):
+    standardized_sale_date = self._standardize_date(sale_date)
 
-        try:
-            while current_date <= self.analysis_end_date:
-                self.ownership_share_series[current_date] = new_share
-                current_date += relativedelta(months=1)
-        except TypeError as e:
-            print(f"TypeError occurred: {e}")
+    if standardized_sale_date <= self.purchase_date:
+        raise ValueError("Sale date must be after the purchase date.")
 
-    def buy_out_partner(self, buyout_date: date, buyout_amount: float):
-        standardized_date = self._standardize_date(buyout_date)
-        self.update_ownership_share(standardized_date, 1.0)
-        self.buyout_amount = buyout_amount
-        self.buyout_date = standardized_date
+    if sale_price <= 0:
+        raise ValueError("Sale price must be positive.")
 
-    def sell_property(self, sale_date: date, sale_price: float):
-        standardized_sale_date = self._standardize_date(sale_date)
+    self.sale_date = standardized_sale_date
+    self.sale_price = sale_price
+    self.current_value = sale_price
 
-        if standardized_sale_date <= self.purchase_date:
-            raise ValueError("Sale date must be after the purchase date.")
-
-        if sale_price <= 0:
-            raise ValueError("Sale price must be positive.")
-
-        self.sale_date = standardized_sale_date
-        self.sale_price = sale_price
-        self.current_value = sale_price
-
-        if self.loan:
-            loan_balance = self.loan.get_current_balance(self.sale_date)
+    if self.loans:
+        for loan in self.loans:
+            loan_balance = loan.get_current_balance(self.sale_date)
             if loan_balance > 0:
                 print(f"Loan balance of ${loan_balance:,.2f} paid off upon sale.")
 
-        print(f"Property sold on {self.sale_date} for ${self.sale_price:,.2f}")
+    print(f"Property sold on {self.sale_date} for ${self.sale_price:,.2f}")
 
-    def __str__(self) -> str:
-        loan_status = "Encumbered" if self.loan else "Unencumbered"
-        sale_info = f", Sold on {self.sale_date} for ${self.sale_price:,.2f}" if self.sale_date else ""
-        return f"{self.name} - {self.address} ({self.property_type}) - {loan_status} - Purchased on {self.purchase_date}{sale_info} - Analysis period: {self.analysis_start_date} to {self.analysis_end_date}"
+def __str__(self) -> str:
+    loan_status = "Encumbered" if self.loans else "Unencumbered"
+    sale_info = f", Sold on {self.sale_date} for ${self.sale_price:,.2f}" if self.sale_date else ""
+    return f"{self.name} - {self.address} ({self.property_type}) - {loan_status} - Purchased on {self.purchase_date}{sale_info} - Analysis period: {self.analysis_start_date} to {self.analysis_end_date}"
