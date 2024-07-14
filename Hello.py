@@ -55,7 +55,7 @@ if 'cash_flows' in st.session_state:
 
     # Sum the transposed DataFrame
     transposed_df = cash_flows.sum().to_frame().T
-    transposed_df.index = ['Total']
+    transposed_df.index = ['Total Adjusted Cash Flows']
 
     # Display in Streamlit without the index
     st.dataframe(transposed_df)
