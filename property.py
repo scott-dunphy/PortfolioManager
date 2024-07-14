@@ -198,7 +198,6 @@ class Property:
 
         # Add financial data to the cash flows DataFrame
         cash_flows_df['Net Operating Income'] = cash_flows_df['Net Operating Income'].add(fin_df['Net Operating Income'], fill_value=0)
-            0)
         cash_flows_df['Capital Expenditures'] = cash_flows_df['Capital Expenditures'].add(fin_df['Capital Expenditures'], fill_value=0)
     
         # Add loan cash flows to the DataFrame
