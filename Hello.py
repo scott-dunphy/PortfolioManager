@@ -73,22 +73,19 @@ if 'cash_flows' in st.session_state:
         
     # Handle form submission
     if submit:
-        if 'capital_flows' not in st.session_state:
-            st.session_state.capital_flows = []
-
-        flow = {
+        # Create a new DataFrame for the new flow
+        new_flow = pd.DataFrame([{
             'Date': date_input,
             'Capital Call': capital_call,
             'Redemption Payment': redemption
-        }
+        }]).set_index('Date')
 
-        flows = pd.DataFrame(flow)
-        flows.set_index('Date', inplace=True)
-        st.session_state.portfolio.add_capital_flows(flows)
+        # Add the new flow to the portfolio
+        st.session_state.portfolio.add_capital_flows(new_flow)
         st.success("Data submitted successfully!")
         st.experimental_rerun()
 
-    if 'capital_flows' in st.session_state:
+    if not st.session_state.portfolio.capital_flows.empty:
         st.write("Capital Flows:")
         st.write(st.session_state.portfolio.capital_flows)
         
