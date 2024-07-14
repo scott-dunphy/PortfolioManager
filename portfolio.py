@@ -68,7 +68,7 @@ class Portfolio:
         date_range = pd.date_range(start_date, end_date, freq='MS').to_pydatetime()
         # Initialize an empty DataFrame with date range index
         columns_order = [
-            'Adjusted Purchase Price', 'Adjusted Loan Proceeds', 'Adjusted Net Operating Income',
+            'Capital Call', 'Redemption Payment', 'Adjusted Purchase Price', 'Adjusted Loan Proceeds', 'Adjusted Net Operating Income',
             'Adjusted Capital Expenditures', 'Adjusted Interest Expense', 'Adjusted Principal Payments',
             'Adjusted Debt Scheduled Repayment', 'Adjusted Debt Early Prepayment', 'Adjusted Sale Proceeds',
             'Adjusted Partner Buyout', 'Total Cash Flow'
@@ -82,6 +82,8 @@ class Portfolio:
             # Ensure the DataFrame is within the specified date range
             property_cf = property_cf.loc[(property_cf.index >= start_date) & (property_cf.index <= end_date)]
             aggregate_cf = aggregate_cf.add(property_cf, fill_value=0)
+
+        aggregate_cf = aggregate_cf.add(self.capital_flows, fill_value=0)
     
         # Aggregate loan cash flows
         if self.unsecured_loans:
