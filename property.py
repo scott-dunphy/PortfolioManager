@@ -160,13 +160,13 @@ class Property:
             start_date = self.analysis_start_date
         if end_date is None:
             end_date = self.analysis_end_date
-
+    
         # Generate a date range for the entire analysis period
         end_date = min(end_date, self.sale_date)
         start_date = max(start_date, self.purchase_date)
         dates = pd.date_range(start=start_date, end=end_date, freq='MS')
         dates = [date(d.year, d.month, d.day) for d in dates]
-
+    
         # Create a DataFrame with these dates as the index
         cash_flows_df = pd.DataFrame(index=dates, columns=[
             'Ownership Share',
@@ -182,35 +182,39 @@ class Property:
             'Debt Early Prepayment',
         ])
         cash_flows_df = cash_flows_df.fillna(0)  # Initialize with 0s
-
+    
         cash_flows_df.at[self.purchase_date, 'Purchase Price'] = self.purchase_price
-
+    
         # Fill in the DataFrame with cash flow data
         for d in dates:
             standardized_date = self._standardize_date(d)
             cash_flows_df.at[standardized_date, 'Ownership Share'] = self.ownership_share_series.get(standardized_date, 1.0)
-
+    
         # Aggregate the values for duplicate dates
-        fin_df = self.noi_capex.groupby(self.noi_capex.index).sum()
-
-        # Reindex fin_df to match cash_flows_df
-        fin_df = fin_df.reindex(cash_flows_df.index, fill_value=0)
-
-        # Add financial data to the cash flows DataFrame
-        cash_flows_df['Net Operating Income'] = cash_flows_df['Net Operating Income'].add(fin_df['Net Operating Income'], fill_value=0)
-        cash_flows_df['Capital Expenditures'] = cash_flows_df['Capital Expenditures'].add(fin_df['Capital Expenditures'], fill_value=0)
+        if self.noi_capex is not None:
+            fin_df = self.noi_capex.groupby(self.noi_capex.index).sum()
+    
+            # Reindex fin_df to match cash_flows_df
+            fin_df = fin_df.reindex(cash_flows_df.index, fill_value=0)
+    
+            # Add financial data to the cash flows DataFrame
+            cash_flows_df['Net Operating Income'] = cash_flows_df['Net Operating Income'].add(fin_df['Net Operating Income'], fill_value=0)
+            cash_flows_df['Capital Expenditures'] = cash_flows_df['Capital Expenditures'].add(fin_df['Capital Expenditures'], fill_value=0)
     
         # Add loan cash flows to the DataFrame
         for loan in self.loans:
             loan_cash_flows = loan.get_schedule()
             for loan_cf in loan_cash_flows:
                 standardized_date = self._standardize_date(loan_cf['date'])
-                cash_flows_df.at[standardized_date, 'Interest Expense'] += loan_cf['Interest Expense']
-                cash_flows_df.at[standardized_date, 'Principal Payments'] += loan_cf['Principal Payments']
-                if standardized_date == loan.origination_date:
-                    cash_flows_df.at[standardized_date, 'Loan Proceeds'] += loan.original_balance
-                if standardized_date == loan.maturity_date and not self.sale_date:
-                    cash_flows_df.at[standardized_date, 'Debt Scheduled Repayment'] += loan.get_current_balance(loan.maturity_date)
+                if standardized_date in cash_flows_df.index:
+                    cash_flows_df.at[standardized_date, 'Interest Expense'] += loan_cf['Interest Expense']
+                    cash_flows_df.at[standardized_date, 'Principal Payments'] += loan_cf['Principal Payments']
+                    if standardized_date == loan.origination_date:
+                        cash_flows_df.at[standardized_date, 'Loan Proceeds'] += loan.original_balance
+                    if standardized_date == loan.maturity_date and not self.sale_date:
+                        cash_flows_df.at[standardized_date, 'Debt Scheduled Repayment'] += loan.get_current_balance(loan.maturity_date)
+                else:
+                    st.error(f"Loan date {standardized_date} not in cash flows DataFrame index.")
     
         if self.sale_date is not None:
             cash_flows_df.at[self.sale_date, 'Sale Proceeds'] = self.sale_price
