@@ -52,8 +52,14 @@ if cash_flows is not None:
 if 'cash_flows' in st.session_state:
     cash_flows = st.session_state.cash_flows
     
+    # Print columns for debugging
+    st.write("Columns in cash_flows DataFrame:", cash_flows.columns.tolist())
+    
     # Ensure the DataFrame contains only supported data types
-    cash_flows = cash_flows.astype({'Capital Call': 'float64', 'Redemption Payment': 'float64'})
+    try:
+        cash_flows = cash_flows.astype({'Capital Call': 'float64', 'Redemption Payment': 'float64'})
+    except KeyError as e:
+        st.error(f"Column not found: {e}")
     
     edited_cash_flows = st.experimental_data_editor(cash_flows, column_config=adjusted_column_config, use_container_width=True)
     
