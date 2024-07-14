@@ -165,8 +165,6 @@ if 'properties' in st.session_state and st.session_state.properties:
             update_property(properties, selected_property, updated_data, fin_df, loan_data_list)
             st.success("Property updated successfully")
 
-            .")
-            
             # Display cash flows
             st.subheader("Hold Period Cash Flows")
             hold_period_cf = selected_property.hold_period_cash_flows()
