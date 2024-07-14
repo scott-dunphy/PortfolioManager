@@ -68,7 +68,8 @@ if 'cash_flows' in st.session_state:
         with col2:
             capital_call = st.number_input("Capital Call", min_value=0.0, step=0.01)
         with col3:
-            submit = st.form_submit_button("Submit")
+            redemption = st.number_input("Capital Call", min_value=0.0, step=0.01)
+        submit = st.form_submit_button("Submit")
         
         # Handle form submission
         if submit:
