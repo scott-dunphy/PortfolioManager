@@ -49,40 +49,10 @@ if cash_flows is not None:
     st.write(st.session_state.portfolio.calculate_monthly_cash().T)
 
 # Check if 'cash_flows' is in session state and set it if not
-if 'cash_flows' in st.session_state:
+if 'cash_flows' is in st.session_state:
     cash_flows = st.session_state.cash_flows
-    
-    # Debugging: Print DataFrame columns and data types
-    st.write("DataFrame columns and types:")
-    st.write(cash_flows.dtypes)
-    
-    # Ensure the DataFrame contains only supported data types
-    try:
-        cash_flows = cash_flows.astype({'Capital Call': 'float64', 'Redemption Payment': 'float64'})
-    except KeyError as e:
-        st.error(f"Column not found: {e}")
-    except ValueError as e:
-        st.error(f"Value error: {e}")
-
-    # Print the DataFrame for debugging before editing
-    st.write("DataFrame before editing:")
-    st.write(cash_flows)
-
-    # Edit the DataFrame
-    edited_cash_flows = st.experimental_data_editor(cash_flows, column_config=adjusted_column_config, use_container_width=True)
-
-    # Debugging: Print the edited DataFrame
-    st.write("Edited DataFrame:")
-    st.write(edited_cash_flows)
-
-    # Ensure the edited DataFrame has the correct columns
-    if 'Capital Call' in edited_cash_flows.columns and 'Redemption Payment' in edited_cash_flows.columns:
-        # Update the portfolio capital flows with edited data
-        st.session_state.portfolio.capital_flows.update(edited_cash_flows)
-    else:
-        st.error("The edited DataFrame does not contain the required columns: 'Capital Call', 'Redemption Payment'.")
-
-    st.session_state.cash_flows = edited_cash_flows
+    cash_flows = st.data_editor(cash_flows, column_config=adjusted_column_config, use_container_width=True)
+    st.session_state.cash_flows = cash_flows  # Update session state with any changes made in the editor
 
     # Sum the transposed DataFrame
     transposed_df = cash_flows.sum().to_frame().T
