@@ -63,10 +63,10 @@ if 'properties' in st.session_state and st.session_state.properties:
         property_names = [prop.name for prop in properties]
         selected_property_name = st.selectbox("Select Property", property_names)
         selected_property = next(prop for prop in properties if prop.name == selected_property_name)
-    
+
         # Property inputs
         col1, col2 = st.columns(2)
-    
+
         with col1:
             property_id = st.text_input('Property ID', value=selected_property.property_id)
             property_name = st.text_input('Property Name', value=selected_property.name)
@@ -77,7 +77,7 @@ if 'properties' in st.session_state and st.session_state.properties:
             current_value = st.number_input('Current Value', min_value=0.0, value=float(selected_property.current_value), format='%f')
             purchase_price = st.number_input('Purchase Price', min_value=0.0, value=float(selected_property.purchase_price), format='%f')
             purchase_date = st.date_input('Purchase Date', value=selected_property.purchase_date)
-    
+
         with col2:
             analysis_start_date = st.date_input('Analysis Start Date', value=selected_property.analysis_start_date)
             analysis_end_date = st.date_input('Analysis End Date', value=selected_property.analysis_end_date)
@@ -87,7 +87,7 @@ if 'properties' in st.session_state and st.session_state.properties:
             sale_price = st.number_input('Sale Price', min_value=0.0, value=float(selected_property.sale_price) if selected_property.sale_price else 0.0, format="%f")
             buyout_date = st.date_input('Partner Buyout Date', value=selected_property.buyout_date or date(2100,12,1))
             buyout_amount = st.number_input('Buyout Amount', min_value=0.0, value=float(selected_property.buyout_amount) if selected_property.buyout_amount else 0.0, format="%f")
-    
+
         # Loan inputs for multiple loans
         loan_data_list = []
         for i, loan in enumerate(selected_property.loans):
@@ -141,7 +141,7 @@ if 'properties' in st.session_state and st.session_state.properties:
         # Financial Data inputs
         with st.expander("Financial Data"):
             fin_df = st.data_editor(selected_property.noi_capex)
-    
+
         if st.button('Update and Recalculate'):
             updated_data = {
                 'property_id': property_id,
@@ -163,8 +163,7 @@ if 'properties' in st.session_state and st.session_state.properties:
             }
             
             update_property(properties, selected_property, updated_data, fin_df, loan_data_list)
-            st.success("Property updated successfully")
-    
+            st.success("Property updated successfully.")
             # Display cash flows
             st.subheader("Hold Period Cash Flows")
             hold_period_cf = selected_property.hold_period_cash_flows()
@@ -177,16 +176,12 @@ if 'properties' in st.session_state and st.session_state.properties:
                 st.dataframe(loan_schedule)
                 st.write("Amortization Period:", loan.amortization_period)
                 st.write("Monthly Payment:", loan.monthly_payment)
-        
-        if st.button("Delete Property"):
-            st.session_state.properties = [prop for prop in st.session_state.properties if prop.property_id != property_id]
-            st.experimental_rerun()
 
     else:
         # New property inputs
         st.subheader("Add New Property")
         col1, col2 = st.columns(2)
-    
+
         with col1:
             property_id = st.text_input('Property ID', value=str(uuid.uuid4()))
             property_name = st.text_input('Property Name')
@@ -197,7 +192,7 @@ if 'properties' in st.session_state and st.session_state.properties:
             current_value = st.number_input('Current Value', min_value=0.0, format='%f')
             purchase_price = st.number_input('Purchase Price', min_value=0.0, format='%f')
             purchase_date = st.date_input('Purchase Date')
-    
+
         with col2:
             analysis_start_date = st.date_input('Analysis Start Date')
             analysis_end_date = st.date_input('Analysis End Date')
@@ -206,7 +201,7 @@ if 'properties' in st.session_state and st.session_state.properties:
             sale_price = st.number_input('Sale Price', min_value=0.0, format="%f")
             buyout_date = st.date_input('Partner Buyout Date')
             buyout_amount = st.number_input('Buyout Amount', min_value=0.0, format="%f")
-    
+
         # Loan inputs for new property
         loan_data_list = []
         with st.expander("Add Loan"):
@@ -219,7 +214,7 @@ if 'properties' in st.session_state and st.session_state.properties:
                 interest_only_period = st.number_input('Interest Only Period (months)', min_value=0)
                 amortization_period = st.number_input('Amortization Period (months)', min_value=0)
                 day_count_method = st.selectbox('Day Count Method', options=["Actual/360", "Actual/365", "30/360"])
-    
+
                 loan_data = {
                     'loan_exists': loan_exists,
                     'origination_date': origination_date,
@@ -231,15 +226,15 @@ if 'properties' in st.session_state and st.session_state.properties:
                     'day_count_method': day_count_method
                 }
                 loan_data_list.append(loan_data)
-    
+
         # Financial Data inputs for new property
         with st.expander("Financial Data"):
             columns = ['Date', 'Net Operating Income', 'Capital Expenditures']
             # Create a blank DataFrame
             fin_df = pd.DataFrame(columns=columns)
             fin_df = st.data_editor(fin_df)
-    
-if st.button('Add Property'):
+
+        if st.button('Add Property'):
             new_property = Property(
                 property_id=property_id,
                 name=property_name,
@@ -259,7 +254,7 @@ if st.button('Add Property'):
                 buyout_amount=buyout_amount,
                 loans=[],  # Initialize with an empty list of loans
             )
-    
+
             for loan_data in loan_data_list:
                 if loan_data['loan_exists']:
                     new_loan = Loan(
@@ -274,13 +269,13 @@ if st.button('Add Property'):
                     new_property.add_loan(new_loan)
             
             new_property.add_noi_capex(fin_df)
-    
+
             st.session_state.properties.append(new_property)
             st.success("New property added successfully.")
             st.experimental_rerun()  # Rerun to reflect the new property in the session state
 
 else:
-    # Code for when no properties exist
+    # New code for when no properties exist
     st.write("No properties exist. Add a new property:")
     st.session_state.properties = []
     col1, col2 = st.columns(2)
@@ -370,9 +365,7 @@ else:
                     day_count_method=loan_data['day_count_method']
                 )
                 new_property.add_loan(new_loan)
-
         new_property.add_noi_capex(fin_df)
-
         st.session_state.properties.append(new_property)
         st.success("New property added successfully.")
         st.experimental_rerun()  # Rerun to reflect the new property in the session state
@@ -381,3 +374,8 @@ else:
 if st.button("Save Session State"):
     save_session_state()
     st.success("Session state saved to file.")
+
+if 'properties' in st.session_state and property_id in [prop.property_id for prop in st.session_state.properties]:
+    if st.button("Delete Property"):
+        st.session_state.properties = [prop for prop in st.session_state.properties if prop.property_id != property_id]
+        st.rerun()
