@@ -148,7 +148,7 @@ if 'properties' in st.session_state and st.session_state.properties:
             fin_df = st.data_editor(selected_property.noi_capex)
 
         if st.button('Update and Recalculate'):
-            st.session_state.add_new_loan_checked = False
+            
             updated_data = {
                 'property_id': property_id,
                 'name': property_name,
@@ -169,6 +169,7 @@ if 'properties' in st.session_state and st.session_state.properties:
             }
             
             update_property(properties, selected_property, updated_data, fin_df, loan_data_list)
+            st.session_state.add_new_loan_checked = False
             st.success("Property updated successfully.")
             # Display cash flows
             st.subheader("Hold Period Cash Flows")
