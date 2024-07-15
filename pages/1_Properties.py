@@ -174,8 +174,8 @@ if 'properties' in st.session_state and st.session_state.properties:
                 st.subheader(f"Loan Schedule {i + 1}")
                 loan_schedule = loan.get_schedule()
                 st.dataframe(loan_schedule)
-                st.write("Amortization Period:", loan.amortization_period)
-                st.write("Monthly Payment:", loan.monthly_payment)
+                #st.write("Amortization Period:", loan.amortization_period)
+                #st.write("Monthly Payment:", loan.monthly_payment)
 
     else:
         # New property inputs
