@@ -214,7 +214,8 @@ class Property:
                     if standardized_date == loan.maturity_date and not self.sale_date:
                         cash_flows_df.at[standardized_date, 'Debt Scheduled Repayment'] += loan.get_current_balance(loan.maturity_date)
                 else:
-                    st.error(f"Loan date {standardized_date} not in cash flows DataFrame index.")
+                    #st.error(f"Loan date {standardized_date} not in cash flows DataFrame index.")
+                    pass
     
         if self.sale_date is not None:
             cash_flows_df.at[self.sale_date, 'Sale Proceeds'] = self.sale_price
