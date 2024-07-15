@@ -52,6 +52,9 @@ def update_property(properties, selected_property, updated_data, fin_df, loan_da
 
     st.session_state.properties = properties
 
+if 'add_new_loan_checked' not in st.session_state:
+    st.session_state.add_new_loan_checked = False
+    
 if 'properties' in st.session_state and st.session_state.properties:
     properties = st.session_state.properties
 
@@ -115,8 +118,8 @@ if 'properties' in st.session_state and st.session_state.properties:
         
         # Adding a new loan if needed
         with st.expander("Add New Loan"):
-            loan_exists = st.checkbox('Add New Loan')
-            if loan_exists:
+            st.session_state.add_new_loan_checked = st.checkbox('Add New Loan', value=st.session_state.add_new_loan_checked)
+            if st.session_state.add_new_loan_checked:
                 origination_date = st.date_input('New Loan Origination Date')
                 maturity_date = st.date_input('New Loan Maturity Date')
                 original_balance = st.number_input('New Loan Original Balance', min_value=0.0, format='%f')
@@ -124,9 +127,9 @@ if 'properties' in st.session_state and st.session_state.properties:
                 interest_only_period = st.number_input('New Loan Interest Only Period (months)', min_value=0)
                 amortization_period = st.number_input('New Loan Amortization Period (months)', min_value=0)
                 day_count_method = st.selectbox('New Loan Day Count Method', options=["Actual/360", "Actual/365", "30/360"])
-                
+        
                 loan_data = {
-                    'loan_exists': loan_exists,
+                    'loan_exists': True,
                     'origination_date': origination_date,
                     'maturity_date': maturity_date,
                     'original_balance': original_balance,
@@ -136,6 +139,8 @@ if 'properties' in st.session_state and st.session_state.properties:
                     'day_count_method': day_count_method
                 }
                 loan_data_list.append(loan_data)
+            else:
+                st.session_state.add_new_loan_checked = False
                 
         #st.write(selected_property.noi_capex)
         # Financial Data inputs
