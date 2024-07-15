@@ -137,7 +137,7 @@ if 'properties' in st.session_state and st.session_state.properties:
                 }
                 loan_data_list.append(loan_data)
                 
-        st.write(selected_property.noi_capex)
+        #st.write(selected_property.noi_capex)
         # Financial Data inputs
         with st.expander("Financial Data"):
             fin_df = st.data_editor(selected_property.noi_capex)
