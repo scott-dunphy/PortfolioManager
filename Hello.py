@@ -96,3 +96,6 @@ if 'cash_flows' in st.session_state:
 
     st.write("Unsecured Loan Balance")
     viz.plot_loan_balance_over_time()
+
+    st.write("Debt Service Coverage Ratios")
+    st.write(st.session_state.portfolio.calculate_monthly_dscr())
