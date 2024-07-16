@@ -99,3 +99,6 @@ if 'cash_flows' in st.session_state:
 
     st.write("Debt Service Coverage Ratios")
     st.write(st.session_state.portfolio.calculate_monthly_dscr())
+
+    st.write("Unsecured Debt Service Coverage Ratio")
+    st.write(st.session_state.portfolio.calculate_monthly_dscr_unsecured())
