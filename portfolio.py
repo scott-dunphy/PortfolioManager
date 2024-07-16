@@ -123,3 +123,35 @@ class Portfolio:
             monthly_cash['Ending Cash'].iloc[i] = monthly_cash['Beginning Cash'].iloc[i] + monthly_cash['Monthly Cash Flow'].iloc[i]
         
         return monthly_cash
+
+    def calculate_monthly_dscr(self) -> pd.DataFrame:
+        """
+        Calculate the Debt Service Coverage Ratio (DSCR) by month.
+        
+        DSCR = Net Operating Income / (Interest Expense + Principal Payments)
+        
+        Returns:
+        pd.DataFrame: A DataFrame with the DSCR calculated for each month.
+        """
+        # Aggregate the cash flows over the hold period
+        aggregate_cf = self.aggregate_hold_period_cash_flows()
+
+        # Extract the necessary columns for DSCR calculation
+        noi = aggregate_cf['Adjusted Net Operating Income']
+        interest_expense = aggregate_cf['Adjusted Interest Expense']
+        principal_payments = aggregate_cf['Adjusted Principal Payments']
+        
+        # Calculate the Debt Service Coverage Ratio
+        debt_service = interest_expense + principal_payments
+        dscr = noi / debt_service
+        
+        # Create a DataFrame to hold the results
+        dscr_df = pd.DataFrame({
+            'Net Operating Income': noi,
+            'Interest Expense': interest_expense,
+            'Principal Payments': principal_payments,
+            'Debt Service': debt_service,
+            'DSCR': dscr
+        })
+        
+        return dscr_df
