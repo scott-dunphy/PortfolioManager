@@ -155,3 +155,58 @@ class Portfolio:
         })
         
         return dscr_df
+
+    def calculate_monthly_dscr_unsecured(self) -> pd.DataFrame:
+        """
+        Calculate the Debt Service Coverage Ratio (DSCR) by month for assets without loans,
+        divided by the debt service of unsecured loans.
+        
+        DSCR = NOI of assets without loans / (Interest Expense of unsecured loans + Principal Payments of unsecured loans)
+        
+        Returns:
+        pd.DataFrame: A DataFrame with the DSCR calculated for each month.
+        """
+        # Aggregate the cash flows over the hold period
+        aggregate_cf = self.aggregate_hold_period_cash_flows()
+
+        # Extract the necessary columns for DSCR calculation
+        noi = aggregate_cf['Adjusted Net Operating Income']
+        
+        # Initialize NOI for properties without loans
+        noi_no_loans = pd.Series(0, index=aggregate_cf.index)
+
+        # Check if properties have any loan balances
+        for property in self.properties:
+            has_loans = False
+            for loan in property.loans:
+                if loan.get_current_balance(date.today()) > 0:  # Check if the loan balance is greater than 0
+                    has_loans = True
+                    break
+            if not has_loans:
+                noi_no_loans += property.hold_period_cash_flows()['Adjusted Net Operating Income']
+
+        # Extract unsecured loans' interest expense and principal payments
+        interest_expense_unsecured = pd.Series(0, index=aggregate_cf.index)
+        principal_payments_unsecured = pd.Series(0, index=aggregate_cf.index)
+        for loan in self.unsecured_loans:
+            loan_schedule = loan.get_unsecured_schedule()
+            loan_cf = pd.DataFrame(loan_schedule)
+            loan_cf['date'] = pd.to_datetime(loan_cf['date'], errors='coerce').dt.date
+            loan_cf.set_index('date', inplace=True)
+            interest_expense_unsecured += loan_cf['Adjusted Interest Expense']
+            principal_payments_unsecured += loan_cf['Adjusted Principal Payments']
+        
+        # Calculate the Debt Service Coverage Ratio for unsecured loans
+        debt_service_unsecured = interest_expense_unsecured + principal_payments_unsecured
+        dscr_unsecured = noi_no_loans / debt_service_unsecured
+        
+        # Create a DataFrame to hold the results
+        dscr_df_unsecured = pd.DataFrame({
+            'NOI (No Loans)': noi_no_loans,
+            'Interest Expense (Unsecured)': interest_expense_unsecured,
+            'Principal Payments (Unsecured)': principal_payments_unsecured,
+            'Debt Service (Unsecured)': debt_service_unsecured,
+            'DSCR (Unsecured)': dscr_unsecured
+        })
+        
+        return dscr_df_unsecured
