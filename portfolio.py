@@ -203,10 +203,10 @@ class Portfolio:
         # Create a DataFrame to hold the results
         dscr_df_unsecured = pd.DataFrame({
             'NOI (No Loans)': noi_no_loans,
-            'Interest Expense (Unsecured)': interest_expense_unsecured,
-            'Principal Payments (Unsecured)': principal_payments_unsecured,
-            'Debt Service (Unsecured)': debt_service_unsecured,
-            'DSCR (Unsecured)': dscr_unsecured
+            'Interest Expense (Unsecured)': -interest_expense_unsecured,
+            'Principal Payments (Unsecured)': -principal_payments_unsecured,
+            'Debt Service (Unsecured)': -debt_service_unsecured,
+            'DSCR (Unsecured)': -dscr_unsecured
         })
         
         return dscr_df_unsecured
