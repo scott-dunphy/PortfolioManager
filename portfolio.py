@@ -138,8 +138,8 @@ class Portfolio:
 
         # Extract the necessary columns for DSCR calculation
         noi = aggregate_cf['Adjusted Net Operating Income']
-        interest_expense = aggregate_cf['Adjusted Interest Expense']
-        principal_payments = aggregate_cf['Adjusted Principal Payments']
+        interest_expense = -aggregate_cf['Adjusted Interest Expense']
+        principal_payments = -aggregate_cf['Adjusted Principal Payments']
         
         # Calculate the Debt Service Coverage Ratio
         debt_service = interest_expense + principal_payments
